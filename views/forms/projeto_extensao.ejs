@@ -1,0 +1,133 @@
+<%- include('../cabecalho', { titulo: isEdit ? 'Editar Projeto' : 'Cadastrar Projeto' }) %>
+
+<% const registro = projeto_extensao || {}; %>
+<% const registroId = registro.id_projeto; %>
+<% const listaTipoPlanos = Array.isArray(tipoPlanos) ? tipoPlanos : []; %>
+<% const listaPublicosAlvo = Array.isArray(publicosAlvo) ? publicosAlvo : []; %>
+
+<main class="container my-5">
+  <section class="card shadow p-4 p-md-5">
+
+    <h1 class="fw-bold mb-4">
+      <%= isEdit ? 'Editar Projeto de Extensão' : 'Cadastrar Projeto de Extensão' %>
+    </h1>
+
+    <form method="POST"
+      action="<%= isEdit && registroId ? '/projeto_extensao/' + registroId + '/edit' : '/projeto_extensao/cadastrar' %>"
+      onsubmit="prepararEnvio()">
+
+      <input type="hidden" name="dadosCursos" id="dadosCursos">
+
+      <div class="mb-3">
+        <label class="form-label">Título</label>
+        <input
+          name="titulo"
+          class="form-control"
+          value="<%= registro.titulo || '' %>"
+          required
+        >
+      </div>
+
+      <div class="mb-3">
+        <label class="form-label">Tipo de Plano</label>
+        <select name="id_tipo_plano" class="form-select" required>
+          <option value="">Selecione</option>
+          <% listaTipoPlanos.forEach(item => { %>
+            <option
+              value="<%= item.id_tipo_plano %>"
+              <%= registro.id_tipo_plano == item.id_tipo_plano ? 'selected' : '' %>
+            >
+              <%= item.descricao %>
+            </option>
+          <% }) %>
+        </select>
+      </div>
+
+      <div class="row">
+        <div class="col-md-6 mb-3">
+          <label class="form-label">Início</label>
+          <input
+            type="date"
+            name="periodo_inicio"
+            class="form-control"
+            value="<%= registro.periodo_inicio ? registro.periodo_inicio.toISOString().split('T')[0] : '' %>"
+          >
+        </div>
+
+        <div class="col-md-6 mb-3">
+          <label class="form-label">Fim</label>
+          <input
+            type="date"
+            name="periodo_fim"
+            class="form-control"
+            value="<%= registro.periodo_fim ? registro.periodo_fim.toISOString().split('T')[0] : '' %>"
+          >
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-md-6 mb-3">
+          <label class="form-label">Carga Horária</label>
+          <input
+            type="number"
+            name="carga_horaria_total"
+            min="0"
+            class="form-control"
+            value="<%= registro.carga_horaria_total || '' %>"
+          >
+        </div>
+
+        <div class="col-md-6 mb-3">
+          <label class="form-label">Público Alvo</label>
+          <select name="id_publico_alvo" class="form-select">
+            <option value="">Selecione</option>
+            <% listaPublicosAlvo.forEach(item => { %>
+              <option
+                value="<%= item.id_publico_alvo %>"
+                <%= registro.id_publico_alvo == item.id_publico_alvo ? 'selected' : '' %>
+              >
+                <%= item.descricao %>
+              </option>
+            <% }) %>
+          </select>
+        </div>
+      </div>
+
+      <div class="mb-3">
+        <label class="form-label">Objetivo</label>
+        <textarea name="objetivo" class="form-control" rows="4"><%= registro.objetivo || '' %></textarea>
+      </div>
+
+      <div class="mb-3">
+        <label class="form-label">Metodologia</label>
+        <textarea name="metodologia" class="form-control" rows="4"><%= registro.metodologia || '' %></textarea>
+      </div>
+
+      <div class="card mb-3">
+        <div class="card-header fw-bold">Cursos e Equipe</div>
+        <div class="card-body">
+          <div id="lista-global-cursos"></div>
+
+          <button
+            type="button"
+            class="btn btn-primary w-100 mb-3"
+            onclick="adicionarBlocoCurso()"
+          >
+            + Adicionar Curso
+          </button>
+        </div>
+      </div>
+
+      <div class="d-flex gap-2">
+        <a href="/projeto_extensao" class="btn btn-secondary">Voltar</a>
+        <button class="btn btn-primary" type="submit">Salvar</button>
+      </div>
+
+    </form>
+  </section>
+</main>
+
+<script id="cursos-data" type="application/json"><%- JSON.stringify(typeof cursos !== 'undefined' ? cursos : []) %></script>
+<script id="cursos-selecionados-data" type="application/json"><%- JSON.stringify(typeof cursosPreSelecionados !== 'undefined' ? cursosPreSelecionados : []) %></script>
+<script src="/js/projeto_extensao.js"></script>
+<%- include('../rodape') %>

@@ -1,0 +1,14 @@
+CREATE TABLE `projeto_custo` (
+  `Id` int NOT NULL AUTO_INCREMENT,
+  `id_projeto` int DEFAULT NULL,
+  `descricao` varchar(255) DEFAULT NULL,
+  `quantitativo` decimal(10,2) DEFAULT NULL,
+  `valor_unitario` decimal(10,2) DEFAULT NULL,
+  `justificativa` text,
+  `realizado` int DEFAULT NULL,
+  `tipo` int DEFAULT NULL,
+  `fonte_recurso` varchar(255) DEFAULT NULL,
+  PRIMARY KEY (`Id`),
+  KEY `id_projeto` (`id_projeto`),
+  CONSTRAINT `projeto_custo_ibfk_1` FOREIGN KEY (`id_projeto`) REFERENCES `projeto_extensao` (`id_projeto`)
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci

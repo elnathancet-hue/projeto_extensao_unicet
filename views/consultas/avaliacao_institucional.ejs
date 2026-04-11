@@ -1,0 +1,68 @@
+<%- include('../cabecalho', { titulo: 'Consulta de Avaliação Institucional' }) %>
+
+<main id="conteudo-principal-form" class="container my-5">
+  <section id="secao-cadastro-projeto" class="card shadow p-4 p-md-5">
+    
+    <div class="d-flex align-items-center mb-4 pb-3 border-bottom">
+      <i class="bi bi-journal-check fs-4 me-2"></i>
+      <h1 class="fs-4 fw-bold mb-0">Avaliações Institucionais Cadastradas</h1>
+    </div>
+
+    <div class="d-flex justify-content-between align-items-center mb-3">
+      <span class="fw-semibold">Inserir novo registro</span>
+      <a class="btn btn-success" href="/avaliacao_institucional/forms/avaliacao_institucional">
+        <i class="bi bi-plus-circle me-2"></i>Nova Avaliação
+      </a>
+    </div>
+
+    <div id="form-feedback-message" class="alert d-none" role="alert"></div>
+
+    <div class="table-responsive">
+      <table class="table table-striped table-hover align-middle">
+        <thead class="table-light">
+          <tr>
+            <th>ID Val.</th>
+            <th>ID Proj.</th>
+            <th>Critérios</th>
+            <th>Metodologia</th>
+            <th>Forma Apresentação</th>
+            <th>Ações</th>
+          </tr>            
+        </thead>
+        <tbody>
+          <% if (dados && dados.length > 0) { %>
+            <% dados.forEach(d => { %>
+              <tr>
+                <td><span class="badge bg-secondary"><%= d.id_avaliacao %></span></td>
+                <td><%= d.id_projeto || '-' %></td>
+                <td><%= d.criterios_avaliacao || '-' %></td>
+                <td><%= d.metodologia_avaliacao || '-' %></td>
+                <td><%= d.forma_apresentacao_relatorio || '-' %></td>
+                <td>
+                  <a href="/avaliacao_institucional/<%= d.id_avaliacao %>/edit" class="btn btn-primary btn-sm" title="Editar">
+                   Editar
+                  </a>
+                  <form action="/avaliacao_institucional/<%= d.id_avaliacao %>/delete" method="POST" class="d-inline">
+                    <button type="submit" class="btn btn-danger btn-sm" title="Deletar" onclick="return confirm('Tem certeza que deseja deletar permanentemente esta avaliação?')">
+                      Excluir
+                    </button>
+                  </form>
+                </td>
+              </tr>
+            <% }) %>
+          <% } else { %>
+            <tr>
+              <td colspan="6" class="text-center py-4 text-muted">Nenhum registro encontrado.</td>
+            </tr>
+          <% } %>
+        </tbody>
+      </table>
+    </div>
+    
+    <div class="mt-3">
+      <a href="/logo" class="btn btn-secondary">Voltar ao Início</a>
+    </div>
+
+  </section>
+</main>
+<%- include('../rodape') %>

@@ -1,0 +1,276 @@
+const projeto_extensaoModel = require('../models/projeto_extensaoModel');
+const tipo_acaoModel = require('../models/tipo_acaoModel');
+const linha_programaticaModel = require('../models/linha_programaticaModel');
+const tipo_planoModel = require('../models/tipo_planoModel');
+const publico_alvoModel = require('../models/publico_alvoModel');
+const cursoModel = require('../models/cursoModel');
+
+// ajuste esse valor conforme o id real em Papel_Projeto
+const ID_PAPEL_PROFESSOR = 1;
+
+// Normaliza o corpo da request para o formato esperado pelo model
+function mapRequestToRegistro(body) {
+  const {
+    id_projeto,
+    titulo,
+    id_tipo_plano,
+    periodo_inicio,
+    periodo_fim,
+    carga_horaria_total,
+    id_publico_alvo,
+    objetivo,
+    metodologia,
+    tipo_acao_ids,
+    linha_programatica_ids,
+    dadosCursos
+  } = body;
+
+  const mapRel = (ids, idKey) => {
+    if (!ids) return [];
+    const idArray = Array.isArray(ids) ? ids : [ids];
+    return idArray.map(id => ({ [idKey]: id }));
+  };
+
+  let cursos = [];
+  if (dadosCursos) {
+    try {
+      cursos = JSON.parse(dadosCursos);
+    } catch (error) {
+      console.error('Erro ao converter dadosCursos:', error);
+      cursos = [];
+    }
+  }
+
+  return {
+    id_projeto,
+    titulo,
+    id_tipo_plano: id_tipo_plano || null,
+    coordenador_id: null,
+    periodo_inicio: periodo_inicio || null,
+    periodo_fim: periodo_fim || null,
+    carga_horaria_total: carga_horaria_total || null,
+    id_publico_alvo: id_publico_alvo || null,
+    objetivo,
+    metodologia,
+    tiposAcao: mapRel(tipo_acao_ids, 'id_acao'),
+    linhasProgramaticas: mapRel(linha_programatica_ids, 'id_linha'),
+    cursos
+  };
+}
+
+async function listprojeto_extensaos(req, res) {
+  try {
+    const projeto_extensaos = await projeto_extensaoModel.getAllprojeto_extensaos();
+    res.render('consultas/projeto_extensao', { dados: projeto_extensaos });
+  } catch (error) {
+    console.error('Erro ao buscar projeto_extensaos:', error);
+    res.render('error', {
+      message: 'Erro ao buscar projeto_extensaos',
+      returnLink: '/logo'
+    });
+  }
+}
+
+async function filterprojeto_extensao(req, res) {
+  const { nome } = req.body;
+  try {
+    const projeto_extensaos = await projeto_extensaoModel.getprojeto_extensaosByNome(nome || '');
+    res.render('consultas/projeto_extensao', { dados: projeto_extensaos || [] });
+  } catch (error) {
+    console.error('Erro ao filtrar projeto_extensao:', error);
+    res.render('error', {
+      message: 'Erro ao filtrar projeto_extensao',
+      returnLink: '/logo'
+    });
+  }
+}
+
+async function showCreateForm(req, res) {
+  try {
+    const tipoPlanos = await tipo_planoModel.getAlltipo_plano();
+    const publicosAlvo = await publico_alvoModel.getAllpublico_alvo();
+    const todosTiposAcao = await tipo_acaoModel.getAlltipo_acao();
+    const todasLinhas = await linha_programaticaModel.getAllinha_programatica();
+    const cursos = await cursoModel.getAllCursosComEquipe();
+
+    res.render('forms/projeto_extensao', {
+      projeto_extensao: {},
+      isEdit: false,
+      tipoPlanos,
+      publicosAlvo,
+      cursos,
+      todosTiposAcao,
+      todasLinhas,
+      relTiposAcao: [],
+      relLinhas: []
+    });
+  } catch (error) {
+    console.error('Erro ao carregar formulário de cadastro:', error);
+    res.render('error', {
+      message: 'Erro ao carregar formulário de cadastro',
+      returnLink: '/projeto_extensao'
+    });
+  }
+}
+
+async function addprojeto_extensao(req, res) {
+  try {
+    const registro = mapRequestToRegistro(req.body);
+
+    const projetoId = await projeto_extensaoModel.insertprojeto_extensaos(registro);
+
+    await projeto_extensaoModel.updateTipoAcaoProjeto(projetoId, registro.tiposAcao);
+    await projeto_extensaoModel.updateLinhaProgramaticaProjeto(projetoId, registro.linhasProgramaticas);
+    await projeto_extensaoModel.updateCursosProjeto(projetoId, registro.cursos);
+    await projeto_extensaoModel.updatePessoasProjeto(
+      projetoId,
+      registro.cursos,
+      ID_PAPEL_PROFESSOR
+    );
+
+    res.redirect('/projeto_extensao');
+  } catch (error) {
+    console.error('Erro ao inserir projeto_extensao:', error);
+    res.render('error', {
+      message: 'Erro ao inserir projeto_extensao',
+      returnLink: '/logo'
+    });
+  }
+}
+
+async function showprojeto_extensao(req, res) {
+  const id = req.params.id;
+  try {
+    const projeto_extensao = await projeto_extensaoModel.getprojeto_extensaosById(id);
+    if (!projeto_extensao) {
+      return res.status(404).send('projeto_extensao nao encontrado');
+    }
+
+    res.render('consultas/projeto_extensao', { dados: [projeto_extensao] });
+  } catch (error) {
+    console.error('Erro ao buscar projeto_extensao:', error);
+    res.render('error', {
+      message: 'Erro ao buscar projeto_extensao',
+      returnLink: '/logo'
+    });
+  }
+}
+
+async function showEditForm(req, res) {
+  const id = req.params.id;
+  try {
+    const projeto_extensao = await projeto_extensaoModel.getprojeto_extensaosById(id);
+    if (!projeto_extensao) {
+      return res.status(404).send('projeto_extensao nao encontrado');
+    }
+
+    const tipoPlanos = await tipo_planoModel.getAlltipo_plano();
+    const publicosAlvo = await publico_alvoModel.getAllpublico_alvo();
+    const todosTiposAcao = await tipo_acaoModel.getAlltipo_acao();
+    const todasLinhas = await linha_programaticaModel.getAllinha_programatica();
+    const relTiposAcao = await projeto_extensaoModel.getTipoAcaoByProjeto(id);
+    const relLinhas = await projeto_extensaoModel.getLinhaProgramaticaByProjeto(id);
+    const cursos = await cursoModel.getAllCursosComEquipe();
+
+    const relCursos = await projeto_extensaoModel.getCursosByProjeto(id);
+    const relPessoas = await projeto_extensaoModel.getPessoasByProjeto(id);
+    const ID_PAPEL_PROFESSOR = 1;
+    const relProfs = relPessoas.filter(p => p.id_papel == ID_PAPEL_PROFESSOR).map(p => String(p.id_pessoa));
+    
+    const cursosPreSelecionados = relCursos.map((c) => {
+      return {
+        cursoId: String(c.id_curso),
+        professores: relProfs
+      };
+    });
+
+    res.render('forms/projeto_extensao', {
+      projeto_extensao,
+      isEdit: true,
+      tipoPlanos,
+      publicosAlvo,
+      cursos,
+      todosTiposAcao,
+      todasLinhas,
+      relTiposAcao,
+      relLinhas,
+      cursosPreSelecionados
+    });
+    
+  } catch (error) {
+    console.error('Erro ao carregar projeto_extensao para edicao:', error);
+    res.render('error', {
+      message: 'Erro ao carregar projeto_extensao para edicao',
+      returnLink: '/projeto_extensao'
+    });
+  }
+}
+
+async function editprojeto_extensao(req, res) {
+  const id = req.params.id;
+  try {
+    const registro = mapRequestToRegistro(req.body);
+
+    await projeto_extensaoModel.updateprojeto_extensaos(id, registro);
+    await projeto_extensaoModel.updateTipoAcaoProjeto(id, registro.tiposAcao);
+    await projeto_extensaoModel.updateLinhaProgramaticaProjeto(id, registro.linhasProgramaticas);
+    await projeto_extensaoModel.updateCursosProjeto(id, registro.cursos);
+    await projeto_extensaoModel.updatePessoasProjeto(
+      id,
+      registro.cursos,
+      ID_PAPEL_PROFESSOR
+    );
+
+    res.redirect('/projeto_extensao');
+  } catch (error) {
+    console.error('Erro ao editar projeto_extensao:', error);
+    res.render('error', {
+      message: 'Erro ao editar projeto_extensao',
+      returnLink: '/projeto_extensao'
+    });
+  }
+}
+
+async function showConfirmDeleteForm(req, res) {
+  const id = req.params.id;
+  try {
+    const projeto_extensao = await projeto_extensaoModel.getprojeto_extensaosById(id);
+    if (!projeto_extensao) {
+      return res.status(404).send('projeto_extensao nao encontrado');
+    }
+
+    res.render('confirmDelete', { projeto_extensao });
+  } catch (error) {
+    console.error('Erro ao carregar confirmacao de exclusao:', error);
+    res.render('error', {
+      message: 'Erro ao carregar confirmacao de exclusao',
+      returnLink: '/projeto_extensao'
+    });
+  }
+}
+
+async function deleteprojeto_extensao(req, res) {
+  const id = req.params.id;
+  try {
+    await projeto_extensaoModel.deleteprojeto_extensaos(id);
+    res.redirect('/projeto_extensao');
+  } catch (error) {
+    console.error('Erro ao excluir projeto_extensao:', error);
+    res.render('error', {
+      message: 'Erro ao excluir projeto_extensao',
+      returnLink: '/projeto_extensao'
+    });
+  }
+}
+
+module.exports = {
+  listprojeto_extensaos,
+  filterprojeto_extensao,
+  showCreateForm,
+  addprojeto_extensao,
+  showprojeto_extensao,
+  showEditForm,
+  editprojeto_extensao,
+  showConfirmDeleteForm,
+  deleteprojeto_extensao
+};

@@ -1,0 +1,171 @@
+<%- include('../cabecalho') %>
+<% const registro = typeof projeto_custo !== 'undefined' ? projeto_custo : null; %>
+<% const registroId = registro && registro['Id']; %>
+<% const formatBR = (valor) => {
+  const num = Number(valor);
+  if (Number.isNaN(num)) return valor ?? '';
+  return num.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+}; %>
+<main id="conteudo-principal-form" class="container my-5">
+  <section class="card shadow p-4 p-md-5">
+    <h1 class="fs-4 fw-bold mb-4 border-bottom pb-3">
+      <%= isEdit ? 'Editar custo do projeto' : 'Cadastrar custo do projeto' %>
+    </h1>
+
+    <% if (projetos && projetos.length === 0) { %>
+      <div class="alert alert-warning" role="alert">
+        <i class="bi bi-exclamation-triangle-fill flex-shrink-0 me-2"></i>
+        É necessário primeiro cadastrar um <strong>projeto de extensão</strong> antes de registrar custos correspondentes.
+      </div>
+      <div class="mt-3">
+        <a href="/projeto_extensao/forms/projeto_extensao" class="btn btn-primary">Cadastrar Projeto</a>
+        <a href="/projeto_custo/consultas/projeto_custo" class="btn btn-secondary">Voltar</a>
+      </div>
+    <% } else { %>
+    <form method="POST" action="<%= isEdit ? '/projeto_custo/' + registroId + '/edit' : '/projeto_custo/cadastrar' %>">
+
+      <!-- id (hidden) -->
+      <input type="hidden" name="Id" value="<%= registro && registro['Id'] != null ? registro['Id'] : '' %>">
+
+      <div class="mb-3">
+        <label for="campo-id_projeto" class="form-label">Projeto de Extensão</label>
+        <select
+          id="campo-id_projeto"
+          name="id_projeto"
+          class="form-select"
+          required
+        >
+          <option value="">Selecione o Projeto</option>
+          <% if (projetos && projetos.length > 0) { %>
+            <% projetos.forEach(proj => { %>
+              <option value="<%= proj.id_projeto %>" <%= (registro && registro.id_projeto == proj.id_projeto) ? 'selected' : '' %>>
+                <%= proj.titulo %>
+              </option>
+            <% }) %>
+          <% } %>
+        </select>
+      </div>
+
+      <div class="mb-3">
+        <label for="campo-descricao" class="form-label">Descrição da Despesa</label>
+        <input
+          id="campo-descricao"
+          name="descricao"
+          class="form-control"
+          value="<%= registro && registro['descricao'] != null ? registro['descricao'] : '' %>"
+          placeholder="Ex: Aquisição de cartilhas..."
+          required
+        >
+      </div>
+
+      <div class="row mb-3">
+        <div class="col-md-4">
+          <label for="campo-quantitativo" class="form-label">Quantidade</label>
+          <input
+            id="campo-quantitativo"
+            name="quantitativo"
+            type="number"
+            min="0"
+            step="0.01"
+            class="form-control"
+            value="<%= registro && registro['quantitativo'] != null ? registro['quantitativo'] : '' %>"
+            placeholder="0"
+            required
+          >
+        </div>
+
+        <div class="col-md-4">
+          <label for="campo-valor_unitario" class="form-label">Valor Unitário (R$)</label>
+          <input
+            id="campo-valor_unitario"
+            name="valor_unitario"
+            type="text"
+            class="form-control"
+            value="<%= registro && registro['valor_unitario'] != null ? formatBR(registro['valor_unitario']) : '' %>"
+            placeholder="0,00"
+            required
+          >
+        </div>
+
+        <div class="col-md-4">
+          <label for="campo-valor_total" class="form-label">Valor Total (R$)</label>
+          <input
+            id="campo-valor_total"
+            class="form-control bg-light"
+            type="text"
+            readonly
+            placeholder="0,00"
+          >
+        </div>
+      </div>
+
+      <div class="mb-3">
+        <label for="campo-justificativa" class="form-label">Justificativa</label>
+        <input
+          id="campo-justificativa"
+          name="justificativa"
+          class="form-control"
+          value="<%= registro && registro['justificativa'] != null ? registro['justificativa'] : '' %>"
+          placeholder="Justificativa"
+          required
+        >
+      </div>
+
+      <div class="mb-3">
+        <label for="campo-fonte_recurso" class="form-label">Fonte do recurso</label>
+        <input
+          id="campo-fonte_recurso"
+          name="fonte_recurso"
+          class="form-control"
+          value="<%= registro && registro['fonte_recurso'] != null ? registro['fonte_recurso'] : '' %>"
+          placeholder="Ex: Pró-Reitoria, FAPEMA..."
+          required
+        >
+      </div>
+
+      <div class="d-flex gap-2 mt-4">
+        <button type="submit" class="btn btn-primary">
+          <%= isEdit ? 'Salvar alterações' : 'Cadastrar' %>
+        </button>
+        <a href="/projeto_custo/consultas/projeto_custo" class="btn btn-secondary">Voltar</a>
+      </div>
+    </form>
+
+    <% if (isEdit && registroId) { %>
+    <form method="POST" action="/projeto_custo/<%= registroId %>/delete" class="mt-3">
+      <button type="submit" class="btn btn-danger">Excluir</button>
+    </form>
+    <% } %>
+
+    <% } /* end if projetos.length === 0 */ %>
+  </section>
+</main>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    const inputQtd = document.getElementById('campo-quantitativo');
+    const inputUnitario = document.getElementById('campo-valor_unitario');
+    const inputTotal = document.getElementById('campo-valor_total');
+    
+    if(!inputQtd || !inputUnitario || !inputTotal) return;
+
+    function calcularTotal() {
+      const qtdText = inputQtd.value.replace(',', '.');
+      const unitarioText = inputUnitario.value.replace(/\\./g, '').replace(',', '.');
+      
+      const qtd = parseFloat(qtdText) || 0;
+      const unitario = parseFloat(unitarioText) || 0;
+      
+      const total = qtd * unitario;
+      
+      inputTotal.value = total.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    }
+
+    inputQtd.addEventListener('input', calcularTotal);
+    inputUnitario.addEventListener('input', calcularTotal);
+    
+    // Initial calculation on load
+    calcularTotal();
+  });
+</script>
+<%- include('../rodape') %>

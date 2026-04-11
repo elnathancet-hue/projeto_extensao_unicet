@@ -1,0 +1,37 @@
+<%- include('../cabecalho') %>
+
+<main id="conteudo-principal-form" class="container my-5">
+  <section id="secao-curso" class="card shadow p-4 p-md-5">
+    <h1 class="fs-4 fw-bold mb-4 border-bottom pb-3">
+      <%= isEdit ? 'Editar Tipo de Ação' : 'Novo Tipo de Ação' %>
+    </h1>
+
+    <form method="POST" action="<%= isEdit ? '/tipo_acao/' + tipo_acao.id_tipo_acao + '/edit' : '/tipo_acao/cadastrar' %>">
+      
+      <% if (isEdit) { %>
+        <input type="hidden" name="id_tipo_acao" value="<%= tipo_acao.id_tipo_acao %>">
+      <% } %>
+
+      <div class="mb-3">
+        <label for="campo-nome" class="form-label">Nome</label>
+        <input 
+          id="campo-nome" 
+          name="nome" 
+          class="form-control" 
+          placeholder="Digite o nome"
+          value="<%= tipo_acao.nome || '' %>"
+          required>
+      </div>
+
+      <button type="submit" class="btn btn-primary me-2">
+        <i class="bi bi-floppy"></i> Salvar
+      </button>
+      <a href="/tipo_acao" class="btn btn-secondary">
+        <i class="bi bi-arrow-left"></i> Voltar
+      </a>
+
+    </form>
+  </section>
+</main>
+
+<%- include('../rodape') %>

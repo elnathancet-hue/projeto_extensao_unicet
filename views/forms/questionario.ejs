@@ -1,0 +1,150 @@
+<%- include('../cabecalho') %>
+<% 
+  // Garante que 'quest' seja um objeto (mesmo que vazio) para evitar erros de 'null'
+  const quest = (typeof questionario !== 'undefined' && questionario) ? questionario : {}; 
+  const isEdit = (typeof isEditMode !== 'undefined' && isEditMode);
+%>
+
+<main class="form-container">
+  <section class="card-chart p-4 p-md-5">
+    
+    <header class="form-header text-center flex-column">
+      <h1 class="fs-4 fw-bold mb-2">III - RESULTADOS ALCANÇADOS</h1>
+      <h2 class="fs-6 text-muted uppercase tracking-wider">QUESTIONÁRIO DE AVALIAÇÃO DE IMPACTO DA AÇÃO EXTENSIONISTA</h2>
+    </header>
+
+    <hr class="my-4" style="border-color: var(--line);">
+
+    <form method="POST" action="<%= isEdit ? '/questionario/' + (quest.id || '') + '/edit' : '/questionario/cadastrar' %>">
+      
+      <div class="row">
+        <div class="col-12 mb-3">
+          <label for="nome_acao">Nome da Ação Extensionista:</label>
+          <input type="text" id="nome_acao" name="nome_acao" value="<%= quest.nome_acao || '' %>" required class="form-control">
+        </div>
+        <div class="col-md-7 mb-3">
+          <label for="instituicao">Instituição:</label>
+          <input type="text" id="instituicao" name="instituicao" value="<%= quest.instituicao || '' %>" required class="form-control">
+        </div>
+        <div class="col-md-5 mb-3">
+          <label for="data_realizacao">Data da realização:</label>
+          <input type="date" id="data_realizacao" name="data_realizacao" 
+                 value="<%= quest.data_realizacao ? new Date(quest.data_realizacao).toISOString().split('T')[0] : '' %>" required class="form-control">
+        </div>
+        <div class="col-md-6 mb-3">
+          <label for="tipo_acao">Tipo de ação:</label>
+          <select id="tipo_acao" name="tipo_acao" required class="form-select">
+            <option value="">Selecione...</option>
+            <% ['Curso', 'Projeto', 'Evento', 'Prestação de Serviço', 'Outro'].forEach(tipo => { %>
+              <option value="<%= tipo %>" <%= quest.tipo_acao === tipo ? 'selected' : '' %>><%= tipo %></option>
+            <% }); %>
+          </select>
+        </div>
+        <div class="col-md-6 mb-3">
+          <label for="local_realizacao">Local de realização:</label>
+          <input type="text" id="local_realizacao" name="local_realizacao" value="<%= quest.local_realizacao || '' %>" required class="form-control">
+        </div>
+      </div>
+
+      <div class="mt-5 mb-4 border-start border-4 border-success ps-3">
+        <h3 class="fs-5 fw-bold mb-0">1. Perfil dos participantes</h3>
+      </div>
+      
+      <div class="row">
+        <div class="col-md-6 mb-3">
+          <label>1.1. Faixa etária:</label>
+          <select name="faixa_etaria" required class="form-select">
+            <option value="">Selecione...</option>
+            <% ['Menos de 18', '18 a 24', '25 a 34', '35 a 44', '45 a 59', '60 ou mais'].forEach(faixa => { %>
+              <option value="<%= faixa %>" <%= quest.faixa_etaria === faixa ? 'selected' : '' %>><%= faixa %></option>
+            <% }); %>
+          </select>
+        </div>
+        <div class="col-md-6 mb-3">
+          <label>1.2. Escolaridade:</label>
+          <select name="escolaridade" required class="form-select">
+            <option value="">Selecione...</option>
+            <% ['Não alfabetizado', 'Ensino Fundamental', 'Ensino Médio', 'Superior', 'Pós-graduação'].forEach(esc => { %>
+              <option value="<%= esc %>" <%= quest.escolaridade === esc ? 'selected' : '' %>><%= esc %></option>
+            <% }); %>
+          </select>
+        </div>
+        <div class="col-12 mb-3">
+          <label>1.3. Você reside na comunidade/localidade atendida?</label>
+          <div class="d-flex gap-4 mt-2">
+          <div class="form-check">
+            <input type="radio" name="reside_local" value="1" <%= (quest.reside_local == '1' || quest.reside_local === 'Sim') ? 'checked' : '' %> required> Sim
+          </div>
+          <div class="form-check">
+             <input type="radio" name="reside_local" value="0" <%= (quest.reside_local == '0' || quest.reside_local === 'Não') ? 'checked' : '' %>> Não
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="mt-5 mb-4 border-start border-4 border-success ps-3">
+        <h3 class="fs-5 fw-bold mb-0">2. Avaliação da Ação Extensionista</h3>
+      </div>
+
+      <div class="mb-4">
+        <label>2.1. Como você avalia os conteúdos/aprendizados oferecidos?</label>
+        <div class="d-flex flex-wrap gap-3 mt-2">
+          <% ['Excelente', 'Bom', 'Regular', 'Ruim', 'Péssimo'].forEach(item => { %>
+            <label class="btn btn-outline-success fw-normal py-2 px-3">
+              <input type="radio" name="aval_conteudo" value="<%= item %>" <%= quest.aval_conteudo === item ? 'checked' : '' %> required> <%= item %>
+            </label>
+          <% }); %>
+        </div>
+      </div>
+
+      <div class="mb-4">
+        <label>2.2. A ação atendeu às suas expectativas?</label>
+        <select name="expectativas" required class="form-select">
+          <option value="">Escolha uma opção...</option>
+          <% ['Totalmente', 'Parcialmente', 'Não atendeu', 'Não sei dizer'].forEach(opt => { %>
+            <option value="<%= opt %>" <%= quest.expectativas === opt ? 'selected' : '' %>><%= opt %></option>
+          <% }); %>
+        </select>
+      </div>
+
+      <div class="mt-5 mb-4 border-start border-4 border-success ps-3">
+        <h3 class="fs-5 fw-bold mb-0">3. Percepção de Impacto na Sua Vida</h3>
+      </div>
+
+      <div class="mb-3">
+        <label>3.2. A ação contribuiu para melhorar algum aspecto pessoal?</label>
+        <textarea name="impacto_desc" rows="3" class="form-control" placeholder="Se sim, qual?"><%= quest.impacto_desc || '' %></textarea>
+      </div>
+
+      <div class="mb-3">
+        <label>3.3. Pretende aplicar os conhecimentos adquiridos?</label>
+        <textarea name="aplicacao_conhecimento" rows="2" class="form-control" placeholder="Por quê?"><%= quest.aplicacao_conhecimento || '' %></textarea>
+      </div>
+
+      <div class="p-4 mt-5 mb-4 bg-light border-rounded">
+  <p class="fw-bold mb-1">5. Consentimento</p>
+  <p class="small text-muted mb-3">Autorizo o uso das informações para fins de avaliação.</p>
+  <div class="d-flex gap-4">
+    <label><input type="radio" name="consentimento" value="1" <%= (quest.consentimento == '1' || quest.consentimento === 'Sim') ? 'checked' : '' %> required> Sim, autorizo</label>
+    <label><input type="radio" name="consentimento" value="0" <%= (quest.consentimento == '0' || quest.consentimento === 'Não') ? 'checked' : '' %>> Não autorizo</label>
+  </div>
+</div>
+
+      <div class="d-flex justify-content-between align-items-center mt-5 pt-4 border-top">
+        <div class="d-flex gap-2">
+          <button type="submit" class="btn btn-success px-4">
+            <i class="fas fa-save"></i> <%= isEdit ? 'Salvar Alterações' : 'Finalizar e Enviar' %>
+          </button>
+          
+          <a href="/questionario" class="btn btn-primary px-4">
+            <i class="bi bi-arrow-left"></i> Voltar
+          </a>
+
+          <a href="/logo" class="btn btn-secondary px-4">
+            <i class="bi bi-x-circle"></i> Cancelar
+          </a>
+        </div>
+      </div>
+    </form>
+  </section>
+</main>
