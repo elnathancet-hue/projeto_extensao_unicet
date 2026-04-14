@@ -91,7 +91,18 @@
       "Bash(sed -i \"s|href=\\\\\"/instituicao\\\\\" class=\\\\\"btn btn-secondary\\\\\"|href=\\\\\"/configuracoes#secao-cadastro\\\\\" class=\\\\\"btn btn-secondary btn-sm\\\\\"|\" instituicao.ejs)",
       "Bash(sed -i \"s|href=\\\\\"/local_execucao\\\\\" class=\\\\\"btn btn-secondary\\\\\"|href=\\\\\"/configuracoes#secao-cadastro\\\\\" class=\\\\\"btn btn-secondary btn-sm\\\\\"|\" local_execucao.ejs)",
       "Bash(gh auth:*)",
-      "Bash(where gh:*)"
+      "Bash(where gh:*)",
+      "Bash(\"/c/xampp/mysql/bin/mysql.exe\" -h switchback.proxy.rlwy.net -P 57664 -u root -pThIRFYADpLXAVnsGcIuYensedMdHoJQM railway -e \"SELECT 1 AS connected\")",
+      "Bash(\"/c/Program Files/MySQL/MySQL Server 8.0/bin/mysql.exe\" -h switchback.proxy.rlwy.net -P 57664 -u root -pThIRFYADpLXAVnsGcIuYensedMdHoJQM railway -e \"SELECT 1 AS connected\")",
+      "Bash(\"/c/Program Files/MySQL/MySQL Server 8.0/bin/mysql.exe\" -h switchback.proxy.rlwy.net -P 57664 -u root -pThIRFYADpLXAVnsGcIuYensedMdHoJQM railway)",
+      "Bash(\"/c/Program Files/MySQL/MySQL Server 8.0/bin/mysql.exe\" -h switchback.proxy.rlwy.net -P 57664 -u root -pThIRFYADpLXAVnsGcIuYensedMdHoJQM railway -e \"SHOW TABLES; SELECT COUNT\\(*\\) AS total_pessoas FROM pessoa; SELECT COUNT\\(*\\) AS total_cursos FROM curso;\")",
+      "Bash(\"/c/Program Files/MySQL/MySQL Server 8.0/bin/mysql.exe\" -h switchback.proxy.rlwy.net -P 57664 -u root -pThIRFYADpLXAVnsGcIuYensedMdHoJQM railway -e \"SELECT * FROM usuario\")",
+      "Bash(curl -s http://localhost:3000/login -d \"username=admin&password=admin123\" -c /tmp/ck.txt -o /dev/null)",
+      "Bash(curl -s -b /tmp/ck.txt http://localhost:3000/logo)",
+      "Bash(find consultas/ -name \"*.ejs\" -exec sed -i 's/> Filtrar<\\\\/button>/> Buscar<\\\\/button>/g' {} +)",
+      "Bash(sed -i 's/placeholder=\"Filtrar por nome\\\\.\\\\.\\\\./placeholder=\"Buscar por nome.../g' configuracoes.ejs)",
+      "Bash(sed -i 's/placeholder=\"Filtrar por cidade ou bairro\\\\.\\\\.\\\\./placeholder=\"Buscar por cidade ou bairro.../g' configuracoes.ejs)",
+      "Bash(grep -rn 'placeholder=.*filtrar\\\\|placeholder=.*Filtrar' consultas/)"
     ]
   }
 }
