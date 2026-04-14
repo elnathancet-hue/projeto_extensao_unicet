@@ -74,6 +74,8 @@
                   <span class="badge bg-info"><%= d.carga_horaria_total || 0 %>h</span>
                 </td>
                 <td>
+                  <a href="/projeto_extensao/<%= d.id_projeto %>/plano" class="btn btn-sm btn-outline-primary" title="Plano"><i class="bi bi-file-text"></i></a>
+                  <a href="/projeto_extensao/<%= d.id_projeto %>/relatorio" class="btn btn-sm btn-outline-info" title="Relatório"><i class="bi bi-journal-text"></i></a>
                   <a href="/projeto_extensao/<%= d.id_projeto %>/edit" class="btn btn-primary btn-sm" title="Editar">
                     <i class="bi bi-pencil"></i> Editar
                   </a>

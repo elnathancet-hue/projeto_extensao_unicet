@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'Times New Roman', Times, serif;
+      font-size: 12pt;
+      color: #000;
+      line-height: 1.5;
+      padding: 20px 40px;
+    }
+    .header {
+      text-align: center;
+      border-bottom: 2px solid #333;
+      padding-bottom: 10px;
+      margin-bottom: 20px;
+    }
+    .header img { height: 50px; }
+    .header h2 {
+      font-size: 10pt;
+      color: #666;
+      margin: 4px 0;
+      font-weight: normal;
+    }
+    .title {
+      text-align: center;
+      font-size: 14pt;
+      font-weight: bold;
+      margin: 20px 0;
+      text-transform: uppercase;
+    }
+    .section-title {
+      font-weight: bold;
+      font-size: 12pt;
+      margin: 16px 0 8px;
+      border-bottom: 1px solid #ccc;
+      padding-bottom: 4px;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 8px 0;
+      font-size: 11pt;
+    }
+    th, td {
+      border: 1px solid #999;
+      padding: 6px 8px;
+      text-align: left;
+    }
+    th {
+      background: #f0f0f0;
+      font-weight: bold;
+    }
+    .field-row {
+      display: flex;
+      margin-bottom: 4px;
+    }
+    .field-label {
+      font-weight: bold;
+      min-width: 180px;
+    }
+    .field-value {
+      margin-bottom: 8px;
+    }
+    .text-block {
+      margin: 4px 0 12px;
+      text-align: justify;
+      white-space: pre-wrap;
+    }
+    .signature-line {
+      border-bottom: 1px solid #000;
+      width: 300px;
+      margin: 40px auto 4px;
+    }
+    .signature-label {
+      text-align: center;
+      font-size: 10pt;
+    }
+    .text-right { text-align: right; }
+    .fw-bold { font-weight: bold; }
+    .mt-20 { margin-top: 20px; }
+    @media print {
+      body { padding: 0; }
+    }
+  </style>
+</head>
+<body>
+
+<%
+  const p = projeto || {};
+  const formatDate = (d) => {
+    if (!d) return '___/___/______';
+    try {
+      const dt = new Date(d);
+      const dd = String(dt.getDate()).padStart(2, '0');
+      const mm = String(dt.getMonth() + 1).padStart(2, '0');
+      const yyyy = dt.getFullYear();
+      return dd + '/' + mm + '/' + yyyy;
+    } catch(e) { return '___/___/______'; }
+  };
+  const formatBR = (valor) => {
+    const num = Number(valor);
+    if (Number.isNaN(num)) return valor ?? '0,00';
+    return num.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  };
+  const safe = (val) => val || '___';
+%>
+
+<!-- CABECALHO -->
+<div class="header">
+  <% if (typeof logoSrc !== 'undefined' && logoSrc) { %>
+    <img src="<%= logoSrc %>" alt="UNI-CET">
+  <% } %>
+  <h2>CENTRO DE EDUCACAO TECNOLOGICA DE TERESINA - CET</h2>
+  <h2>CENTRO UNIVERSITARIO TECNOLOGICO DE TERESINA - UNI-CET</h2>
+</div>
+
+<div class="title">PLANO DE ATIVIDADE DE EXTENSAO</div>
+
+<!-- TIPO DE EXTENSAO -->
+<div class="section-title">TIPO DE EXTENSAO</div>
+<p class="field-value"><%= safe(p.tipo_plano_nome) %></p>
+
+<!-- I - IDENTIFICACAO -->
+<div class="section-title">I - IDENTIFICACAO</div>
+<table>
+  <tr>
+    <td class="field-label" style="width:35%">Titulo do Projeto</td>
+    <td><%= safe(p.titulo) %></td>
+  </tr>
+  <tr>
+    <td class="field-label">Coordenador(a)</td>
+    <td><%= safe(p.coordenador_nome) %></td>
+  </tr>
+  <tr>
+    <td class="field-label">Linha Programatica</td>
+    <td><%= (p.linhas && p.linhas.length > 0) ? p.linhas.map(l => l.nome).join(', ') : '___' %></td>
+  </tr>
+  <tr>
+    <td class="field-label">Tipo de Acao</td>
+    <td><%= (p.tiposAcao && p.tiposAcao.length > 0) ? p.tiposAcao.map(t => t.nome).join(', ') : '___' %></td>
+  </tr>
+  <tr>
+    <td class="field-label">Cursos Envolvidos</td>
+    <td><%= (p.cursos && p.cursos.length > 0) ? p.cursos.map(c => c.nome_curso).join(', ') : '___' %></td>
+  </tr>
+  <tr>
+    <td class="field-label">Periodo de Execucao</td>
+    <td><%= formatDate(p.periodo_inicio) %> a <%= formatDate(p.periodo_fim) %></td>
+  </tr>
+  <tr>
+    <td class="field-label">Carga Horaria Total</td>
+    <td><%= p.carga_horaria_total ? p.carga_horaria_total + ' horas' : '___' %></td>
+  </tr>
+  <tr>
+    <td class="field-label">Publico-Alvo</td>
+    <td><%= safe(p.publico_alvo_nome) %></td>
+  </tr>
+  <% if (p.locais && p.locais.length > 0) { %>
+  <tr>
+    <td class="field-label">Local de Execucao</td>
+    <td>
+      <% p.locais.forEach((loc, i) => { %>
+        <%= loc.endereco %> - <%= loc.bairro %>, <%= loc.cidade %><%= i < p.locais.length - 1 ? '; ' : '' %>
+      <% }) %>
+    </td>
+  </tr>
+  <% } %>
+  <% if (p.instituicoes && p.instituicoes.length > 0) { %>
+  <tr>
+    <td class="field-label">Instituicoes Parceiras</td>
+    <td>
+      <% p.instituicoes.forEach((inst, i) => { %>
+        <%= inst.nome %> (<%= inst.sigla %> - <%= inst.tipo %>)<%= i < p.instituicoes.length - 1 ? '; ' : '' %>
+      <% }) %>
+    </td>
+  </tr>
+  <% } %>
+</table>
+
+<% if (p.pessoas && p.pessoas.length > 0) { %>
+<div style="margin-top: 8px;">
+  <span class="field-label">Equipe do Projeto:</span>
+  <table>
+    <thead>
+      <tr>
+        <th>Nome</th>
+        <th>Funcao</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% p.pessoas.forEach(pe => { %>
+      <tr>
+        <td><%= pe.nome %></td>
+        <td><%= pe.papel %></td>
+      </tr>
+      <% }) %>
+    </tbody>
+  </table>
+</div>
+<% } %>
+
+<!-- II - OBJETIVOS -->
+<div class="section-title">II - OBJETIVOS</div>
+<div class="text-block"><%= safe(p.objetivo) %></div>
+
+<!-- III - METODOLOGIA -->
+<div class="section-title">III - METODOLOGIA</div>
+<div class="text-block"><%= safe(p.metodologia) %></div>
+
+<!-- IV - CRONOGRAMA -->
+<div class="section-title">IV - CRONOGRAMA</div>
+<% if (p.cronograma && p.cronograma.length > 0) { %>
+<table>
+  <thead>
+    <tr>
+      <th>Atividade</th>
+      <th>Inicio</th>
+      <th>Fim</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% p.cronograma.forEach(c => { %>
+    <tr>
+      <td><%= c.atividade || c.descricao || '' %></td>
+      <td><%= formatDate(c.data_inicio || c.inicio) %></td>
+      <td><%= formatDate(c.data_fim || c.fim) %></td>
+    </tr>
+    <% }) %>
+  </tbody>
+</table>
+<% } else { %>
+<p>___</p>
+<% } %>
+
+<!-- V - CUSTOS -->
+<div class="section-title">V - CUSTOS</div>
+<% if (p.custos && p.custos.length > 0) { %>
+<table>
+  <thead>
+    <tr>
+      <th>Descricao</th>
+      <th>Qtd</th>
+      <th>Valor Unit. (R$)</th>
+      <th>Valor Total (R$)</th>
+      <th>Justificativa</th>
+      <th>Fonte</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% let totalGeral = 0; %>
+    <% p.custos.forEach(cu => { %>
+      <% const vt = Number(cu.valor_total || 0); totalGeral += vt; %>
+    <tr>
+      <td><%= cu.descricao || '' %></td>
+      <td><%= cu.quantitativo || '' %></td>
+      <td><%= formatBR(cu.valor_unitario) %></td>
+      <td><%= formatBR(cu.valor_total) %></td>
+      <td><%= cu.justificativa || '' %></td>
+      <td><%= cu.fonte_recurso || '' %></td>
+    </tr>
+    <% }) %>
+  </tbody>
+  <tfoot>
+    <tr>
+      <td colspan="3" class="text-right fw-bold">Total Geral:</td>
+      <td class="fw-bold">R$ <%= formatBR(totalGeral) %></td>
+      <td colspan="2"></td>
+    </tr>
+  </tfoot>
+</table>
+<% } else { %>
+<p>___</p>
+<% } %>
+
+<!-- VI - RESULTADOS ESPERADOS -->
+<div class="section-title">VI - RESULTADOS ESPERADOS</div>
+<div class="text-block"><%= safe(p.resultados_esperados) %></div>
+
+<!-- VII - AVALIACAO -->
+<div class="section-title">VII - AVALIACAO</div>
+<div class="text-block"><%= safe(p.avaliacao_descricao) %></div>
+
+<!-- IX - REFERENCIAS -->
+<div class="section-title">IX - REFERENCIAS</div>
+<div class="text-block"><%= safe(p.referencias) %></div>
+
+<!-- X - AUTENTICACAO -->
+<div class="section-title">X - AUTENTICACAO</div>
+
+<div class="mt-20">
+  <p style="text-align:center; margin-bottom:4px;">Teresina - PI, ______ de ____________________ de ________</p>
+</div>
+
+<div class="mt-20">
+  <div class="signature-line"></div>
+  <p class="signature-label"><%= safe(p.coordenador_nome) %></p>
+  <p class="signature-label">Coordenador(a) do Projeto</p>
+</div>
+
+<div class="mt-20">
+  <div class="signature-line"></div>
+  <p class="signature-label">Coordenador(a) de Extensao</p>
+</div>
+
+<div class="mt-20">
+  <div class="signature-line"></div>
+  <p class="signature-label">Pro-Reitor(a) de Extensao</p>
+</div>
+
+</body>
+</html>

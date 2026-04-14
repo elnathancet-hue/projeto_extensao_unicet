@@ -288,6 +288,50 @@ async function filterprojeto_extensao(filters) {
   return rows;
 }
 
+async function getProjetoCompletoById(id) {
+  const [projeto] = await pool.query(`
+    SELECT pe.*, tp.descricao AS tipo_plano_nome, pa.descricao AS publico_alvo_nome,
+           p.nome AS coordenador_nome
+    FROM projeto_extensao pe
+    LEFT JOIN tipo_plano tp ON pe.id_tipo_plano = tp.id_tipo_plano
+    LEFT JOIN publico_alvo pa ON pe.id_publico_alvo = pa.id_publico_alvo
+    LEFT JOIN pessoa p ON pe.coordenador_id = p.id_pessoa
+    WHERE pe.id_projeto = ?
+  `, [id]);
+  if (!projeto[0]) return null;
+  const proj = projeto[0];
+
+  const [tiposAcao] = await pool.query('SELECT ta.nome FROM projeto_tipoacao pt JOIN tipo_acao ta ON pt.id_acao = ta.id_acao WHERE pt.id_projeto = ?', [id]);
+  const [linhas] = await pool.query('SELECT lp.nome FROM projeto_linhaprogramatica pl JOIN linha_programatica lp ON pl.id_linha = lp.id_linha WHERE pl.id_projeto = ?', [id]);
+  const [cursos] = await pool.query('SELECT c.nome_curso FROM projeto_curso pc JOIN curso c ON pc.id_curso = c.id_curso WHERE pc.id_projeto = ?', [id]);
+  const [pessoas] = await pool.query('SELECT p.nome, pp2.descricao AS papel FROM projeto_pessoa pp JOIN pessoa p ON pp.id_pessoa = p.id_pessoa LEFT JOIN papel_projeto pp2 ON pp.id_papel = pp2.id_papel WHERE pp.id_projeto = ?', [id]);
+  const [custos] = await pool.query('SELECT * FROM projeto_custo WHERE id_projeto = ?', [id]);
+  const [cronograma] = await pool.query('SELECT * FROM cronograma_atividades WHERE id_projeto = ? ORDER BY numero', [id]);
+  const [locais] = await pool.query('SELECT le.* FROM projeto_local pl JOIN local_execucao le ON pl.id_local = le.id_local WHERE pl.id_projeto = ?', [id]);
+  const [instituicoes] = await pool.query('SELECT i.nome, i.sigla, ti.descricao AS tipo FROM projeto_instituicao pi JOIN instituicao i ON pi.id_instituicao = i.id_instituicao LEFT JOIN tipo_instituicao ti ON i.id_tipo_instituicao = ti.id_tipo_instituicao WHERE pi.id_projeto = ?', [id]);
+
+  proj.tiposAcao = tiposAcao;
+  proj.linhas = linhas;
+  proj.cursos = cursos;
+  proj.pessoas = pessoas;
+  proj.custos = custos;
+  proj.cronograma = cronograma;
+  proj.locais = locais;
+  proj.instituicoes = instituicoes;
+
+  return proj;
+}
+
+async function updatePlano(id, campos) {
+  await pool.query(`UPDATE projeto_extensao SET resultados_esperados = ?, avaliacao_descricao = ?, referencias = ? WHERE id_projeto = ?`,
+    [campos.resultados_esperados || null, campos.avaliacao_descricao || null, campos.referencias || null, id]);
+}
+
+async function updateRelatorio(id, campos) {
+  await pool.query(`UPDATE projeto_extensao SET justificativa = ?, resultados_alcancados = ?, avaliacao_comunidade = ?, avaliacao_equipe = ?, produtos_gerados = ?, ods = ?, observacao_final = ?, anexos = ? WHERE id_projeto = ?`,
+    [campos.justificativa || null, campos.resultados_alcancados || null, campos.avaliacao_comunidade || null, campos.avaliacao_equipe || null, campos.produtos_gerados || null, campos.ods || null, campos.observacao_final || null, campos.anexos || null, id]);
+}
+
 module.exports = {
   getAllprojeto_extensaos,
   getprojeto_extensaosByNome,
@@ -303,5 +347,8 @@ module.exports = {
   updateCursosProjeto,
   getPessoasByProjeto,
   updatePessoasProjeto,
-  filterprojeto_extensao
+  filterprojeto_extensao,
+  getProjetoCompletoById,
+  updatePlano,
+  updateRelatorio
 };

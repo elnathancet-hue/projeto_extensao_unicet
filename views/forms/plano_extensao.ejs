@@ -1,0 +1,229 @@
+<%- include('../cabecalho', { titulo: 'Plano de Extensao' }) %>
+
+<%
+  const p = projeto || {};
+  const formatDate = (d) => {
+    if (!d) return '---';
+    try { return new Date(d).toLocaleDateString('pt-BR'); } catch(e) { return '---'; }
+  };
+  const formatBR = (valor) => {
+    const num = Number(valor);
+    if (Number.isNaN(num)) return valor ?? '';
+    return num.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  };
+%>
+
+<main class="container my-5">
+  <section class="card shadow p-4 p-md-5">
+
+    <h1 class="fs-4 fw-bold mb-4 border-bottom pb-3">
+      <i class="bi bi-file-earmark-text"></i> Plano de Extensao - <%= p.titulo || '' %>
+    </h1>
+
+    <form method="POST" action="/projeto_extensao/<%= p.id_projeto %>/plano">
+
+      <!-- ===== DADOS DO PROJETO (readonly) ===== -->
+      <h5 class="fw-bold mt-4 mb-3"><i class="bi bi-info-circle"></i> Dados do Projeto</h5>
+
+      <div class="row mb-3">
+        <div class="col-md-6">
+          <label class="form-label fw-semibold">Tipo de Extensao</label>
+          <div class="form-control bg-light"><%= p.tipo_plano_nome || '---' %></div>
+        </div>
+        <div class="col-md-6">
+          <label class="form-label fw-semibold">Titulo</label>
+          <div class="form-control bg-light"><%= p.titulo || '---' %></div>
+        </div>
+      </div>
+
+      <div class="row mb-3">
+        <div class="col-md-6">
+          <label class="form-label fw-semibold">Linha Programatica</label>
+          <div class="form-control bg-light">
+            <%= (p.linhas && p.linhas.length > 0) ? p.linhas.map(l => l.nome).join(', ') : '---' %>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <label class="form-label fw-semibold">Tipo de Acao</label>
+          <div class="form-control bg-light">
+            <%= (p.tiposAcao && p.tiposAcao.length > 0) ? p.tiposAcao.map(t => t.nome).join(', ') : '---' %>
+          </div>
+        </div>
+      </div>
+
+      <div class="row mb-3">
+        <div class="col-md-6">
+          <label class="form-label fw-semibold">Coordenador</label>
+          <div class="form-control bg-light"><%= p.coordenador_nome || '---' %></div>
+        </div>
+        <div class="col-md-6">
+          <label class="form-label fw-semibold">Cursos</label>
+          <div class="form-control bg-light">
+            <%= (p.cursos && p.cursos.length > 0) ? p.cursos.map(c => c.nome_curso).join(', ') : '---' %>
+          </div>
+        </div>
+      </div>
+
+      <% if (p.pessoas && p.pessoas.length > 0) { %>
+      <div class="mb-3">
+        <label class="form-label fw-semibold">Professores / Tecnicos</label>
+        <div class="form-control bg-light" style="height:auto; min-height:38px;">
+          <% p.pessoas.forEach((pe, i) => { %>
+            <%= pe.nome %> (<%= pe.papel %>)<%= i < p.pessoas.length - 1 ? ', ' : '' %>
+          <% }) %>
+        </div>
+      </div>
+      <% } %>
+
+      <div class="row mb-3">
+        <div class="col-md-4">
+          <label class="form-label fw-semibold">Periodo</label>
+          <div class="form-control bg-light">
+            <%= formatDate(p.periodo_inicio) %> a <%= formatDate(p.periodo_fim) %>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <label class="form-label fw-semibold">Carga Horaria</label>
+          <div class="form-control bg-light"><%= p.carga_horaria_total || '---' %> h</div>
+        </div>
+        <div class="col-md-4">
+          <label class="form-label fw-semibold">Publico-Alvo</label>
+          <div class="form-control bg-light"><%= p.publico_alvo_nome || '---' %></div>
+        </div>
+      </div>
+
+      <% if (p.locais && p.locais.length > 0) { %>
+      <div class="mb-3">
+        <label class="form-label fw-semibold">Local de Execucao</label>
+        <div class="form-control bg-light" style="height:auto; min-height:38px;">
+          <% p.locais.forEach((loc, i) => { %>
+            <%= loc.endereco %> - <%= loc.bairro %>, <%= loc.cidade %><%= i < p.locais.length - 1 ? '; ' : '' %>
+          <% }) %>
+        </div>
+      </div>
+      <% } %>
+
+      <% if (p.instituicoes && p.instituicoes.length > 0) { %>
+      <div class="mb-3">
+        <label class="form-label fw-semibold">Instituicoes Parceiras</label>
+        <div class="form-control bg-light" style="height:auto; min-height:38px;">
+          <% p.instituicoes.forEach((inst, i) => { %>
+            <%= inst.nome %> (<%= inst.sigla %> - <%= inst.tipo %>)<%= i < p.instituicoes.length - 1 ? ', ' : '' %>
+          <% }) %>
+        </div>
+      </div>
+      <% } %>
+
+      <!-- ===== OBJETIVOS (readonly) ===== -->
+      <h5 class="fw-bold mt-4 mb-3"><i class="bi bi-bullseye"></i> Objetivos</h5>
+      <div class="mb-3">
+        <div class="form-control bg-light" style="height:auto; min-height:80px; white-space:pre-wrap;"><%= p.objetivo || '---' %></div>
+      </div>
+
+      <!-- ===== METODOLOGIA (readonly) ===== -->
+      <h5 class="fw-bold mt-4 mb-3"><i class="bi bi-diagram-3"></i> Metodologia</h5>
+      <div class="mb-3">
+        <div class="form-control bg-light" style="height:auto; min-height:80px; white-space:pre-wrap;"><%= p.metodologia || '---' %></div>
+      </div>
+
+      <!-- ===== CRONOGRAMA (readonly) ===== -->
+      <% if (p.cronograma && p.cronograma.length > 0) { %>
+      <h5 class="fw-bold mt-4 mb-3"><i class="bi bi-calendar-range"></i> Cronograma</h5>
+      <div class="table-responsive mb-3">
+        <table class="table table-bordered table-striped">
+          <thead class="table-light">
+            <tr>
+              <th>Atividade</th>
+              <th>Inicio</th>
+              <th>Fim</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% p.cronograma.forEach(c => { %>
+            <tr>
+              <td><%= c.atividade || c.descricao || '' %></td>
+              <td><%= formatDate(c.data_inicio || c.inicio) %></td>
+              <td><%= formatDate(c.data_fim || c.fim) %></td>
+            </tr>
+            <% }) %>
+          </tbody>
+        </table>
+      </div>
+      <% } %>
+
+      <!-- ===== CUSTOS (readonly) ===== -->
+      <% if (p.custos && p.custos.length > 0) { %>
+      <h5 class="fw-bold mt-4 mb-3"><i class="bi bi-currency-dollar"></i> Custos</h5>
+      <div class="table-responsive mb-3">
+        <table class="table table-bordered table-striped">
+          <thead class="table-light">
+            <tr>
+              <th>Descricao</th>
+              <th>Qtd</th>
+              <th>Valor Unit.</th>
+              <th>Valor Total</th>
+              <th>Justificativa</th>
+              <th>Fonte</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% let totalGeral = 0; %>
+            <% p.custos.forEach(cu => { %>
+              <% const vt = Number(cu.valor_total || 0); totalGeral += vt; %>
+            <tr>
+              <td><%= cu.descricao || '' %></td>
+              <td><%= cu.quantitativo || '' %></td>
+              <td>R$ <%= formatBR(cu.valor_unitario) %></td>
+              <td>R$ <%= formatBR(cu.valor_total) %></td>
+              <td><%= cu.justificativa || '' %></td>
+              <td><%= cu.fonte_recurso || '' %></td>
+            </tr>
+            <% }) %>
+          </tbody>
+          <tfoot>
+            <tr class="table-light fw-bold">
+              <td colspan="3" class="text-end">Total Geral:</td>
+              <td>R$ <%= formatBR(totalGeral) %></td>
+              <td colspan="2"></td>
+            </tr>
+          </tfoot>
+        </table>
+      </div>
+      <% } %>
+
+      <!-- ===== RESULTADOS ESPERADOS (editavel) ===== -->
+      <h5 class="fw-bold mt-4 mb-3"><i class="bi bi-check2-circle"></i> Resultados Esperados</h5>
+      <div class="mb-3">
+        <textarea name="resultados_esperados" class="form-control" rows="5" placeholder="Descreva os resultados esperados..."><%= p.resultados_esperados || '' %></textarea>
+      </div>
+
+      <!-- ===== AVALIACAO (editavel) ===== -->
+      <h5 class="fw-bold mt-4 mb-3"><i class="bi bi-clipboard-data"></i> Avaliacao</h5>
+      <div class="mb-3">
+        <textarea name="avaliacao_descricao" class="form-control" rows="5" placeholder="Descreva o processo de avaliacao..."><%= p.avaliacao_descricao || '' %></textarea>
+      </div>
+
+      <!-- ===== REFERENCIAS (editavel) ===== -->
+      <h5 class="fw-bold mt-4 mb-3"><i class="bi bi-book"></i> Referencias</h5>
+      <div class="mb-3">
+        <textarea name="referencias" class="form-control" rows="5" placeholder="Liste as referencias bibliograficas..."><%= p.referencias || '' %></textarea>
+      </div>
+
+      <!-- ===== BOTOES ===== -->
+      <div class="d-flex gap-2 mt-4">
+        <button type="submit" class="btn btn-primary">
+          <i class="bi bi-save"></i> Salvar
+        </button>
+        <a href="/projeto_extensao/<%= p.id_projeto %>/plano/pdf" class="btn btn-success" target="_blank">
+          <i class="bi bi-filetype-pdf"></i> Baixar PDF
+        </a>
+        <a href="/projeto_extensao" class="btn btn-secondary">
+          <i class="bi bi-arrow-left"></i> Voltar
+        </a>
+      </div>
+
+    </form>
+  </section>
+</main>
+
+<%- include('../rodape') %>

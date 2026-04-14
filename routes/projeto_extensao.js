@@ -21,6 +21,16 @@ router.post('/cadastrar', projeto_extensaoController.addprojeto_extensao);
 // Consulta
 router.get('/consultas/projeto_extensao', projeto_extensaoController.listprojeto_extensaos);
 
+// Plano de Extensão
+router.get('/:id/plano', projeto_extensaoController.showPlano);
+router.post('/:id/plano', projeto_extensaoController.savePlano);
+router.get('/:id/plano/pdf', projeto_extensaoController.gerarPdfPlano);
+
+// Relatório de Extensão
+router.get('/:id/relatorio', projeto_extensaoController.showRelatorio);
+router.post('/:id/relatorio', projeto_extensaoController.saveRelatorio);
+router.get('/:id/relatorio/pdf', projeto_extensaoController.gerarPdfRelatorio);
+
 // Exibir um projeto
 router.get('/:id', projeto_extensaoController.showprojeto_extensao);
 

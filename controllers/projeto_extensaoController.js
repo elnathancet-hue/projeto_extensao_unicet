@@ -271,6 +271,100 @@ async function deleteprojeto_extensao(req, res) {
   }
 }
 
+async function showPlano(req, res) {
+  try {
+    const projeto = await projeto_extensaoModel.getProjetoCompletoById(req.params.id);
+    if (!projeto) return res.render('error', { message: 'Projeto não encontrado', returnLink: '/projeto_extensao' });
+    res.render('forms/plano_extensao', { projeto });
+  } catch (error) {
+    console.error('Erro ao carregar plano:', error);
+    res.render('error', { message: 'Erro ao carregar plano', returnLink: '/projeto_extensao' });
+  }
+}
+
+async function savePlano(req, res) {
+  try {
+    await projeto_extensaoModel.updatePlano(req.params.id, req.body);
+    res.redirect('/projeto_extensao/' + req.params.id + '/plano');
+  } catch (error) {
+    console.error('Erro ao salvar plano:', error);
+    res.render('error', { message: 'Erro ao salvar plano', returnLink: '/projeto_extensao' });
+  }
+}
+
+async function showRelatorio(req, res) {
+  try {
+    const projeto = await projeto_extensaoModel.getProjetoCompletoById(req.params.id);
+    if (!projeto) return res.render('error', { message: 'Projeto não encontrado', returnLink: '/projeto_extensao' });
+    res.render('forms/relatorio_extensao', { projeto });
+  } catch (error) {
+    console.error('Erro ao carregar relatório:', error);
+    res.render('error', { message: 'Erro ao carregar relatório', returnLink: '/projeto_extensao' });
+  }
+}
+
+async function saveRelatorio(req, res) {
+  try {
+    await projeto_extensaoModel.updateRelatorio(req.params.id, req.body);
+    res.redirect('/projeto_extensao/' + req.params.id + '/relatorio');
+  } catch (error) {
+    console.error('Erro ao salvar relatório:', error);
+    res.render('error', { message: 'Erro ao salvar relatório', returnLink: '/projeto_extensao' });
+  }
+}
+
+async function gerarPdfPlano(req, res) {
+  try {
+    const projeto = await projeto_extensaoModel.getProjetoCompletoById(req.params.id);
+    if (!projeto) return res.status(404).send('Projeto não encontrado');
+    const ejs = require('ejs');
+    const path = require('path');
+    const fs = require('fs');
+    const logoPath = path.join(__dirname, '..', 'views', 'imagens', 'logo-unicet.png');
+    const logoBase64 = fs.readFileSync(logoPath).toString('base64');
+    const logoSrc = 'data:image/png;base64,' + logoBase64;
+    const html = await ejs.renderFile(path.join(__dirname, '..', 'views', 'pdf', 'plano_pdf.ejs'), { projeto, logoSrc });
+    const puppeteer = require('puppeteer');
+    const browser = await puppeteer.launch({ headless: true, args: ['--no-sandbox', '--disable-setuid-sandbox'] });
+    const page = await browser.newPage();
+    await page.setContent(html, { waitUntil: 'networkidle0' });
+    const pdf = await page.pdf({ format: 'A4', margin: { top: '20mm', bottom: '20mm', left: '20mm', right: '20mm' }, printBackground: true });
+    await browser.close();
+    res.setHeader('Content-Type', 'application/pdf');
+    res.setHeader('Content-Disposition', 'attachment; filename=Plano_Extensao_' + projeto.id_projeto + '.pdf');
+    res.send(pdf);
+  } catch (error) {
+    console.error('Erro ao gerar PDF do plano:', error);
+    res.render('error', { message: 'Erro ao gerar PDF', returnLink: '/projeto_extensao/' + req.params.id + '/plano' });
+  }
+}
+
+async function gerarPdfRelatorio(req, res) {
+  try {
+    const projeto = await projeto_extensaoModel.getProjetoCompletoById(req.params.id);
+    if (!projeto) return res.status(404).send('Projeto não encontrado');
+    const ejs = require('ejs');
+    const path = require('path');
+    const fs = require('fs');
+    const logoPath = path.join(__dirname, '..', 'views', 'imagens', 'logo-unicet.png');
+    const logoBase64 = fs.readFileSync(logoPath).toString('base64');
+    const logoSrc = 'data:image/png;base64,' + logoBase64;
+    const html = await ejs.renderFile(path.join(__dirname, '..', 'views', 'pdf', 'relatorio_pdf.ejs'), { projeto, logoSrc });
+    const puppeteer = require('puppeteer');
+    const browser = await puppeteer.launch({ headless: true, args: ['--no-sandbox', '--disable-setuid-sandbox'] });
+    const page = await browser.newPage();
+    await page.setContent(html, { waitUntil: 'networkidle0' });
+    const pdf = await page.pdf({ format: 'A4', margin: { top: '20mm', bottom: '20mm', left: '20mm', right: '20mm' }, printBackground: true });
+    await browser.close();
+    res.setHeader('Content-Type', 'application/pdf');
+    res.setHeader('Content-Disposition', 'attachment; filename=Relatorio_Extensao_' + projeto.id_projeto + '.pdf');
+    res.send(pdf);
+  } catch (error) {
+    console.error('Erro ao gerar PDF do relatório:', error);
+    res.render('error', { message: 'Erro ao gerar PDF', returnLink: '/projeto_extensao/' + req.params.id + '/relatorio' });
+  }
+}
+
 module.exports = {
   listprojeto_extensaos,
   filterprojeto_extensao,
@@ -280,5 +374,11 @@ module.exports = {
   showEditForm,
   editprojeto_extensao,
   showConfirmDeleteForm,
-  deleteprojeto_extensao
+  deleteprojeto_extensao,
+  showPlano,
+  savePlano,
+  showRelatorio,
+  saveRelatorio,
+  gerarPdfPlano,
+  gerarPdfRelatorio
 };
