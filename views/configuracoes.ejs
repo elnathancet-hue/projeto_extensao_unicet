@@ -1,0 +1,654 @@
+<%- include('cabecalho', { titulo: 'Configurações' }) %>
+
+<main id="conteudo-principal-form" class="container my-5">
+  <section class="card shadow p-4 p-md-5">
+    <div class="d-flex align-items-center mb-3 pb-3 border-bottom">
+      <i class="bi bi-gear fs-4 me-2"></i>
+      <div>
+        <h1 class="fs-4 fw-bold mb-0">Configurações</h1>
+        <small class="text-muted" style="font-size:0.7rem">Gerencie as opções e cadastros do sistema</small>
+      </div>
+    </div>
+
+    <div class="tab-content" id="mainTabContent">
+
+      <!-- ============================================================ -->
+      <!-- SEÇÃO FORMULÁRIO -->
+      <!-- ============================================================ -->
+      <div class="tab-pane fade show active" id="secao-formulario">
+        <p class="text-muted mb-2" style="font-size:0.7rem">Opções pré-configuradas que alimentam os formulários.</p>
+
+        <ul class="nav nav-tabs config-tabs" id="formTabs">
+          <li class="nav-item"><button class="nav-link active" data-bs-toggle="tab" data-bs-target="#tab-tipoPessoa">Tipo Pessoa</button></li>
+          <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#tab-tipoPlano">Tipo Plano</button></li>
+          <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#tab-tipoInstituicao">Tipo Instituição</button></li>
+          <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#tab-tipoAcao">Tipo Ação</button></li>
+          <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#tab-publicoAlvo">Público-Alvo</button></li>
+          <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#tab-papelProjeto">Papel Projeto</button></li>
+          <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#tab-faixaEtaria">Faixa Etária</button></li>
+          <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#tab-escolaridade">Escolaridade</button></li>
+          <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#tab-linhaProgramatica">Linha Programática</button></li>
+        </ul>
+
+        <div class="tab-content pt-3">
+          <%
+            function renderSimpleTab(data, idField, textField, formName, resourceUrl, isActive, label) {
+          %>
+          <div class="tab-pane fade <%= isActive ? 'show active' : '' %>" id="tab-<%= formName %>">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+              <span class="text-muted" style="font-size:0.75rem"><%= data.length %> registro(s)</span>
+              <button type="button" class="btn btn-primary btn-sm cfg-btn-add-modal"
+                data-action="/<%= resourceUrl %>/cadastrar"
+                data-label="<%= label %>"
+                data-fields='[{"name":"<%= textField %>","label":"<%= textField === 'nome' || textField === 'nome_escolaridade' ? 'Nome' : 'Descrição' %>","type":"text"}]'>
+                <i class="bi bi-plus"></i> Adicionar
+              </button>
+            </div>
+            <table class="table table-hover cfg-table">
+              <thead><tr><th style="width:60px">ID</th><th><%= textField === 'nome' || textField === 'nome_escolaridade' ? 'Nome' : 'Descrição' %></th><th style="width:120px">Ações</th></tr></thead>
+              <tbody>
+                <% data.forEach(function(item) { %>
+                <tr>
+                  <td><span class="badge bg-secondary"><%= item[idField] %></span></td>
+                  <td>
+                    <span class="cfg-text"><%= item[textField] %></span>
+                    <form method="POST" action="/<%= resourceUrl %>/<%= item[idField] %>/edit" class="cfg-edit-form d-none">
+                      <input type="text" name="<%= textField %>" class="form-control form-control-sm" value="<%= item[textField] %>">
+                    </form>
+                  </td>
+                  <td>
+                    <div class="cfg-actions">
+                      <button type="button" class="btn btn-sm btn-outline-secondary cfg-btn-edit"><i class="bi bi-pencil"></i></button>
+                      <button type="button" class="btn btn-sm btn-primary cfg-btn-save d-none"><i class="bi bi-check-lg"></i></button>
+                      <button type="button" class="btn btn-sm btn-outline-secondary cfg-btn-cancel d-none"><i class="bi bi-x-lg"></i></button>
+                      <form method="POST" action="/<%= resourceUrl %>/<%= item[idField] %>/delete" class="d-inline">
+                        <button type="submit" class="btn btn-sm btn-outline-danger cfg-btn-delete"><i class="bi bi-trash"></i></button>
+                      </form>
+                    </div>
+                  </td>
+                </tr>
+                <% }); %>
+                <% if (!data.length) { %><tr><td colspan="3" class="text-center text-muted py-3">Nenhum registro.</td></tr><% } %>
+              </tbody>
+            </table>
+          </div>
+          <% } %>
+
+          <% renderSimpleTab(tipoPessoa, 'id_tipo_pessoa', 'descricao', 'tipoPessoa', 'tipo_pessoa', true, 'Tipo de Pessoa') %>
+          <% renderSimpleTab(tipoPlano, 'id_tipo_plano', 'descricao', 'tipoPlano', 'tipo_plano', false, 'Tipo de Plano') %>
+          <% renderSimpleTab(tipoInstituicao, 'id_tipo_instituicao', 'descricao', 'tipoInstituicao', 'tipo_instituicao', false, 'Tipo de Instituição') %>
+          <% renderSimpleTab(tipoAcao, 'id_tipo_acao', 'nome', 'tipoAcao', 'tipo_acao', false, 'Tipo de Ação') %>
+          <% renderSimpleTab(publicoAlvo, 'id_publico_alvo', 'descricao', 'publicoAlvo', 'publico_alvo', false, 'Público-Alvo') %>
+          <% renderSimpleTab(papelProjeto, 'id_papel', 'descricao', 'papelProjeto', 'papel_projeto', false, 'Papel do Projeto') %>
+          <% renderSimpleTab(faixaEtaria, 'id_faixa', 'descricao', 'faixaEtaria', 'faixa_etaria', false, 'Faixa Etária') %>
+          <% renderSimpleTab(escolaridade, 'id_escolaridade', 'descricao', 'escolaridade', 'escolaridade', false, 'Escolaridade') %>
+          <% renderSimpleTab(linhaProgramatica, 'id_linha', 'nome', 'linhaProgramatica', 'linha_programatica', false, 'Linha Programática') %>
+        </div>
+      </div>
+
+      <!-- ============================================================ -->
+      <!-- SEÇÃO CADASTRO -->
+      <!-- ============================================================ -->
+      <div class="tab-pane fade" id="secao-cadastro">
+        <p class="text-muted mb-2" style="font-size:0.7rem">Registros principais do sistema. Dados que são referenciados nos projetos.</p>
+
+        <ul class="nav nav-tabs config-tabs" id="cadTabs">
+          <li class="nav-item"><button class="nav-link active" data-bs-toggle="tab" data-bs-target="#tab-pessoas">Pessoas</button></li>
+          <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#tab-cursos">Cursos</button></li>
+          <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#tab-instituicoes">Instituições</button></li>
+          <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#tab-locais">Locais de Execução</button></li>
+        </ul>
+
+        <div class="tab-content pt-3">
+
+          <!-- PESSOAS -->
+          <div class="tab-pane fade show active" id="tab-pessoas">
+            <div class="d-flex justify-content-between align-items-center mb-2">
+              <div class="d-flex gap-2 align-items-center">
+                <input type="text" class="form-control form-control-sm cfg-filter-input" data-table="tab-pessoas" placeholder="Filtrar por nome..." style="max-width:220px">
+                <select class="form-select form-select-sm cfg-filter-select" data-table="tab-pessoas" data-col="5" style="max-width:160px">
+                  <option value="">Tipo: Todos</option>
+                  <% tipoPessoa.forEach(function(tp) { %><option value="<%= tp.descricao %>"><%= tp.descricao %></option><% }) %>
+                </select>
+                <span class="text-muted cfg-count" style="font-size:0.7rem;white-space:nowrap"></span>
+              </div>
+              <button type="button" class="btn btn-primary btn-sm cfg-btn-add-modal"
+                data-action="/pessoa/cadastrar"
+                data-label="Pessoa"
+                data-fields='[{"name":"nome","label":"Nome Completo","type":"text","required":true},{"name":"cpf","label":"CPF","type":"text","placeholder":"000.000.000-00","required":true},{"name":"email","label":"Email","type":"text","placeholder":"email@ex.com","required":true},{"name":"telefone","label":"Telefone","type":"text","placeholder":"(00) 00000-0000","required":true},{"name":"id_tipo_pessoa","label":"Tipo de Pessoa","type":"select","required":true}]'>
+                <i class="bi bi-plus"></i> Adicionar
+              </button>
+            </div>
+            <div class="table-responsive">
+              <table class="table table-hover cfg-table">
+                <thead><tr><th style="width:50px">ID</th><th>Nome</th><th>CPF</th><th>Email</th><th>Telefone</th><th>Tipo</th><th style="width:120px">Ações</th></tr></thead>
+                <tbody>
+                  <% pessoas.forEach(function(p) { %>
+                  <tr>
+                    <td><span class="badge bg-secondary"><%= p.id_pessoa %></span></td>
+                    <td><span class="cfg-text"><%= p.nome %></span></td>
+                    <td><%= p.cpf || '-' %></td>
+                    <td><%= p.email || '-' %></td>
+                    <td><%= p.telefone || '-' %></td>
+                    <td><span class="badge bg-info"><%= p.tipo_nome || '-' %></span></td>
+                    <td>
+                      <div class="cfg-actions">
+                        <a href="/pessoa/<%= p.id_pessoa %>/edit" class="btn btn-sm btn-outline-secondary cfg-btn-edit-page" data-nome="<%= p.nome %>"><i class="bi bi-pencil"></i></a>
+                        <form method="POST" action="/pessoa/<%= p.id_pessoa %>/delete" class="d-inline">
+                          <button type="submit" class="btn btn-sm btn-outline-danger cfg-btn-delete"><i class="bi bi-trash"></i></button>
+                        </form>
+                      </div>
+                    </td>
+                  </tr>
+                  <% }); %>
+                  <% if (!pessoas.length) { %><tr class="cfg-empty-row"><td colspan="7" class="text-center text-muted py-3">Nenhuma pessoa cadastrada.</td></tr><% } %>
+                </tbody>
+              </table>
+            </div>
+            <div class="cfg-pagination" data-table="tab-pessoas"></div>
+          </div>
+
+          <!-- CURSOS -->
+          <div class="tab-pane fade" id="tab-cursos">
+            <div class="d-flex justify-content-between align-items-center mb-2">
+              <div class="d-flex gap-2 align-items-center">
+                <input type="text" class="form-control form-control-sm cfg-filter-input" data-table="tab-cursos" placeholder="Filtrar por nome..." style="max-width:220px">
+                <span class="text-muted cfg-count" style="font-size:0.7rem;white-space:nowrap"></span>
+              </div>
+              <button type="button" class="btn btn-primary btn-sm cfg-btn-add-modal"
+                data-action="/curso/cadastrar"
+                data-label="Curso"
+                data-fields='[{"name":"nome_curso","label":"Nome do Curso","type":"text","required":true}]'>
+                <i class="bi bi-plus"></i> Adicionar
+              </button>
+            </div>
+            <table class="table table-hover cfg-table">
+              <thead><tr><th style="width:60px">ID</th><th>Nome do Curso</th><th style="width:120px">Ações</th></tr></thead>
+              <tbody>
+                <% cursos.forEach(function(c) { %>
+                <tr>
+                  <td><span class="badge bg-secondary"><%= c.id_curso %></span></td>
+                  <td>
+                    <span class="cfg-text"><%= c.nome_curso %></span>
+                    <form method="POST" action="/curso/<%= c.id_curso %>/edit" class="cfg-edit-form d-none">
+                      <input type="text" name="nome_curso" class="form-control form-control-sm" value="<%= c.nome_curso %>">
+                    </form>
+                  </td>
+                  <td>
+                    <div class="cfg-actions">
+                      <button type="button" class="btn btn-sm btn-outline-secondary cfg-btn-edit"><i class="bi bi-pencil"></i></button>
+                      <button type="button" class="btn btn-sm btn-primary cfg-btn-save d-none"><i class="bi bi-check-lg"></i></button>
+                      <button type="button" class="btn btn-sm btn-outline-secondary cfg-btn-cancel d-none"><i class="bi bi-x-lg"></i></button>
+                      <form method="POST" action="/curso/<%= c.id_curso %>/delete" class="d-inline">
+                        <button type="submit" class="btn btn-sm btn-outline-danger cfg-btn-delete"><i class="bi bi-trash"></i></button>
+                      </form>
+                    </div>
+                  </td>
+                </tr>
+                <% }) %>
+                <% if (!cursos.length) { %><tr class="cfg-empty-row"><td colspan="3" class="text-center text-muted py-3">Nenhum curso.</td></tr><% } %>
+              </tbody>
+            </table>
+            <div class="cfg-pagination" data-table="tab-cursos"></div>
+          </div>
+
+          <!-- INSTITUIÇÕES -->
+          <div class="tab-pane fade" id="tab-instituicoes">
+            <div class="d-flex justify-content-between align-items-center mb-2">
+              <div class="d-flex gap-2 align-items-center">
+                <input type="text" class="form-control form-control-sm cfg-filter-input" data-table="tab-instituicoes" placeholder="Filtrar por nome..." style="max-width:220px">
+                <span class="text-muted cfg-count" style="font-size:0.7rem;white-space:nowrap"></span>
+              </div>
+              <button type="button" class="btn btn-primary btn-sm cfg-btn-add-modal"
+                data-action="/instituicao/cadastrar"
+                data-label="Instituição"
+                data-fields='[{"name":"nome","label":"Nome","type":"text","required":true},{"name":"sigla","label":"Sigla","type":"text","placeholder":"Ex: UFPI"},{"name":"id_tipo_instituicao","label":"Tipo de Instituição","type":"select","required":true}]'>
+                <i class="bi bi-plus"></i> Adicionar
+              </button>
+            </div>
+            <table class="table table-hover cfg-table">
+              <thead><tr><th style="width:50px">ID</th><th>Nome</th><th>Sigla</th><th>Tipo</th><th style="width:120px">Ações</th></tr></thead>
+              <tbody>
+                <% instituicoes.forEach(function(inst) { %>
+                <tr>
+                  <td><span class="badge bg-secondary"><%= inst.id_instituicao %></span></td>
+                  <td><span class="cfg-text"><%= inst.nome %></span></td>
+                  <td><%= inst.sigla || '-' %></td>
+                  <td><span class="badge bg-info"><%= inst.tipo || '-' %></span></td>
+                  <td>
+                    <div class="cfg-actions">
+                      <a href="/instituicao/<%= inst.id_instituicao %>/edit" class="btn btn-sm btn-outline-secondary cfg-btn-edit-page" data-nome="<%= inst.nome %>"><i class="bi bi-pencil"></i></a>
+                      <form method="POST" action="/instituicao/<%= inst.id_instituicao %>/delete" class="d-inline">
+                        <button type="submit" class="btn btn-sm btn-outline-danger cfg-btn-delete"><i class="bi bi-trash"></i></button>
+                      </form>
+                    </div>
+                  </td>
+                </tr>
+                <% }) %>
+                <% if (!instituicoes.length) { %><tr class="cfg-empty-row"><td colspan="5" class="text-center text-muted py-3">Nenhuma instituição.</td></tr><% } %>
+              </tbody>
+            </table>
+            <div class="cfg-pagination" data-table="tab-instituicoes"></div>
+          </div>
+
+          <!-- LOCAIS -->
+          <div class="tab-pane fade" id="tab-locais">
+            <div class="d-flex justify-content-between align-items-center mb-2">
+              <div class="d-flex gap-2 align-items-center">
+                <input type="text" class="form-control form-control-sm cfg-filter-input" data-table="tab-locais" placeholder="Filtrar por cidade ou bairro..." style="max-width:220px">
+                <span class="text-muted cfg-count" style="font-size:0.7rem;white-space:nowrap"></span>
+              </div>
+              <button type="button" class="btn btn-primary btn-sm cfg-btn-add-modal"
+                data-action="/local_execucao/cadastrar"
+                data-label="Local de Execução"
+                data-fields='[{"name":"endereco","label":"Endereço","type":"text","required":true},{"name":"cep","label":"CEP","type":"text","placeholder":"00000-000"},{"name":"bairro","label":"Bairro","type":"text"},{"name":"cidade","label":"Cidade","type":"text","required":true}]'>
+                <i class="bi bi-plus"></i> Adicionar
+              </button>
+            </div>
+            <table class="table table-hover cfg-table">
+              <thead><tr><th style="width:50px">ID</th><th>Endereço</th><th>CEP</th><th>Bairro</th><th>Cidade</th><th style="width:120px">Ações</th></tr></thead>
+              <tbody>
+                <% locais.forEach(function(loc) { %>
+                <tr>
+                  <td><span class="badge bg-secondary"><%= loc.id_local %></span></td>
+                  <td><span class="cfg-text"><%= loc.endereco || '-' %></span></td>
+                  <td><%= loc.cep || '-' %></td>
+                  <td><%= loc.bairro || '-' %></td>
+                  <td><%= loc.cidade || '-' %></td>
+                  <td>
+                    <div class="cfg-actions">
+                      <a href="/local_execucao/<%= loc.id_local %>/edit" class="btn btn-sm btn-outline-secondary cfg-btn-edit-page" data-nome="<%= loc.endereco || loc.cidade || '-' %>"><i class="bi bi-pencil"></i></a>
+                      <form method="POST" action="/local_execucao/<%= loc.id_local %>/delete" class="d-inline">
+                        <button type="submit" class="btn btn-sm btn-outline-danger cfg-btn-delete"><i class="bi bi-trash"></i></button>
+                      </form>
+                    </div>
+                  </td>
+                </tr>
+                <% }) %>
+                <% if (!locais.length) { %><tr class="cfg-empty-row"><td colspan="6" class="text-center text-muted py-3">Nenhum local.</td></tr><% } %>
+              </tbody>
+            </table>
+            <div class="cfg-pagination" data-table="tab-locais"></div>
+          </div>
+
+        </div>
+      </div>
+
+    </div>
+  </section>
+</main>
+
+<!-- Dados dos selects para os modais -->
+<script id="selectData" type="application/json"><%- JSON.stringify({
+  id_tipo_pessoa: tipoPessoa.map(function(tp) { return { value: tp.id_tipo_pessoa, label: tp.descricao }; }),
+  id_tipo_instituicao: tipoInstituicao.map(function(ti) { return { value: ti.id_tipo_instituicao, label: ti.descricao }; })
+}) %></script>
+
+<style>
+  .config-tabs { flex-wrap: wrap; gap: 2px; border-bottom: 2px solid var(--line); }
+  .config-tabs .nav-link {
+    font-size: 0.7rem; padding: 7px 10px; color: var(--muted);
+    border: 1px solid transparent; border-bottom: none;
+    border-radius: var(--radius-xs) var(--radius-xs) 0 0; white-space: nowrap;
+  }
+  .config-tabs .nav-link.active {
+    color: var(--brand); font-weight: 700; background: #fff;
+    border-color: var(--line); border-bottom-color: #fff; margin-bottom: -2px;
+  }
+  .config-tabs .nav-link:hover:not(.active) { color: var(--text); background: var(--bg); }
+  .cfg-table { font-size: 0.813rem; margin-bottom: 0; }
+  .cfg-table th { font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.04em; color: var(--muted); padding: 8px 12px; }
+  .cfg-table td { padding: 6px 12px; vertical-align: middle; }
+  .cfg-actions { display: flex; gap: 4px; align-items: center; }
+  .cfg-actions .btn { padding: 3px 7px; font-size: 0.7rem; }
+  .cfg-text { font-size: 0.813rem; }
+  .cfg-edit-form input { font-size: 0.813rem; padding: 4px 8px; }
+  tr.cfg-editing { background: #fefce8 !important; }
+
+  /* Modal */
+  .cfg-modal-overlay {
+    position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(0,0,0,0.4); z-index: 9999;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .cfg-modal {
+    background: #fff; border-radius: var(--radius); padding: 24px;
+    max-width: 480px; width: 90%; box-shadow: 0 8px 30px rgba(0,0,0,0.15);
+  }
+  .cfg-modal h5 { font-size: 0.938rem; margin-bottom: 16px; display: flex; align-items: center; gap: 8px; }
+  .cfg-modal .cfg-modal-field { margin-bottom: 12px; }
+  .cfg-modal .cfg-modal-field label { font-size: 0.75rem; font-weight: 600; margin-bottom: 4px; display: block; color: var(--text); }
+  .cfg-modal .cfg-modal-field input,
+  .cfg-modal .cfg-modal-field select {
+    width: 100%; padding: 8px 10px; border: 1px solid var(--line);
+    border-radius: var(--radius-xs); font-size: 0.813rem;
+  }
+  .cfg-modal .cfg-modal-field input:focus,
+  .cfg-modal .cfg-modal-field select:focus { border-color: var(--brand); outline: none; box-shadow: 0 0 0 3px rgba(28,110,54,0.1); }
+  .cfg-modal .cfg-modal-actions { display: flex; gap: 8px; justify-content: flex-end; margin-top: 16px; }
+  .cfg-modal .cfg-confirm-name { font-weight: 700; color: var(--text); background: var(--bg); padding: 2px 6px; border-radius: 4px; }
+  .cfg-modal p { font-size: 0.813rem; color: var(--muted); margin-bottom: 12px; }
+  .cfg-modal input.cfg-input-error { border-color: var(--bs-danger) !important; }
+  .cfg-modal .cfg-error-msg { color: var(--bs-danger); font-size: 0.75rem; margin-top: -8px; margin-bottom: 10px; display: none; }
+
+  /* Paginação */
+  .cfg-pagination {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 8px 0; font-size: 0.75rem; color: var(--muted);
+  }
+  .cfg-pagination .cfg-pag-info { font-size: 0.7rem; }
+  .cfg-pagination .cfg-pag-btns { display: flex; gap: 2px; }
+  .cfg-pagination .cfg-pag-btn {
+    padding: 4px 10px; border: 1px solid var(--line); border-radius: var(--radius-xs);
+    background: #fff; color: var(--text); cursor: pointer; font-size: 0.7rem; font-weight: 500;
+  }
+  .cfg-pagination .cfg-pag-btn:hover { background: var(--bg); }
+  .cfg-pagination .cfg-pag-btn.active { background: var(--brand); color: #fff; border-color: var(--brand); }
+  .cfg-pagination .cfg-pag-btn:disabled { opacity: 0.4; cursor: default; }
+</style>
+
+<script>
+  var selectData = JSON.parse(document.getElementById('selectData').textContent);
+
+  // ===== Ativar aba pelo hash =====
+  window.addEventListener('load', function() {
+    if (window.location.hash === '#secao-cadastro') {
+      document.getElementById('secao-formulario').classList.remove('show', 'active');
+      document.getElementById('secao-cadastro').classList.add('show', 'active');
+    }
+  });
+  window.addEventListener('hashchange', function() {
+    var f = document.getElementById('secao-formulario'), c = document.getElementById('secao-cadastro');
+    if (window.location.hash === '#secao-cadastro') { f.classList.remove('show','active'); c.classList.add('show','active'); }
+    else { c.classList.remove('show','active'); f.classList.add('show','active'); }
+  });
+
+  // ===== Confirmação para editar em página separada =====
+  document.addEventListener('click', function(e) {
+    var btn = e.target.closest('.cfg-btn-edit-page');
+    if (btn) {
+      if (!confirm('Deseja realmente editar "' + btn.getAttribute('data-nome') + '"?\n\nVocê será redirecionado para a página de edição.')) e.preventDefault();
+    }
+  });
+
+  // ===== Edição inline com confirmação =====
+  document.addEventListener('click', function(e) {
+    var editBtn = e.target.closest('.cfg-btn-edit');
+    if (editBtn) {
+      var tr = editBtn.closest('tr');
+      var nome = tr.querySelector('.cfg-text').textContent.trim();
+      if (!confirm('Este campo já vem pré-configurado no sistema.\n\nDeseja realmente editar "' + nome + '"?')) return;
+      tr.classList.add('cfg-editing');
+      tr.querySelector('.cfg-text').classList.add('d-none');
+      tr.querySelector('.cfg-edit-form').classList.remove('d-none');
+      tr.querySelector('.cfg-edit-form input').focus();
+      tr.querySelector('.cfg-edit-form input').select();
+      tr.querySelector('.cfg-btn-edit').classList.add('d-none');
+      tr.querySelector('.cfg-btn-delete').closest('form').classList.add('d-none');
+      tr.querySelector('.cfg-btn-save').classList.remove('d-none');
+      tr.querySelector('.cfg-btn-cancel').classList.remove('d-none');
+    }
+    var saveBtn = e.target.closest('.cfg-btn-save');
+    if (saveBtn) {
+      var tr = saveBtn.closest('tr');
+      var input = tr.querySelector('.cfg-edit-form input');
+      var novoNome = input.value.trim().toLowerCase();
+      var nomeOriginal = tr.querySelector('.cfg-text').textContent.trim().toLowerCase();
+      if (novoNome !== nomeOriginal) {
+        var existentes = getNomesExistentes(saveBtn);
+        if (existentes.indexOf(novoNome) !== -1) {
+          alert('Já existe um registro com o nome "' + input.value.trim() + '".');
+          input.focus(); input.select();
+          return;
+        }
+      }
+      tr.querySelector('.cfg-edit-form').submit();
+    }
+    var cancelBtn = e.target.closest('.cfg-btn-cancel');
+    if (cancelBtn) {
+      var tr = cancelBtn.closest('tr');
+      tr.classList.remove('cfg-editing');
+      tr.querySelector('.cfg-text').classList.remove('d-none');
+      tr.querySelector('.cfg-edit-form').classList.add('d-none');
+      tr.querySelector('.cfg-btn-edit').classList.remove('d-none');
+      tr.querySelector('.cfg-btn-delete').closest('form').classList.remove('d-none');
+      tr.querySelector('.cfg-btn-save').classList.add('d-none');
+      tr.querySelector('.cfg-btn-cancel').classList.add('d-none');
+      tr.querySelector('.cfg-edit-form input').value = tr.querySelector('.cfg-text').textContent.trim();
+    }
+    // Excluir com modal de digitação
+    var deleteBtn = e.target.closest('.cfg-btn-delete');
+    if (deleteBtn) {
+      e.preventDefault();
+      mostrarModalExclusao(deleteBtn.closest('tr').querySelector('.cfg-text').textContent.trim(), deleteBtn.closest('form'));
+    }
+    // Adicionar com modal
+    var addBtn = e.target.closest('.cfg-btn-add-modal');
+    if (addBtn) mostrarModalAdicionar(addBtn);
+  });
+
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'Enter' && e.target.closest('.cfg-edit-form')) { e.preventDefault(); e.target.closest('.cfg-edit-form').submit(); }
+    if (e.key === 'Escape' && e.target.closest('.cfg-edit-form')) { e.target.closest('tr').querySelector('.cfg-btn-cancel').click(); }
+  });
+
+  // ===== Coletar nomes existentes da aba ativa =====
+  function getNomesExistentes(btn) {
+    var tabPane = btn.closest('.tab-pane');
+    var nomes = [];
+    tabPane.querySelectorAll('.cfg-text').forEach(function(el) {
+      nomes.push(el.textContent.trim().toLowerCase());
+    });
+    return nomes;
+  }
+
+  // ===== Modal ADICIONAR =====
+  function mostrarModalAdicionar(btn) {
+    var action = btn.getAttribute('data-action');
+    var label = btn.getAttribute('data-label');
+    var fields = JSON.parse(btn.getAttribute('data-fields'));
+    var nomesExistentes = getNomesExistentes(btn);
+
+    var fieldsHtml = '';
+    fields.forEach(function(f) {
+      if (f.type === 'select') {
+        var opts = '<option value="">Selecione</option>';
+        var data = selectData[f.name] || [];
+        data.forEach(function(o) { opts += '<option value="' + o.value + '">' + o.label + '</option>'; });
+        fieldsHtml += '<div class="cfg-modal-field"><label>' + f.label + '</label><select name="' + f.name + '"' + (f.required ? ' required' : '') + '>' + opts + '</select></div>';
+      } else {
+        fieldsHtml += '<div class="cfg-modal-field"><label>' + f.label + '</label><input type="text" name="' + f.name + '" placeholder="' + (f.placeholder || '') + '"' + (f.required ? ' required' : '') + '></div>';
+      }
+    });
+
+    var overlay = document.createElement('div');
+    overlay.className = 'cfg-modal-overlay';
+    overlay.innerHTML =
+      '<div class="cfg-modal">' +
+        '<h5><i class="bi bi-plus-circle" style="color:var(--brand)"></i> Novo ' + label + '</h5>' +
+        '<form method="POST" action="' + action + '">' +
+          fieldsHtml +
+          '<p class="cfg-error-msg cfg-dup-msg">Já existe um registro com este nome.</p>' +
+          '<div class="cfg-modal-actions">' +
+            '<button type="button" class="btn btn-secondary btn-sm cfg-modal-cancel">Cancelar</button>' +
+            '<button type="submit" class="btn btn-primary btn-sm">Salvar</button>' +
+          '</div>' +
+        '</form>' +
+      '</div>';
+
+    document.body.appendChild(overlay);
+    var firstInput = overlay.querySelector('input, select');
+    if (firstInput) firstInput.focus();
+
+    // Validação de duplicados no submit
+    var form = overlay.querySelector('form');
+    form.addEventListener('submit', function(e) {
+      var mainInput = overlay.querySelector('input[type="text"]');
+      if (mainInput && nomesExistentes.indexOf(mainInput.value.trim().toLowerCase()) !== -1) {
+        e.preventDefault();
+        mainInput.classList.add('cfg-input-error');
+        overlay.querySelector('.cfg-dup-msg').style.display = 'block';
+        mainInput.focus();
+        mainInput.select();
+        return false;
+      }
+    });
+
+    // Limpar erro ao digitar
+    var inputs = overlay.querySelectorAll('input[type="text"]');
+    inputs.forEach(function(inp) {
+      inp.addEventListener('input', function() {
+        inp.classList.remove('cfg-input-error');
+        overlay.querySelector('.cfg-dup-msg').style.display = 'none';
+      });
+    });
+
+    overlay.querySelector('.cfg-modal-cancel').addEventListener('click', function() { document.body.removeChild(overlay); });
+    overlay.addEventListener('click', function(e) { if (e.target === overlay) document.body.removeChild(overlay); });
+    overlay.addEventListener('keydown', function(e) { if (e.key === 'Escape') document.body.removeChild(overlay); });
+  }
+
+  // ===== FILTRO + PAGINAÇÃO nas abas de Cadastro =====
+  var PER_PAGE = 10;
+  var paginationState = {};
+
+  function initPagination() {
+    document.querySelectorAll('.cfg-pagination').forEach(function(pagDiv) {
+      var tableId = pagDiv.getAttribute('data-table');
+      paginationState[tableId] = { page: 1, filtered: [] };
+      applyFilterAndPaginate(tableId);
+    });
+  }
+
+  function getRows(tableId) {
+    var pane = document.getElementById(tableId);
+    if (!pane) return [];
+    return Array.from(pane.querySelectorAll('tbody tr:not(.cfg-empty-row)'));
+  }
+
+  function applyFilterAndPaginate(tableId) {
+    var pane = document.getElementById(tableId);
+    if (!pane) return;
+    var rows = getRows(tableId);
+    var filterInput = pane.querySelector('.cfg-filter-input');
+    var filterSelect = pane.querySelector('.cfg-filter-select');
+    var term = filterInput ? filterInput.value.trim().toLowerCase() : '';
+    var selectVal = filterSelect ? filterSelect.value.toLowerCase() : '';
+    var selectCol = filterSelect ? parseInt(filterSelect.getAttribute('data-col')) : -1;
+
+    // Filtrar
+    var filtered = rows.filter(function(row) {
+      var text = row.textContent.toLowerCase();
+      var matchText = !term || text.indexOf(term) !== -1;
+      var matchSelect = true;
+      if (selectVal && selectCol >= 0) {
+        var cells = row.querySelectorAll('td');
+        var cellText = cells[selectCol] ? cells[selectCol].textContent.trim().toLowerCase() : '';
+        matchSelect = cellText === selectVal;
+      }
+      return matchText && matchSelect;
+    });
+
+    paginationState[tableId].filtered = filtered;
+    paginationState[tableId].page = 1;
+
+    // Atualizar contador
+    var countEl = pane.querySelector('.cfg-count');
+    if (countEl) countEl.textContent = filtered.length + ' de ' + rows.length;
+
+    renderPage(tableId);
+  }
+
+  function renderPage(tableId) {
+    var state = paginationState[tableId];
+    var rows = getRows(tableId);
+    var filtered = state.filtered;
+    var page = state.page;
+    var totalPages = Math.max(1, Math.ceil(filtered.length / PER_PAGE));
+    if (page > totalPages) page = totalPages;
+    state.page = page;
+    var start = (page - 1) * PER_PAGE;
+    var end = start + PER_PAGE;
+
+    // Esconder todas, mostrar só as filtradas da página
+    rows.forEach(function(r) { r.style.display = 'none'; });
+    filtered.forEach(function(r, i) {
+      r.style.display = (i >= start && i < end) ? '' : 'none';
+    });
+
+    // Renderizar botões de paginação
+    var pagDiv = document.querySelector('.cfg-pagination[data-table="' + tableId + '"]');
+    if (!pagDiv) return;
+    if (filtered.length <= PER_PAGE) { pagDiv.innerHTML = '<span class="cfg-pag-info">' + filtered.length + ' registro(s)</span><span></span>'; return; }
+
+    var html = '<span class="cfg-pag-info">Mostrando ' + (start+1) + '-' + Math.min(end, filtered.length) + ' de ' + filtered.length + '</span>';
+    html += '<div class="cfg-pag-btns">';
+    html += '<button class="cfg-pag-btn" data-page="' + (page-1) + '" ' + (page <= 1 ? 'disabled' : '') + '>&laquo;</button>';
+    for (var p = 1; p <= totalPages; p++) {
+      html += '<button class="cfg-pag-btn ' + (p === page ? 'active' : '') + '" data-page="' + p + '">' + p + '</button>';
+    }
+    html += '<button class="cfg-pag-btn" data-page="' + (page+1) + '" ' + (page >= totalPages ? 'disabled' : '') + '>&raquo;</button>';
+    html += '</div>';
+    pagDiv.innerHTML = html;
+  }
+
+  // Event listeners para filtro
+  document.addEventListener('input', function(e) {
+    if (e.target.classList.contains('cfg-filter-input')) {
+      applyFilterAndPaginate(e.target.getAttribute('data-table'));
+    }
+  });
+  document.addEventListener('change', function(e) {
+    if (e.target.classList.contains('cfg-filter-select')) {
+      applyFilterAndPaginate(e.target.getAttribute('data-table'));
+    }
+  });
+
+  // Event listeners para paginação
+  document.addEventListener('click', function(e) {
+    var btn = e.target.closest('.cfg-pag-btn');
+    if (btn && !btn.disabled) {
+      var tableId = btn.closest('.cfg-pagination').getAttribute('data-table');
+      paginationState[tableId].page = parseInt(btn.getAttribute('data-page'));
+      renderPage(tableId);
+    }
+  });
+
+  // Inicializar após carregar
+  window.addEventListener('load', function() { setTimeout(initPagination, 150); });
+
+  // ===== Modal EXCLUIR =====
+  function mostrarModalExclusao(nome, form) {
+    var overlay = document.createElement('div');
+    overlay.className = 'cfg-modal-overlay';
+    overlay.innerHTML =
+      '<div class="cfg-modal">' +
+        '<h5><i class="bi bi-exclamation-triangle" style="color:var(--bs-danger)"></i> Confirmar Exclusão</h5>' +
+        '<p>Para excluir, digite exatamente:</p>' +
+        '<p style="text-align:center;margin-bottom:12px"><span class="cfg-confirm-name">' + nome + '</span></p>' +
+        '<input type="text" class="cfg-delete-input" placeholder="Digite o nome para confirmar...">' +
+        '<p class="cfg-error-msg">O texto digitado não corresponde.</p>' +
+        '<div class="cfg-modal-actions">' +
+          '<button type="button" class="btn btn-secondary btn-sm cfg-modal-cancel">Cancelar</button>' +
+          '<button type="button" class="btn btn-danger btn-sm cfg-modal-confirm" disabled>Excluir</button>' +
+        '</div>' +
+      '</div>';
+    document.body.appendChild(overlay);
+    var input = overlay.querySelector('.cfg-delete-input');
+    var confirmBtn = overlay.querySelector('.cfg-modal-confirm');
+    input.focus();
+    input.addEventListener('input', function() {
+      confirmBtn.disabled = (input.value.trim() !== nome);
+      if (!confirmBtn.disabled) { input.classList.remove('cfg-input-error'); overlay.querySelector('.cfg-error-msg').style.display = 'none'; }
+    });
+    input.addEventListener('keydown', function(e) {
+      if (e.key === 'Enter') { if (input.value.trim() === nome) form.submit(); else { input.classList.add('cfg-input-error'); overlay.querySelector('.cfg-error-msg').style.display = 'block'; input.select(); } }
+      if (e.key === 'Escape') document.body.removeChild(overlay);
+    });
+    confirmBtn.addEventListener('click', function() { if (input.value.trim() === nome) form.submit(); });
+    overlay.querySelector('.cfg-modal-cancel').addEventListener('click', function() { document.body.removeChild(overlay); });
+    overlay.addEventListener('click', function(e) { if (e.target === overlay) document.body.removeChild(overlay); });
+  }
+</script>
+
+<%- include('rodape') %>

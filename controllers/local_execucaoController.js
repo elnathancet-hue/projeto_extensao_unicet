@@ -3,8 +3,16 @@ const local_execucaoModel = require('../models/local_execucaoModel');
 
 async function listAll(req, res) {
   try {
-    const registros = await local_execucaoModel.getAlllocal_execucao();
-    res.render('consultas/local_execucao', { dados: registros });
+    const filters = {
+      cidade: req.query.cidade || '',
+      bairro: req.query.bairro || '',
+      endereco: req.query.endereco || ''
+    };
+    const hasFilter = Object.values(filters).some(v => v);
+    const registros = hasFilter
+      ? await local_execucaoModel.filterlocal_execucao(filters)
+      : await local_execucaoModel.getAlllocal_execucao();
+    res.render('consultas/local_execucao', { dados: registros, filters });
   } catch (error) {
     console.error('Erro ao buscar locais de execução:', error);
     res.render('error', { message: 'Erro ao buscar locais de execução', returnLink: '/logo' });
@@ -26,7 +34,7 @@ async function insert(req, res) {
   const { endereco, cep, bairro, cidade } = req.body;
   try {
     await local_execucaoModel.insertlocal_execucao(endereco, cep, bairro, cidade);
-    res.redirect('/local_execucao');
+    res.redirect('/configuracoes#secao-cadastro');
   } catch (error) {
     console.error('Erro ao inserir local de execução:', error);
     res.render('error', { message: 'Erro ao inserir', returnLink: '/logo' });
@@ -49,7 +57,7 @@ async function update(req, res) {
   const { endereco, cep, bairro, cidade } = req.body;
   try {
     await local_execucaoModel.updatelocal_execucao(id, endereco, cep, bairro, cidade);
-    res.redirect('/local_execucao');
+    res.redirect('/configuracoes#secao-cadastro');
   } catch (error) {
     console.error('Erro ao editar local de execução:', error);
     res.render('error', { message: 'Erro ao editar', returnLink: '/local_execucao' });
@@ -60,7 +68,7 @@ async function deleteRecord(req, res) {
   const { id } = req.params;
   try {
     await local_execucaoModel.deletelocal_execucao(id);
-    res.redirect('/local_execucao');
+    res.redirect('/configuracoes#secao-cadastro');
   } catch (error) {
     console.error('Erro ao excluir local de execução:', error);
     res.render('error', { message: 'Erro ao excluir', returnLink: '/local_execucao' });

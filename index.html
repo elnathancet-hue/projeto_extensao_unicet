@@ -1,0 +1,935 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Formulários de Extensão - UNI-CET 2025</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f0f2f5;
+            color: #333;
+        }
+
+        /* ===== NAVIGATION TABS ===== */
+        .nav-bar {
+            background: #1a3a5c;
+            padding: 0 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+        }
+        .nav-bar h1 {
+            color: #fff;
+            font-size: 16px;
+            padding: 14px 0;
+            margin-right: 20px;
+            white-space: nowrap;
+        }
+        .tab-btn {
+            background: none;
+            border: none;
+            color: rgba(255,255,255,0.7);
+            padding: 14px 20px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            border-bottom: 3px solid transparent;
+            transition: all 0.2s;
+        }
+        .tab-btn:hover { color: #fff; }
+        .tab-btn.active {
+            color: #fff;
+            border-bottom-color: #4fc3f7;
+        }
+
+        /* ===== FORM CONTAINER ===== */
+        .form-page { display: none; }
+        .form-page.active { display: block; }
+
+        .form-container {
+            max-width: 900px;
+            margin: 30px auto;
+            padding: 0 20px 40px;
+        }
+
+        /* ===== PDF CONTENT AREA ===== */
+        .pdf-content {
+            background: #fff;
+            padding: 50px 60px;
+            border-radius: 4px;
+            box-shadow: 0 1px 4px rgba(0,0,0,0.1);
+        }
+
+        .doc-title {
+            text-align: center;
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 30px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        /* ===== SECTIONS ===== */
+        .section {
+            margin-bottom: 24px;
+        }
+        .section-title {
+            font-size: 14px;
+            font-weight: bold;
+            background: #1a3a5c;
+            color: #fff;
+            padding: 8px 14px;
+            margin-bottom: 14px;
+            border-radius: 3px;
+        }
+
+        /* ===== FORM FIELDS ===== */
+        .field-group {
+            margin-bottom: 14px;
+        }
+        .field-group label {
+            display: block;
+            font-weight: 600;
+            font-size: 13px;
+            margin-bottom: 4px;
+            color: #444;
+        }
+        .field-group input[type="text"],
+        .field-group input[type="date"],
+        .field-group input[type="number"],
+        .field-group textarea,
+        .field-group select {
+            width: 100%;
+            padding: 8px 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 13px;
+            font-family: inherit;
+            transition: border-color 0.2s;
+        }
+        .field-group input:focus,
+        .field-group textarea:focus,
+        .field-group select:focus {
+            outline: none;
+            border-color: #1a3a5c;
+            box-shadow: 0 0 0 2px rgba(26,58,92,0.1);
+        }
+        .field-group textarea {
+            min-height: 80px;
+            resize: vertical;
+        }
+
+        .field-row {
+            display: flex;
+            gap: 14px;
+        }
+        .field-row .field-group { flex: 1; }
+
+        /* ===== CHECKBOXES ===== */
+        .checkbox-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px 20px;
+            margin-top: 4px;
+        }
+        .checkbox-item {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 13px;
+        }
+        .checkbox-item input[type="checkbox"],
+        .checkbox-item input[type="radio"] {
+            accent-color: #1a3a5c;
+        }
+
+        /* ===== DYNAMIC TABLE ===== */
+        .dynamic-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 8px;
+            font-size: 12px;
+        }
+        .dynamic-table th {
+            background: #e8eef4;
+            padding: 8px 6px;
+            border: 1px solid #ccc;
+            font-weight: 600;
+            text-align: center;
+            font-size: 11px;
+        }
+        .dynamic-table td {
+            padding: 4px;
+            border: 1px solid #ccc;
+        }
+        .dynamic-table input,
+        .dynamic-table textarea {
+            width: 100%;
+            border: none;
+            padding: 4px 6px;
+            font-size: 12px;
+            font-family: inherit;
+            background: transparent;
+        }
+        .dynamic-table input:focus,
+        .dynamic-table textarea:focus {
+            outline: none;
+            background: #f7f9fc;
+        }
+
+        .btn-add-row {
+            margin-top: 6px;
+            padding: 5px 14px;
+            background: #e8eef4;
+            border: 1px solid #ccc;
+            border-radius: 3px;
+            cursor: pointer;
+            font-size: 12px;
+            color: #1a3a5c;
+        }
+        .btn-add-row:hover { background: #d0dbe8; }
+
+        /* ===== SIGNATURE AREA ===== */
+        .signature-block {
+            margin-top: 30px;
+            text-align: center;
+        }
+        .signature-line {
+            margin: 30px auto 4px;
+            width: 400px;
+            border-bottom: 1px solid #333;
+        }
+        .signature-label {
+            font-size: 12px;
+            color: #555;
+        }
+        .signature-date {
+            margin-top: 20px;
+            font-size: 13px;
+        }
+
+        /* ===== GENERATE BUTTON ===== */
+        .btn-generate {
+            display: block;
+            margin: 24px auto;
+            padding: 12px 40px;
+            background: #1a3a5c;
+            color: #fff;
+            border: none;
+            border-radius: 6px;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        .btn-generate:hover { background: #244d73; }
+        .btn-generate:disabled {
+            background: #999;
+            cursor: not-allowed;
+        }
+
+        /* ===== PARECER BLOCKS ===== */
+        .parecer-block {
+            margin-top: 24px;
+            padding: 16px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        .parecer-block h4 {
+            font-size: 12px;
+            font-weight: bold;
+            margin-bottom: 8px;
+            color: #1a3a5c;
+            text-transform: uppercase;
+        }
+
+        /* ===== PRINT / PDF STYLES ===== */
+        @media print {
+            body { background: #fff; }
+            .nav-bar, .btn-generate, .btn-add-row, .no-print { display: none !important; }
+            .form-page { display: none !important; }
+            .form-page.active { display: block !important; }
+            .form-container { margin: 0; padding: 0; max-width: 100%; }
+            .pdf-content {
+                box-shadow: none;
+                padding: 20px 40px;
+                border-radius: 0;
+            }
+            .field-group input,
+            .field-group textarea,
+            .field-group select,
+            .dynamic-table input,
+            .dynamic-table textarea {
+                border: none !important;
+                padding: 2px 0 !important;
+                background: transparent !important;
+                box-shadow: none !important;
+            }
+            .section { page-break-inside: avoid; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="nav-bar">
+    <h1>UNI-CET 2025</h1>
+    <button class="tab-btn active" onclick="switchTab('plano')">Plano de Extensão</button>
+    <button class="tab-btn" onclick="switchTab('relatorio')">Relatório de Extensão</button>
+</div>
+
+<!-- ============================================================ -->
+<!-- PLANO DE ATIVIDADE DE EXTENSÃO -->
+<!-- ============================================================ -->
+<div id="plano" class="form-page active">
+<div class="form-container">
+    <div class="pdf-content" id="pdf-plano">
+
+        <div class="doc-title">PLANO DE ATIVIDADE DE EXTENSÃO</div>
+
+        <!-- TIPO DE EXTENSÃO -->
+        <div class="section">
+            <div class="section-title">TIPO DE EXTENSÃO</div>
+            <div class="checkbox-grid">
+                <label class="checkbox-item"><input type="radio" name="plano_tipo_ext" value="Curricular"> Curricular</label>
+                <label class="checkbox-item"><input type="radio" name="plano_tipo_ext" value="Extracurricular"> Extracurricular</label>
+            </div>
+        </div>
+
+        <!-- I - IDENTIFICAÇÃO -->
+        <div class="section">
+            <div class="section-title">I - IDENTIFICAÇÃO</div>
+
+            <div class="field-group">
+                <label>TÍTULO:</label>
+                <input type="text" placeholder="Título da atividade de extensão">
+            </div>
+
+            <div class="field-group">
+                <label>LINHA PROGRAMÁTICA / PROGRAMA:</label>
+                <div class="checkbox-grid">
+                    <label class="checkbox-item"><input type="checkbox" name="plano_linha[]" value="Comunicação"> Comunicação</label>
+                    <label class="checkbox-item"><input type="checkbox" name="plano_linha[]" value="Cultura"> Cultura</label>
+                    <label class="checkbox-item"><input type="checkbox" name="plano_linha[]" value="Direitos Humanos e Justiça"> Direitos Humanos e Justiça</label>
+                    <label class="checkbox-item"><input type="checkbox" name="plano_linha[]" value="Educação"> Educação</label>
+                    <label class="checkbox-item"><input type="checkbox" name="plano_linha[]" value="Meio Ambiente"> Meio Ambiente</label>
+                    <label class="checkbox-item"><input type="checkbox" name="plano_linha[]" value="Saúde"> Saúde</label>
+                    <label class="checkbox-item"><input type="checkbox" name="plano_linha[]" value="Tecnologia e Produção"> Tecnologia e Produção</label>
+                    <label class="checkbox-item"><input type="checkbox" name="plano_linha[]" value="Trabalho"> Trabalho</label>
+                </div>
+            </div>
+
+            <div class="field-group">
+                <label>TIPO DE AÇÃO:</label>
+                <div class="checkbox-grid">
+                    <label class="checkbox-item"><input type="radio" name="plano_tipo_acao" value="Programa"> Programa</label>
+                    <label class="checkbox-item"><input type="radio" name="plano_tipo_acao" value="Projeto"> Projeto</label>
+                    <label class="checkbox-item"><input type="radio" name="plano_tipo_acao" value="Curso"> Curso</label>
+                    <label class="checkbox-item"><input type="radio" name="plano_tipo_acao" value="Evento"> Evento</label>
+                    <label class="checkbox-item"><input type="radio" name="plano_tipo_acao" value="Prestação de Serviço"> Prestação de Serviço</label>
+                    <label class="checkbox-item"><input type="radio" name="plano_tipo_acao" value="Produção e Publicação"> Produção e Publicação</label>
+                    <label class="checkbox-item"><input type="radio" name="plano_tipo_acao" value="Incubadora"> Incubadora</label>
+                    <label class="checkbox-item"><input type="radio" name="plano_tipo_acao" value="Empresa Júnior"> Empresa Júnior</label>
+                    <label class="checkbox-item"><input type="radio" name="plano_tipo_acao" value="Observatório"> Observatório</label>
+                    <label class="checkbox-item"><input type="radio" name="plano_tipo_acao" value="Clínica Escola / Escritório Modelo"> Clínica Escola / Escritório Modelo</label>
+                    <label class="checkbox-item"><input type="radio" name="plano_tipo_acao" value="Lab. de Práticas Extensionistas"> Lab. de Práticas Extensionistas</label>
+                </div>
+            </div>
+
+            <div class="field-group">
+                <label>INSTITUIÇÃO(ÕES) ENVOLVIDA(AS):</label>
+                <div class="field-row">
+                    <div class="field-group">
+                        <label style="font-weight:normal"><input type="checkbox"> Pública:</label>
+                        <input type="text" placeholder="Nomes das instituições públicas">
+                    </div>
+                    <div class="field-group">
+                        <label style="font-weight:normal"><input type="checkbox"> Privada:</label>
+                        <input type="text" placeholder="Nomes das instituições privadas">
+                    </div>
+                </div>
+            </div>
+
+            <div class="field-group">
+                <label>COORDENADOR RESPONSÁVEL:</label>
+                <input type="text" placeholder="Nome do coordenador">
+            </div>
+
+            <div class="field-group">
+                <label>PROFESSORES E TÉCNICOS ENVOLVIDOS:</label>
+                <textarea placeholder="Listar professores e técnicos envolvidos"></textarea>
+            </div>
+
+            <div class="field-group">
+                <label>CURSOS ENVOLVIDOS:</label>
+                <input type="text" placeholder="Cursos envolvidos">
+            </div>
+
+            <div class="field-row">
+                <div class="field-group">
+                    <label>PERÍODO DE REALIZAÇÃO - INÍCIO:</label>
+                    <input type="date">
+                </div>
+                <div class="field-group">
+                    <label>PERÍODO DE REALIZAÇÃO - FIM:</label>
+                    <input type="date">
+                </div>
+            </div>
+
+            <div class="field-row">
+                <div class="field-group">
+                    <label>LOCAL DE EXECUÇÃO:</label>
+                    <input type="text" placeholder="Local de execução">
+                </div>
+                <div class="field-group">
+                    <label>CARGA HORÁRIA TOTAL:</label>
+                    <input type="text" placeholder="Ex: 40h">
+                </div>
+            </div>
+
+            <div class="field-group">
+                <label>PÚBLICO-ALVO:</label>
+                <div class="checkbox-grid" style="margin-bottom:6px">
+                    <label class="checkbox-item"><input type="checkbox" name="plano_publico[]" value="Interno"> Interno</label>
+                    <label class="checkbox-item"><input type="checkbox" name="plano_publico[]" value="Externo"> Externo</label>
+                </div>
+                <textarea placeholder="Perfil da clientela alcançada pelo projeto"></textarea>
+            </div>
+        </div>
+
+        <!-- II - OBJETIVOS -->
+        <div class="section">
+            <div class="section-title">II - OBJETIVO(S)</div>
+            <div class="field-group">
+                <textarea rows="5" placeholder="Estabelecer objetivos da atividade de extensão. Usar verbos como: desenvolver, estabelecer, organizar, capacitar, demonstrar, contribuir, colaborar, valorizar..."></textarea>
+            </div>
+        </div>
+
+        <!-- III - METODOLOGIA -->
+        <div class="section">
+            <div class="section-title">III - METODOLOGIA</div>
+            <div class="field-group">
+                <textarea rows="5" placeholder="Descrever todos os procedimentos a serem adotados, contendo o roteiro claro e detalhado das etapas necessárias e das respectivas atividades a serem executadas."></textarea>
+            </div>
+        </div>
+
+        <!-- IV - CRONOGRAMA -->
+        <div class="section">
+            <div class="section-title">IV - CRONOGRAMA DE ATIVIDADES E AÇÕES</div>
+            <table class="dynamic-table" id="plano-cronograma">
+                <thead>
+                    <tr>
+                        <th style="width:40px">Nº</th>
+                        <th>Etapa</th>
+                        <th style="width:110px">Data</th>
+                        <th style="width:80px">Hora</th>
+                        <th style="width:150px">Local</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr><td style="text-align:center">1</td><td><input type="text" value="Envio do Projeto de Extensão para a Coordenação do Curso"></td><td><input type="date"></td><td><input type="text"></td><td><input type="text"></td></tr>
+                    <tr><td style="text-align:center">2</td><td><input type="text"></td><td><input type="date"></td><td><input type="text"></td><td><input type="text"></td></tr>
+                    <tr><td style="text-align:center">3</td><td><input type="text"></td><td><input type="date"></td><td><input type="text"></td><td><input type="text"></td></tr>
+                    <tr><td style="text-align:center">4</td><td><input type="text"></td><td><input type="date"></td><td><input type="text"></td><td><input type="text"></td></tr>
+                    <tr><td style="text-align:center">5</td><td><input type="text"></td><td><input type="date"></td><td><input type="text"></td><td><input type="text"></td></tr>
+                    <tr><td style="text-align:center">6</td><td><input type="text"></td><td><input type="date"></td><td><input type="text"></td><td><input type="text"></td></tr>
+                    <tr><td style="text-align:center">7</td><td><input type="text"></td><td><input type="date"></td><td><input type="text"></td><td><input type="text"></td></tr>
+                    <tr><td style="text-align:center">8</td><td><input type="text"></td><td><input type="date"></td><td><input type="text"></td><td><input type="text"></td></tr>
+                    <tr><td style="text-align:center">9</td><td><input type="text"></td><td><input type="date"></td><td><input type="text"></td><td><input type="text"></td></tr>
+                    <tr><td style="text-align:center">10</td><td><input type="text" value="Envio do Relatório de Extensão para a Coordenação do Curso"></td><td><input type="date"></td><td><input type="text"></td><td><input type="text"></td></tr>
+                </tbody>
+            </table>
+            <button class="btn-add-row no-print" onclick="addCronogramaRow('plano-cronograma')">+ Adicionar linha</button>
+        </div>
+
+        <!-- V - CUSTOS -->
+        <div class="section">
+            <div class="section-title">V - CUSTOS DO PROJETO</div>
+            <table class="dynamic-table" id="plano-custos">
+                <thead>
+                    <tr>
+                        <th style="width:40px">Nº</th>
+                        <th>Descrição da Despesa</th>
+                        <th style="width:60px">Qtd</th>
+                        <th style="width:100px">Valor Unit. (R$)</th>
+                        <th style="width:100px">Valor Total (R$)</th>
+                        <th>Justificativa</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr><td style="text-align:center">1</td><td><input type="text"></td><td><input type="number" min="0"></td><td><input type="text"></td><td><input type="text"></td><td><input type="text"></td></tr>
+                    <tr><td style="text-align:center">2</td><td><input type="text"></td><td><input type="number" min="0"></td><td><input type="text"></td><td><input type="text"></td><td><input type="text"></td></tr>
+                    <tr><td style="text-align:center">3</td><td><input type="text"></td><td><input type="number" min="0"></td><td><input type="text"></td><td><input type="text"></td><td><input type="text"></td></tr>
+                    <tr><td style="text-align:center">4</td><td><input type="text"></td><td><input type="number" min="0"></td><td><input type="text"></td><td><input type="text"></td><td><input type="text"></td></tr>
+                    <tr><td style="text-align:center">5</td><td><input type="text"></td><td><input type="number" min="0"></td><td><input type="text"></td><td><input type="text"></td><td><input type="text"></td></tr>
+                </tbody>
+            </table>
+            <button class="btn-add-row no-print" onclick="addCustoRow('plano-custos')">+ Adicionar linha</button>
+
+            <div class="field-group" style="margin-top:14px">
+                <label>FONTE DE RECURSOS:</label>
+                <textarea rows="3" placeholder="Indicar valor total, financiamento externo/interno, parcerias, contrapartida..."></textarea>
+            </div>
+        </div>
+
+        <!-- VI - RESULTADOS ESPERADOS -->
+        <div class="section">
+            <div class="section-title">VI - RESULTADOS ESPERADOS</div>
+            <div class="field-group">
+                <textarea rows="4" placeholder="Descrever os resultados esperados com base nos objetivos do plano de extensão."></textarea>
+            </div>
+        </div>
+
+        <!-- VII - AVALIAÇÃO -->
+        <div class="section">
+            <div class="section-title">VII - AVALIAÇÃO</div>
+            <div class="field-group">
+                <textarea rows="4" placeholder="Descrever a forma de avaliação: participação, desempenho e produção dos resultados."></textarea>
+            </div>
+        </div>
+
+        <!-- IX - REFERÊNCIAS -->
+        <div class="section">
+            <div class="section-title">IX - REFERÊNCIAS</div>
+            <div class="field-group">
+                <textarea rows="4" placeholder="Seguir a NBR 6023/2018 (ABNT)"></textarea>
+            </div>
+        </div>
+
+        <!-- X - AUTENTICAÇÃO -->
+        <div class="section">
+            <div class="section-title">X - AUTENTICAÇÃO</div>
+
+            <div class="field-row">
+                <div class="field-group">
+                    <label>Teresina,</label>
+                    <input type="date">
+                </div>
+            </div>
+
+            <div class="signature-block">
+                <div class="signature-line"></div>
+                <div class="signature-label">Docente responsável</div>
+            </div>
+            <div class="signature-block">
+                <div class="signature-line"></div>
+                <div class="signature-label">Coordenador(a) de Curso responsável</div>
+            </div>
+
+            <!-- PARECERES -->
+            <div class="parecer-block">
+                <h4>Parecer Técnico - Pró-Reitoria de Pós-Graduação, Pesquisa, Extensão e Cursos Livres</h4>
+                <div class="field-group"><textarea rows="2" placeholder="Parecer..."></textarea></div>
+                <div class="field-row">
+                    <div class="field-group"><label>Data:</label><input type="date"></div>
+                </div>
+                <div class="signature-block"><div class="signature-line"></div><div class="signature-label">Assinatura</div></div>
+            </div>
+
+            <div class="parecer-block">
+                <h4>Parecer - Pró-Reitoria Executiva de Administração, Inovação e Tecnologia</h4>
+                <div class="field-group"><textarea rows="2" placeholder="Parecer..."></textarea></div>
+                <div class="field-row">
+                    <div class="field-group"><label>Data:</label><input type="date"></div>
+                </div>
+                <div class="signature-block"><div class="signature-line"></div><div class="signature-label">Assinatura</div></div>
+            </div>
+
+            <div class="parecer-block">
+                <h4>Parecer - Pró-Reitoria de Ensino de Graduação e Aprendizagem, Cultura, Relação Comunitária e Responsabilidade Social</h4>
+                <div class="field-group"><textarea rows="2" placeholder="Parecer..."></textarea></div>
+                <div class="field-row">
+                    <div class="field-group"><label>Data:</label><input type="date"></div>
+                </div>
+                <div class="signature-block"><div class="signature-line"></div><div class="signature-label">Assinatura</div></div>
+            </div>
+
+            <div class="parecer-block">
+                <h4>Parecer - Gerência de Pesquisa, Extensão e Cursos Livres</h4>
+                <div class="field-group"><textarea rows="2" placeholder="Parecer..."></textarea></div>
+                <div class="field-row">
+                    <div class="field-group"><label>Data:</label><input type="date"></div>
+                </div>
+                <div class="signature-block"><div class="signature-line"></div><div class="signature-label">Assinatura</div></div>
+            </div>
+
+            <div class="parecer-block">
+                <h4>Parecer - Coordenadoria do Núcleo de Apoio Pedagógico (NAP)</h4>
+                <div class="field-group"><textarea rows="2" placeholder="Parecer..."></textarea></div>
+                <div class="field-row">
+                    <div class="field-group"><label>Data:</label><input type="date"></div>
+                </div>
+                <div class="signature-block"><div class="signature-line"></div><div class="signature-label">Assinatura</div></div>
+            </div>
+
+            <div class="parecer-block">
+                <h4>Parecer - Núcleo Docente Estruturante (NDE)</h4>
+                <div class="field-group"><textarea rows="2" placeholder="Parecer..."></textarea></div>
+                <div class="field-row">
+                    <div class="field-group"><label>Data:</label><input type="date"></div>
+                </div>
+                <div class="signature-block">
+                    <div class="signature-line"></div><div class="signature-label">Assinatura</div>
+                    <div class="signature-line"></div><div class="signature-label">Assinatura</div>
+                    <div class="signature-line"></div><div class="signature-label">Assinatura</div>
+                </div>
+            </div>
+        </div>
+
+    </div><!-- /pdf-content -->
+
+    <button class="btn-generate no-print" onclick="generatePDF('pdf-plano', 'Plano_Extensao_UNI-CET_2025')">
+        Gerar PDF - Plano de Extensão
+    </button>
+</div>
+</div>
+
+<!-- ============================================================ -->
+<!-- RELATÓRIO DA ATIVIDADE DE EXTENSÃO -->
+<!-- ============================================================ -->
+<div id="relatorio" class="form-page">
+<div class="form-container">
+    <div class="pdf-content" id="pdf-relatorio">
+
+        <div class="doc-title">RELATÓRIO DA ATIVIDADE DE EXTENSÃO</div>
+
+        <!-- TIPO DE EXTENSÃO -->
+        <div class="section">
+            <div class="section-title">TIPO DE EXTENSÃO</div>
+            <div class="checkbox-grid">
+                <label class="checkbox-item"><input type="radio" name="rel_tipo_ext" value="Curricular"> Curricular</label>
+                <label class="checkbox-item"><input type="radio" name="rel_tipo_ext" value="Extracurricular"> Extracurricular</label>
+            </div>
+            <div class="field-row" style="margin-top:10px">
+                <div class="field-group">
+                    <label>TÍTULO DA AÇÃO EXTENSIONISTA:</label>
+                    <input type="text" placeholder="Título da ação">
+                </div>
+                <div class="field-group" style="max-width:160px">
+                    <label>DATA:</label>
+                    <input type="date">
+                </div>
+            </div>
+        </div>
+
+        <!-- I - IDENTIFICAÇÃO DA AÇÃO -->
+        <div class="section">
+            <div class="section-title">I - IDENTIFICAÇÃO DA AÇÃO</div>
+
+            <div class="field-group">
+                <label>TIPO DE AÇÃO:</label>
+                <div class="checkbox-grid">
+                    <label class="checkbox-item"><input type="radio" name="rel_tipo_acao" value="Projeto"> Projeto</label>
+                    <label class="checkbox-item"><input type="radio" name="rel_tipo_acao" value="Programa"> Programa</label>
+                    <label class="checkbox-item"><input type="radio" name="rel_tipo_acao" value="Curso"> Curso</label>
+                    <label class="checkbox-item"><input type="radio" name="rel_tipo_acao" value="Evento"> Evento</label>
+                    <label class="checkbox-item"><input type="radio" name="rel_tipo_acao" value="Prestação de Serviço"> Prestação de Serviço</label>
+                    <label class="checkbox-item"><input type="radio" name="rel_tipo_acao" value="Outro"> Outro</label>
+                </div>
+                <input type="text" placeholder="Se outro, especifique" style="margin-top:4px">
+            </div>
+
+            <div class="field-group">
+                <label>ÁREA TEMÁTICA:</label>
+                <div class="checkbox-grid">
+                    <label class="checkbox-item"><input type="checkbox" name="rel_area[]" value="Educação"> Educação</label>
+                    <label class="checkbox-item"><input type="checkbox" name="rel_area[]" value="Saúde"> Saúde</label>
+                    <label class="checkbox-item"><input type="checkbox" name="rel_area[]" value="Meio Ambiente"> Meio Ambiente</label>
+                    <label class="checkbox-item"><input type="checkbox" name="rel_area[]" value="Cultura"> Cultura</label>
+                    <label class="checkbox-item"><input type="checkbox" name="rel_area[]" value="Direitos Humanos e Justiça"> Direitos Humanos e Justiça</label>
+                    <label class="checkbox-item"><input type="checkbox" name="rel_area[]" value="Trabalho"> Trabalho</label>
+                    <label class="checkbox-item"><input type="checkbox" name="rel_area[]" value="Comunicação"> Comunicação</label>
+                    <label class="checkbox-item"><input type="checkbox" name="rel_area[]" value="Tecnologia e Produção"> Tecnologia e Produção</label>
+                </div>
+            </div>
+
+            <div class="field-group">
+                <label>LINHA PROGRAMÁTICA:</label>
+                <input type="text" placeholder="Ex: Educação ambiental, Gênero e diversidade, Economia solidária...">
+            </div>
+
+            <div class="field-row">
+                <div class="field-group">
+                    <label>CARGA HORÁRIA TOTAL DA AÇÃO:</label>
+                    <input type="text" placeholder="Prevista e realizada">
+                </div>
+                <div class="field-group">
+                    <label>LOCAL:</label>
+                    <input type="text" placeholder="Local da ação">
+                </div>
+            </div>
+        </div>
+
+        <!-- II - EQUIPE EXECUTORA -->
+        <div class="section">
+            <div class="section-title">II - EQUIPE EXECUTORA</div>
+            <div class="field-group">
+                <label>COORDENADOR(A):</label>
+                <textarea rows="2" placeholder="Nome completo, matrícula, cargo, vínculo institucional, e-mail"></textarea>
+            </div>
+            <div class="field-group">
+                <label>EQUIPE DOCENTE E/OU TÉCNICA:</label>
+                <textarea rows="2" placeholder="Nome, função, carga horária dedicada"></textarea>
+            </div>
+            <div class="field-group">
+                <label>ESTUDANTES ENVOLVIDOS:</label>
+                <textarea rows="2" placeholder="Nome, curso, semestre, tipo de participação (bolsista, voluntário, curricularizado)"></textarea>
+            </div>
+            <div class="field-group">
+                <label>OUTROS PARTICIPANTES:</label>
+                <textarea rows="2" placeholder="Se houver técnicos, profissionais da comunidade, etc."></textarea>
+            </div>
+        </div>
+
+        <!-- III - PÚBLICO-ALVO -->
+        <div class="section">
+            <div class="section-title">III - PÚBLICO-ALVO E ABRANGÊNCIA</div>
+            <div class="field-group">
+                <label>PERFIL DO PÚBLICO ATENDIDO:</label>
+                <textarea rows="2" placeholder="Faixa etária, nível de escolaridade, localidade, condição social..."></textarea>
+            </div>
+            <div class="field-group">
+                <label>NÚMERO DE PARTICIPANTES EXTERNOS:</label>
+                <input type="text" placeholder="Previsto e real">
+            </div>
+            <div class="field-group">
+                <label>INSTITUIÇÕES/PARCEIROS ENVOLVIDOS:</label>
+                <textarea rows="2" placeholder="Se houver escolas, ONGs, associações, etc."></textarea>
+            </div>
+        </div>
+
+        <!-- IV - OBJETIVOS -->
+        <div class="section">
+            <div class="section-title">IV - OBJETIVOS DA AÇÃO</div>
+            <div class="field-group">
+                <label>OBJETIVO GERAL:</label>
+                <textarea rows="2" placeholder="Frase única e clara que defina a finalidade principal da ação"></textarea>
+            </div>
+            <div class="field-group">
+                <label>OBJETIVOS ESPECÍFICOS:</label>
+                <textarea rows="3" placeholder="Listar de 2 a 4 objetivos mensuráveis"></textarea>
+            </div>
+        </div>
+
+        <!-- V - JUSTIFICATIVA -->
+        <div class="section">
+            <div class="section-title">V - JUSTIFICATIVA</div>
+            <div class="field-group">
+                <textarea rows="4" placeholder="Motivação da ação: demanda social identificada, problemas a serem enfrentados, importância para a comunidade e formação dos estudantes."></textarea>
+            </div>
+        </div>
+
+        <!-- VI - METODOLOGIA -->
+        <div class="section">
+            <div class="section-title">VI - METODOLOGIA</div>
+            <div class="field-group">
+                <textarea rows="5" placeholder="Como a ação foi executada: estratégias, participação da comunidade, ferramentas/materiais, integração com ensino e pesquisa, enfoque pedagógico..."></textarea>
+            </div>
+        </div>
+
+        <!-- VII - ATIVIDADES DESENVOLVIDAS -->
+        <div class="section">
+            <div class="section-title">VII - ATIVIDADES DESENVOLVIDAS</div>
+            <table class="dynamic-table" id="rel-atividades">
+                <thead>
+                    <tr>
+                        <th style="width:110px">Data</th>
+                        <th>Atividade Realizada</th>
+                        <th style="width:150px">Local</th>
+                        <th style="width:180px">Participantes Envolvidos</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr><td><input type="date"></td><td><input type="text"></td><td><input type="text"></td><td><input type="text"></td></tr>
+                    <tr><td><input type="date"></td><td><input type="text"></td><td><input type="text"></td><td><input type="text"></td></tr>
+                    <tr><td><input type="date"></td><td><input type="text"></td><td><input type="text"></td><td><input type="text"></td></tr>
+                    <tr><td><input type="date"></td><td><input type="text"></td><td><input type="text"></td><td><input type="text"></td></tr>
+                    <tr><td><input type="date"></td><td><input type="text"></td><td><input type="text"></td><td><input type="text"></td></tr>
+                </tbody>
+            </table>
+            <button class="btn-add-row no-print" onclick="addAtividadeRow()">+ Adicionar linha</button>
+        </div>
+
+        <!-- VIII - RESULTADOS ALCANÇADOS -->
+        <div class="section">
+            <div class="section-title">VIII - RESULTADOS ALCANÇADOS</div>
+            <div class="field-group">
+                <label>Resultados qualitativos:</label>
+                <textarea rows="3" placeholder="Mudanças percebidas, engajamento, participação ativa..."></textarea>
+            </div>
+            <div class="field-group">
+                <label>Resultados quantitativos:</label>
+                <textarea rows="3" placeholder="Número de beneficiados, produtos entregues, atividades executadas..."></textarea>
+            </div>
+            <div class="field-group">
+                <label>Depoimentos e aprendizagens:</label>
+                <textarea rows="3" placeholder="Relato de depoimentos, aprendizagens, efeitos percebidos..."></textarea>
+            </div>
+        </div>
+
+        <!-- IX - AVALIAÇÃO -->
+        <div class="section">
+            <div class="section-title">IX - AVALIAÇÃO DA AÇÃO</div>
+            <div class="field-group">
+                <label>Avaliação da comunidade/público participante:</label>
+                <textarea rows="3" placeholder="Como foi coletado o feedback? O que foi positivo? O que melhorar?"></textarea>
+            </div>
+            <div class="field-group">
+                <label>Avaliação interna da equipe executora:</label>
+                <textarea rows="3" placeholder="O que funcionou? Dificuldades? Aprendizagens para ações futuras?"></textarea>
+            </div>
+        </div>
+
+        <!-- X - PRODUTOS GERADOS -->
+        <div class="section">
+            <div class="section-title">X - PRODUTOS GERADOS (SE HOUVER)</div>
+            <div class="field-group">
+                <textarea rows="4" placeholder="Materiais didáticos, artigos, resumos, TCCs, relatórios parciais, aplicativos, protótipos... Indicar links ou anexos."></textarea>
+            </div>
+        </div>
+
+        <!-- XI - ODS -->
+        <div class="section">
+            <div class="section-title">XI - VINCULAÇÃO COM OS ODS</div>
+            <div class="field-group">
+                <textarea rows="3" placeholder="Relacione com 1 a 3 ODS da Agenda 2030 da ONU. Ex: ODS 3 – Saúde e bem-estar; ODS 4 – Educação de qualidade..."></textarea>
+            </div>
+        </div>
+
+        <!-- XII - CARGA HORÁRIA -->
+        <div class="section">
+            <div class="section-title">XII - CARGA HORÁRIA TOTAL</div>
+            <table class="dynamic-table" id="rel-carga">
+                <thead>
+                    <tr>
+                        <th>Atividade</th>
+                        <th style="width:150px">Carga Horária (h)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr><td><input type="text" value="Planejamento"></td><td><input type="text" placeholder="Ex: 10h"></td></tr>
+                    <tr><td><input type="text" value="Execução"></td><td><input type="text" placeholder="Ex: 30h"></td></tr>
+                    <tr><td><input type="text" value="Avaliação e sistematização"></td><td><input type="text" placeholder="Ex: 10h"></td></tr>
+                </tbody>
+                <tfoot>
+                    <tr>
+                        <th style="text-align:right">Total:</th>
+                        <th><input type="text" placeholder="Ex: 50h" style="font-weight:bold;text-align:center"></th>
+                    </tr>
+                </tfoot>
+            </table>
+        </div>
+
+        <!-- XIII - OBSERVAÇÃO FINAL -->
+        <div class="section">
+            <div class="section-title">XIII - OBSERVAÇÃO FINAL</div>
+            <div class="field-group">
+                <textarea rows="3" placeholder="Observações adicionais sobre o relatório...">Este relatório atende às diretrizes da Resolução CNE/CES nº 7/2018 e às orientações da política de extensão da instituição, visando demonstrar o impacto social da ação, sua articulação com o ensino e a formação cidadã dos estudantes.</textarea>
+            </div>
+        </div>
+
+        <!-- XIV - AUTENTICAÇÃO -->
+        <div class="section">
+            <div class="section-title">XIV - AUTENTICAÇÃO</div>
+            <div class="field-row">
+                <div class="field-group">
+                    <label>Teresina,</label>
+                    <input type="date">
+                </div>
+            </div>
+            <div class="signature-block">
+                <div class="signature-line"></div>
+                <div class="signature-label">Docente responsável</div>
+            </div>
+            <div class="signature-block">
+                <div class="signature-line"></div>
+                <div class="signature-label">Coordenador(a) de Curso responsável</div>
+            </div>
+        </div>
+
+        <!-- XV - ANEXOS -->
+        <div class="section">
+            <div class="section-title">XV - ANEXOS</div>
+            <div class="field-group">
+                <textarea rows="4" placeholder="Lista de presença; Questionário aplicado; Avaliações; Fotos (com autorização); Cartazes e materiais; Produções acadêmicas..."></textarea>
+            </div>
+        </div>
+
+    </div><!-- /pdf-content -->
+
+    <button class="btn-generate no-print" onclick="generatePDF('pdf-relatorio', 'Relatorio_Extensao_UNI-CET_2025')">
+        Gerar PDF - Relatório de Extensão
+    </button>
+</div>
+</div>
+
+<script>
+    // ===== TAB SWITCHING =====
+    function switchTab(tabId) {
+        document.querySelectorAll('.form-page').forEach(p => p.classList.remove('active'));
+        document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+        document.getElementById(tabId).classList.add('active');
+        event.target.classList.add('active');
+    }
+
+    // ===== ADD TABLE ROWS =====
+    function addCronogramaRow(tableId) {
+        const tbody = document.querySelector('#' + tableId + ' tbody');
+        const num = tbody.rows.length + 1;
+        const tr = document.createElement('tr');
+        tr.innerHTML = `<td style="text-align:center">${num}</td><td><input type="text"></td><td><input type="date"></td><td><input type="text"></td><td><input type="text"></td>`;
+        tbody.appendChild(tr);
+    }
+
+    function addCustoRow(tableId) {
+        const tbody = document.querySelector('#' + tableId + ' tbody');
+        const num = tbody.rows.length + 1;
+        const tr = document.createElement('tr');
+        tr.innerHTML = `<td style="text-align:center">${num}</td><td><input type="text"></td><td><input type="number" min="0"></td><td><input type="text"></td><td><input type="text"></td><td><input type="text"></td>`;
+        tbody.appendChild(tr);
+    }
+
+    function addAtividadeRow() {
+        const tbody = document.querySelector('#rel-atividades tbody');
+        const tr = document.createElement('tr');
+        tr.innerHTML = `<td><input type="date"></td><td><input type="text"></td><td><input type="text"></td><td><input type="text"></td>`;
+        tbody.appendChild(tr);
+    }
+
+    // ===== PDF GENERATION =====
+    function generatePDF(elementId, filename) {
+        const element = document.getElementById(elementId);
+        const btn = event.target;
+        btn.disabled = true;
+        btn.textContent = 'Gerando PDF...';
+
+        const opt = {
+            margin:       [10, 10, 10, 10],
+            filename:     filename + '.pdf',
+            image:        { type: 'jpeg', quality: 0.98 },
+            html2canvas:  { scale: 2, useCORS: true, letterRendering: true },
+            jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' },
+            pagebreak:    { mode: ['avoid-all', 'css', 'legacy'] }
+        };
+
+        html2pdf().set(opt).from(element).save().then(() => {
+            btn.disabled = false;
+            btn.textContent = btn.textContent.includes('Plano')
+                ? 'Gerar PDF - Plano de Extensão'
+                : 'Gerar PDF - Relatório de Extensão';
+        }).catch(() => {
+            btn.disabled = false;
+            btn.textContent = 'Erro - Tente novamente';
+        });
+    }
+</script>
+
+</body>
+</html>

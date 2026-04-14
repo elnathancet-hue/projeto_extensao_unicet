@@ -60,8 +60,16 @@ function mapRequestToRegistro(body) {
 
 async function listprojeto_extensaos(req, res) {
   try {
-    const projeto_extensaos = await projeto_extensaoModel.getAllprojeto_extensaos();
-    res.render('consultas/projeto_extensao', { dados: projeto_extensaos });
+    const filters = {
+      titulo: req.query.titulo || '',
+      id_tipo_plano: req.query.id_tipo_plano || '',
+      periodo_inicio_de: req.query.periodo_inicio_de || '',
+      periodo_inicio_ate: req.query.periodo_inicio_ate || ''
+    };
+    const hasFilter = Object.values(filters).some(v => v);
+    const projeto_extensaos = hasFilter ? await projeto_extensaoModel.filterprojeto_extensao(filters) : await projeto_extensaoModel.getAllprojeto_extensaos();
+    const tipoPlanos = await tipo_planoModel.getAlltipo_plano();
+    res.render('consultas/projeto_extensao', { dados: projeto_extensaos, filters, tipoPlanos });
   } catch (error) {
     console.error('Erro ao buscar projeto_extensaos:', error);
     res.render('error', {

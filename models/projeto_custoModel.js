@@ -112,6 +112,17 @@ async function updateprojeto_custo(id, registro) {
   }
 }
 
+async function filterprojeto_custo(filters) {
+  let sql = baseSelect;
+  const conditions = [];
+  const params = [];
+  if (filters.id_projeto) { conditions.push('c.id_projeto = ?'); params.push(filters.id_projeto); }
+  if (filters.descricao) { conditions.push('c.descricao LIKE ?'); params.push('%' + filters.descricao + '%'); }
+  if (conditions.length) sql += ' WHERE ' + conditions.join(' AND ');
+  sql += ' ORDER BY c.Id DESC';
+  return await runQuery(sql, params);
+}
+
 module.exports = {
   getAllprojeto_custo,
   getprojeto_custoByNome,
@@ -120,5 +131,6 @@ module.exports = {
   getprojeto_custoById,
   getprojeto_custoByProjetoId,
   deleteprojeto_custo,
-  updateprojeto_custo
+  updateprojeto_custo,
+  filterprojeto_custo
 };

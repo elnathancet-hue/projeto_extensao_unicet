@@ -2,8 +2,10 @@ const escolaridadeModel = require('../models/escolaridadeModel');
 
 async function listescolaridade(req, res) {
  try {
- const escolaridade = await escolaridadeModel.getAllescolaridade();
- res.render('consultas/escolaridade', { dados: escolaridade });
+ const filters = { descricao: req.query.descricao || '' };
+ const hasFilter = Object.values(filters).some(v => v);
+ const escolaridade = hasFilter ? await escolaridadeModel.getescolaridadeByNome(filters.descricao) : await escolaridadeModel.getAllescolaridade();
+ res.render('consultas/escolaridade', { dados: escolaridade, filters });
  } catch (error) {
  console.error('Erro ao buscar cursos:', error);
  res.render('error', { message: 'Erro ao buscar cursos', returnLink: '/logo' });
@@ -26,10 +28,10 @@ async function filterescolaridade(req, res) {
 }
 
 async function addescolaridade(req, res) {
- const { nome_escolaridade } = req.body;
+ const nome_escolaridade = req.body.nome_escolaridade || req.body.descricao;
  try {
  await escolaridadeModel.insertescolaridade(nome_escolaridade);
- res.redirect('/escolaridade');
+ res.redirect('/configuracoes');
  } catch (error) {
  console.error('Erro ao inserir escolaridade:', error);
  res.render('error', { message: 'Erro ao inserir escolaridade', returnLink: '/logo' });
@@ -68,10 +70,10 @@ async function showEditForm(req, res) {
 
 async function editescolaridade(req, res) {
  const id = req.params.id;
- const { nome_escolaridade } = req.body;
+ const nome_escolaridade = req.body.nome_escolaridade || req.body.descricao;
  try {
  await escolaridadeModel.updateescolaridade(id, nome_escolaridade);
- res.redirect('/escolaridade');
+ res.redirect('/configuracoes');
  } catch (error) {
  console.error('Erro ao editar escolaridade:', error);
  res.render('error', { message: 'Erro ao editar escolaridade', returnLink: '/logo' });
@@ -97,7 +99,7 @@ async function deleteescolaridade(req, res) {
  const id = req.params.id;
  try {
  await escolaridadeModel.deleteescolaridade(id);
- res.redirect('/escolaridade');
+ res.redirect('/configuracoes');
  } catch (error) {
  console.error('Erro ao excluir escolaridade:', error);
  res.render('error', { message: 'Erro ao excluir escolaridade', returnLink: '/logo' });

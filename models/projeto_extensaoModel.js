@@ -274,6 +274,20 @@ async function getPessoasByProjeto(id_projeto) {
     }
   }
 
+async function filterprojeto_extensao(filters) {
+  let sql = `SELECT id_projeto, titulo, id_tipo_plano, coordenador_id, periodo_inicio, periodo_fim, carga_horaria_total, id_publico_alvo, objetivo, metodologia FROM Projeto_Extensao`;
+  const conditions = [];
+  const params = [];
+  if (filters.titulo) { conditions.push('titulo LIKE ?'); params.push('%' + filters.titulo + '%'); }
+  if (filters.id_tipo_plano) { conditions.push('id_tipo_plano = ?'); params.push(filters.id_tipo_plano); }
+  if (filters.periodo_inicio_de) { conditions.push('periodo_inicio >= ?'); params.push(filters.periodo_inicio_de); }
+  if (filters.periodo_inicio_ate) { conditions.push('periodo_inicio <= ?'); params.push(filters.periodo_inicio_ate); }
+  if (conditions.length) sql += ' WHERE ' + conditions.join(' AND ');
+  sql += ' ORDER BY id_projeto DESC';
+  const [rows] = await pool.query(sql, params);
+  return rows;
+}
+
 module.exports = {
   getAllprojeto_extensaos,
   getprojeto_extensaosByNome,
@@ -288,5 +302,6 @@ module.exports = {
   getCursosByProjeto,
   updateCursosProjeto,
   getPessoasByProjeto,
-  updatePessoasProjeto
+  updatePessoasProjeto,
+  filterprojeto_extensao
 };

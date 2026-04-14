@@ -80,10 +80,23 @@ async function deleteCronograma(id) {
   }
 }
 
+async function filterCronograma(filters) {
+  let sql = 'SELECT * FROM cronograma_atividades';
+  const conditions = [];
+  const params = [];
+  if (filters.etapa) { conditions.push('etapa LIKE ?'); params.push('%' + filters.etapa + '%'); }
+  if (filters.local) { conditions.push('local LIKE ?'); params.push('%' + filters.local + '%'); }
+  if (conditions.length) sql += ' WHERE ' + conditions.join(' AND ');
+  sql += ' ORDER BY id DESC';
+  const [rows] = await pool.query(sql, params);
+  return rows;
+}
+
 module.exports = {
   getAllCronograma,
   getCronogramaById,
   insertCronograma,
   updateCronograma,
   deleteCronograma,
+  filterCronograma,
 };

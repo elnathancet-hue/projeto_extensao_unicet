@@ -5,7 +5,7 @@ const pool = require('../db');
 async function getAllpessoas() {
   try {
   const [pessoas] = await pool.query(
-    'SELECT id_pessoa, nome, cpf, email, telefone, id_tipo_pessoa FROM pessoa'
+    'SELECT p.id_pessoa, p.nome, p.cpf, p.email, p.telefone, p.id_tipo_pessoa, COALESCE(tp.descricao, "-") AS tipo_nome FROM pessoa p LEFT JOIN tipo_pessoa tp ON p.id_tipo_pessoa = tp.id_tipo_pessoa'
   );
   return pessoas;
   }
@@ -105,12 +105,27 @@ async function updatepessoas(id, registro) {
 }
 }
 
-module.exports = {  
-  getAllpessoas,    
+async function filterpessoa(filters) {
+  let sql = 'SELECT id_pessoa, nome, cpf, email, telefone, id_tipo_pessoa FROM pessoa';
+  const conditions = [];
+  const params = [];
+  if (filters.nome) { conditions.push('nome LIKE ?'); params.push('%' + filters.nome + '%'); }
+  if (filters.cpf) { conditions.push('cpf LIKE ?'); params.push('%' + filters.cpf + '%'); }
+  if (filters.email) { conditions.push('email LIKE ?'); params.push('%' + filters.email + '%'); }
+  if (filters.id_tipo_pessoa) { conditions.push('id_tipo_pessoa = ?'); params.push(filters.id_tipo_pessoa); }
+  if (conditions.length) sql += ' WHERE ' + conditions.join(' AND ');
+  sql += ' ORDER BY id_pessoa DESC';
+  const [rows] = await pool.query(sql, params);
+  return rows;
+}
+
+module.exports = {
+  getAllpessoas,
   getpessoasByNome,
   getpessoasByNomedelete,
   insertpessoas,
   getpessoasById,
   deletepessoas,
-  updatepessoas
+  updatepessoas,
+  filterpessoa
 };

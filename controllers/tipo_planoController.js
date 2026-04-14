@@ -3,8 +3,10 @@ const tipo_planoModel = require('../models/tipo_planoModel');
 
 async function listAll(req, res) {
   try {
-    const registros = await tipo_planoModel.getAlltipo_plano();
-    res.render('consultas/tipo_plano', { dados: registros });
+    const filters = { descricao: req.query.descricao || '' };
+    const hasFilter = Object.values(filters).some(v => v);
+    const registros = hasFilter ? await tipo_planoModel.gettipo_planoByNome(filters.descricao) : await tipo_planoModel.getAlltipo_plano();
+    res.render('consultas/tipo_plano', { dados: registros, filters });
   } catch (error) {
     console.error('Erro ao buscar tipos de plano:', error);
     res.render('error', { message: 'Erro ao buscar tipos de plano', returnLink: '/logo' });
@@ -26,7 +28,7 @@ async function insert(req, res) {
   const { descricao } = req.body;
   try {
     await tipo_planoModel.inserttipo_plano(descricao);
-    res.redirect('/tipo_plano');
+    res.redirect('/configuracoes');
   } catch (error) {
     console.error('Erro ao inserir tipo de plano:', error);
     res.render('error', { message: 'Erro ao inserir', returnLink: '/logo' });
@@ -49,7 +51,7 @@ async function update(req, res) {
   const { descricao } = req.body;
   try {
     await tipo_planoModel.updatetipo_plano(id, descricao);
-    res.redirect('/tipo_plano');
+    res.redirect('/configuracoes');
   } catch (error) {
     console.error('Erro ao editar tipo de plano:', error);
     res.render('error', { message: 'Erro ao editar', returnLink: '/tipo_plano' });
@@ -60,7 +62,7 @@ async function deleteRecord(req, res) {
   const { id } = req.params;
   try {
     await tipo_planoModel.deletetipo_plano(id);
-    res.redirect('/tipo_plano');
+    res.redirect('/configuracoes');
   } catch (error) {
     console.error('Erro ao excluir tipo de plano:', error);
     res.render('error', { message: 'Erro ao excluir', returnLink: '/tipo_plano' });

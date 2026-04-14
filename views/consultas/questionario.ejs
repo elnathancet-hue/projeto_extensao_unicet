@@ -1,73 +1,58 @@
-<%- include('../cabecalho', { titulo: 'Consulta de Impactos' }) %>
+<%- include('../cabecalho', { titulo: 'Questionários de Impacto' }) %>
 
-<div class="container mt-4">
-  <div class="row mb-4 align-items-center border-bottom pb-3">
-    <div class="col-md-6">
-      <h2 class="h4 mb-0"><i class="bi bi-list-check"></i> Questionários de Impacto</h2>
+<main id="conteudo-principal-form" class="container my-5">
+  <section class="card shadow p-4 p-md-5">
+    <div class="d-flex align-items-center mb-4 pb-3 border-bottom">
+      <i class="bi bi-clipboard-check fs-4 me-2"></i>
+      <h1 class="fs-4 fw-bold mb-0">Questionários de Impacto</h1>
     </div>
-    <div class="col-md-6 text-end">
-      <a href="/questionario/forms/questionario" class="btn btn-success">
+
+    <div class="d-flex justify-content-end mb-3">
+      <a href="/questionario/forms/questionario" class="btn btn-primary btn-sm">
         <i class="bi bi-plus-circle"></i> Novo Questionário
       </a>
     </div>
-  </div>
 
-  <div id="form-feedback-message" class="alert d-none" role="alert"></div>
-
-  <div class="table-responsive shadow-sm rounded">
-    <table class="table table-hover align-middle">
-      <thead class="table-light">
-        <tr>
-          <th style="width: 80px;"><i class="bi bi-hash"></i> ID</th>
-          <th><i class="bi bi-journal-text"></i> Ação Extensionista</th>
-          <th><i class="bi bi-building"></i> Instituição</th>
-          <th><i class="bi bi-calendar-event"></i> Data</th>
-          <th><i class="bi bi-geo-alt"></i> Local</th>
-          <th><i class="bi bi-star"></i> Avaliação</th>
-          <th class="text-center"><i class="bi bi-gear"></i> Ações</th>
-        </tr>
-      </thead>
-      <tbody>
-        <% if (dados && dados.length > 0) { %>
-          <% dados.forEach(d => { %>
-            <tr>
-              <td>
-                <span class="badge rounded-pill bg-secondary px-3"><%= d.id %></span>
-              </td>
-              <td class="fw-semibold"><%= d.nome_acao %></td>
-              <td><%= d.instituicao %></td>
-              <td><%= d.data_realizacao ? new Date(d.data_realizacao).toLocaleDateString('pt-BR') : 'N/A' %></td>
-              <td><%= d.local_realizacao %></td>
-              <td>
-                <span class="badge bg-info text-dark"><%= d.aval_conteudo %></span>
-              </td>
-                <td class="text-nowrap align-middle">
-    <a href="/projeto_custo/<%= d.Id %>/edit" class="text-success me-3" title="Editar" style="text-decoration: none; font-weight: 500;">
-      <i class="bi bi-pencil-square me-1"></i> Editar
-    </a>
-
-    <a href="/projeto_custo/<%= d.Id %>/delete" class="text-danger" title="Deletar" style="text-decoration: none; font-weight: 500;" onclick="return confirm('Tem certeza que deseja deletar este custo?')">
-      <i class="bi bi-trash-fill me-1"></i> Deletar
-    </a>
-  </td>
-            </tr>
-          <% }) %>
-        <% } else { %>
+    <div class="table-responsive">
+      <table class="table table-hover">
+        <thead class="table-light">
           <tr>
-            <td colspan="7" class="text-center py-4 text-muted">
-              <i class="bi bi-info-circle me-1"></i> Nenhum questionário encontrado no banco de dados.
-            </td>
+            <th>ID</th>
+            <th>Ação Extensionista</th>
+            <th>Instituição</th>
+            <th>Data</th>
+            <th>Local</th>
+            <th>Avaliação</th>
+            <th>Ações</th>
           </tr>
-        <% } %>
-      </tbody>
-    </table>
-  </div>
+        </thead>
+        <tbody>
+          <% if (dados && dados.length > 0) { %>
+            <% dados.forEach(d => { %>
+              <tr>
+                <td><span class="badge bg-secondary"><%= d.id %></span></td>
+                <td><%= d.nome_acao %></td>
+                <td><%= d.instituicao %></td>
+                <td><%= d.data_realizacao ? new Date(d.data_realizacao).toLocaleDateString('pt-BR') : '-' %></td>
+                <td><%= d.local_realizacao %></td>
+                <td><span class="badge bg-info"><%= d.aval_conteudo %></span></td>
+                <td>
+                  <a href="/questionario/<%= d.id %>/edit" class="btn btn-primary btn-sm"><i class="bi bi-pencil"></i> Editar</a>
+                  <a href="/questionario/<%= d.id %>/delete" class="btn btn-danger btn-sm" onclick="return confirm('Tem certeza que deseja excluir?')"><i class="bi bi-trash"></i> Excluir</a>
+                </td>
+              </tr>
+            <% }) %>
+          <% } else { %>
+            <tr><td colspan="7" class="text-center py-4 text-muted">Nenhum questionário encontrado.</td></tr>
+          <% } %>
+        </tbody>
+      </table>
+    </div>
 
-  <div class="mt-4">
-    <a href="/logo" class="btn btn-secondary">
-      <i class="bi bi-arrow-left"></i> Voltar
-    </a>
-  </div>
-</div>
+    <div class="mt-3">
+      <a href="/logo" class="btn btn-secondary"><i class="bi bi-arrow-left"></i> Voltar</a>
+    </div>
+  </section>
+</main>
 
 <%- include('../rodape') %>

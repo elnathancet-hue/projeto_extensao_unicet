@@ -3,8 +3,10 @@ const papel_projetoModel = require('../models/papel_projetoModel');
 
 async function listAll(req, res) {
   try {
-    const registros = await papel_projetoModel.getAllpapel_projeto();
-    res.render('consultas/papel_projeto', { dados: registros });
+    const filters = { descricao: req.query.descricao || '' };
+    const hasFilter = Object.values(filters).some(v => v);
+    const registros = hasFilter ? await papel_projetoModel.getpapel_projetoByNome(filters.descricao) : await papel_projetoModel.getAllpapel_projeto();
+    res.render('consultas/papel_projeto', { dados: registros, filters });
   } catch (error) {
     console.error('Erro ao buscar papéis do projeto:', error);
     res.render('error', { message: 'Erro ao buscar papéis do projeto', returnLink: '/logo' });
@@ -26,7 +28,7 @@ async function insert(req, res) {
   const { descricao } = req.body;
   try {
     await papel_projetoModel.insertpapel_projeto(descricao);
-    res.redirect('/papel_projeto');
+    res.redirect('/configuracoes');
   } catch (error) {
     console.error('Erro ao inserir papel do projeto:', error);
     res.render('error', { message: 'Erro ao inserir', returnLink: '/logo' });
@@ -49,7 +51,7 @@ async function update(req, res) {
   const { descricao } = req.body;
   try {
     await papel_projetoModel.updatepapel_projeto(id, descricao);
-    res.redirect('/papel_projeto');
+    res.redirect('/configuracoes');
   } catch (error) {
     console.error('Erro ao editar papel do projeto:', error);
     res.render('error', { message: 'Erro ao editar', returnLink: '/papel_projeto' });
@@ -60,7 +62,7 @@ async function deleteRecord(req, res) {
   const { id } = req.params;
   try {
     await papel_projetoModel.deletepapel_projeto(id);
-    res.redirect('/papel_projeto');
+    res.redirect('/configuracoes');
   } catch (error) {
     console.error('Erro ao excluir papel do projeto:', error);
     res.render('error', { message: 'Erro ao excluir', returnLink: '/papel_projeto' });

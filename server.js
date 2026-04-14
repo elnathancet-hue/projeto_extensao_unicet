@@ -24,6 +24,14 @@ app.use(
   })
 )
 
+// Middleware para injetar dados da sessão em todas as views
+app.use((req, res, next) => {
+  res.locals.sessionUsuario = req.session ? req.session.usuario : null;
+  res.locals.sessionTipo = req.session ? req.session.tipo : null;
+  res.locals.currentPath = req.path;
+  next();
+});
+
 // Configurando o Express para usar EJS como mecanismo de modelo
 app.set('view engine', 'ejs')
 

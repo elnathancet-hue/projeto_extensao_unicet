@@ -3,8 +3,10 @@ const publico_alvoModel = require('../models/publico_alvoModel');
 
 async function listAll(req, res) {
   try {
-    const registros = await publico_alvoModel.getAllpublico_alvo();
-    res.render('consultas/publico_alvo', { dados: registros });
+    const filters = { descricao: req.query.descricao || '' };
+    const hasFilter = Object.values(filters).some(v => v);
+    const registros = hasFilter ? await publico_alvoModel.getpublico_alvoByNome(filters.descricao) : await publico_alvoModel.getAllpublico_alvo();
+    res.render('consultas/publico_alvo', { dados: registros, filters });
   } catch (error) {
     console.error('Erro ao buscar públicos-alvo:', error);
     res.render('error', { message: 'Erro ao buscar públicos-alvo', returnLink: '/logo' });
@@ -26,7 +28,7 @@ async function insert(req, res) {
   const { descricao } = req.body;
   try {
     await publico_alvoModel.insertpublico_alvo(descricao);
-    res.redirect('/publico_alvo');
+    res.redirect('/configuracoes');
   } catch (error) {
     console.error('Erro ao inserir público-alvo:', error);
     res.render('error', { message: 'Erro ao inserir', returnLink: '/logo' });
@@ -49,7 +51,7 @@ async function update(req, res) {
   const { descricao } = req.body;
   try {
     await publico_alvoModel.updatepublico_alvo(id, descricao);
-    res.redirect('/publico_alvo');
+    res.redirect('/configuracoes');
   } catch (error) {
     console.error('Erro ao editar público-alvo:', error);
     res.render('error', { message: 'Erro ao editar', returnLink: '/publico_alvo' });
@@ -60,7 +62,7 @@ async function deleteRecord(req, res) {
   const { id } = req.params;
   try {
     await publico_alvoModel.deletepublico_alvo(id);
-    res.redirect('/publico_alvo');
+    res.redirect('/configuracoes');
   } catch (error) {
     console.error('Erro ao excluir público-alvo:', error);
     res.render('error', { message: 'Erro ao excluir', returnLink: '/publico_alvo' });

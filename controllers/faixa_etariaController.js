@@ -2,8 +2,10 @@ const faixa_etariaModel = require('../models/faixa_etariaModel');
 
 async function listfaixaetaria(req, res) {
  try {
- const faixaetaria = await faixa_etariaModel.getAllfaixa_etaria();
- res.render('consultas/faixa_etaria', { dados: faixaetaria });
+ const filters = { descricao: req.query.descricao || '' };
+ const hasFilter = Object.values(filters).some(v => v);
+ const faixaetaria = hasFilter ? await faixa_etariaModel.getfaixa_etariaByNome(filters.descricao) : await faixa_etariaModel.getAllfaixa_etaria();
+ res.render('consultas/faixa_etaria', { dados: faixaetaria, filters });
  } catch (error) {
  console.error('Erro ao buscar cursos:', error);
  res.render('error', { message: 'Erro ao buscar cursos', returnLink: '/logo' });
@@ -29,7 +31,7 @@ async function addfaixaetaria(req, res) {
  const { nome_faixaetaria } = req.body;
  try {
  await faixa_etariaModel.insertfaixa_etaria(nome_faixaetaria);
- res.redirect('/faixa_etaria');
+ res.redirect('/configuracoes');
  } catch (error) {
  console.error('Erro ao inserir faixa etaria:', error);
  res.render('error', { message: 'Erro ao inserir faixa etaria', returnLink: '/logo' });
@@ -71,7 +73,7 @@ async function editfaixaetaria(req, res) {
  const { nome_faixaetaria } = req.body;
  try {
  await faixa_etariaModel.updatefaixa_etaria(id, nome_faixaetaria);
- res.redirect('/faixa_etaria');
+ res.redirect('/configuracoes');
  } catch (error) {
  console.error('Erro ao editar faixa etaria:', error);
  res.render('error', { message: 'Erro ao editar faixa etaria', returnLink: '/logo' });
@@ -97,7 +99,7 @@ async function deletefaixaetaria(req, res) {
  const id = req.params.id;
  try {
  await faixa_etariaModel.deletefaixa_etaria(id);
- res.redirect('/faixa_etaria');
+ res.redirect('/configuracoes');
  } catch (error) {
  console.error('Erro ao excluir faixa etaria:', error);
  res.render('error', { message: 'Erro ao excluir faixa etaria', returnLink: '/logo' });

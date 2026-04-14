@@ -57,11 +57,25 @@ async function deletelocal_execucao(id) {
   }
 }
 
+async function filterlocal_execucao(filters) {
+  let sql = 'SELECT id_local, endereco, cep, bairro, cidade FROM Local_Execucao';
+  const conditions = [];
+  const params = [];
+  if (filters.cidade) { conditions.push('cidade LIKE ?'); params.push('%' + filters.cidade + '%'); }
+  if (filters.bairro) { conditions.push('bairro LIKE ?'); params.push('%' + filters.bairro + '%'); }
+  if (filters.endereco) { conditions.push('endereco LIKE ?'); params.push('%' + filters.endereco + '%'); }
+  if (conditions.length) sql += ' WHERE ' + conditions.join(' AND ');
+  sql += ' ORDER BY id_local DESC';
+  const [rows] = await pool.query(sql, params);
+  return rows;
+}
+
 module.exports = {
   getAlllocal_execucao,
   getlocal_execucaoByNome,
   getlocal_execucaoById,
   insertlocal_execucao,
   updatelocal_execucao,
-  deletelocal_execucao
+  deletelocal_execucao,
+  filterlocal_execucao
 };

@@ -14,16 +14,23 @@ async function listprojeto_custo(req, res) {
  try {
  const projetos = await projeto_extensaoModel.getAllprojeto_extensaos();
  const id_projeto = parseInt(req.query.id_projeto, 10);
- 
+ const descricao = req.query.descricao || '';
+ const filters = {
+   id_projeto: (id_projeto && !isNaN(id_projeto)) ? id_projeto : '',
+   descricao: descricao
+ };
+ const hasFilter = Object.values(filters).some(v => v);
+
  let projeto_custo = [];
- if (id_projeto && !isNaN(id_projeto)) {
-   projeto_custo = await projeto_custoModel.getprojeto_custoByProjetoId(id_projeto);
+ if (hasFilter) {
+   projeto_custo = await projeto_custoModel.filterprojeto_custo(filters);
  }
- 
- res.render('consultas/projeto_custo', { 
-   dados: projeto_custo, 
+
+ res.render('consultas/projeto_custo', {
+   dados: projeto_custo,
    projetos,
-   idProjetoSelecionado: id_projeto || ''
+   idProjetoSelecionado: id_projeto || '',
+   filters
  });
  } catch (error) {
  console.error('Erro ao buscar projeto_custo:', error);

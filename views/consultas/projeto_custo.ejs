@@ -24,25 +24,31 @@ if (dados && dados.length > 0) {
       <h1 class="fs-4 fw-bold mb-0">Custos e Receitas</h1>
     </div>
 
+    <% const f = typeof filters !== 'undefined' ? filters : {}; %>
     <!-- Filtro de Projeto -->
     <div class="bg-light p-3 rounded mb-4 border">
-      <form method="GET" action="/projeto_custo/consultas/projeto_custo" id="formFiltroProjeto">
-        <label for="filtro_id_projeto" class="form-label fw-bold">Selecione o Projeto para filtrar os custos:</label>
-        <select 
-          name="id_projeto" 
-          id="filtro_id_projeto" 
-          class="form-select" 
-          onchange="document.getElementById('formFiltroProjeto').submit();"
-        >
-          <option value="">-- Exibir nenhum --</option>
-          <% if (typeof projetos !== 'undefined' && projetos.length > 0) { %>
-            <% projetos.forEach(p => { %>
-              <option value="<%= p.id_projeto %>" <%= (typeof idProjetoSelecionado !== 'undefined' && idProjetoSelecionado == p.id_projeto) ? 'selected' : '' %>>
-                <%= p.titulo %>
-              </option>
-            <% }) %>
-          <% } %>
-        </select>
+      <form method="GET" action="/projeto_custo/consultas/projeto_custo" id="formFiltroProjeto" class="row g-2 align-items-end">
+        <div class="col-md-5">
+          <label for="filtro_id_projeto" class="form-label fw-bold">Selecione o Projeto:</label>
+          <select
+            name="id_projeto"
+            id="filtro_id_projeto"
+            class="form-select form-select-sm"
+          >
+            <option value="">-- Exibir nenhum --</option>
+            <% if (typeof projetos !== 'undefined' && projetos.length > 0) { %>
+              <% projetos.forEach(p => { %>
+                <option value="<%= p.id_projeto %>" <%= (typeof idProjetoSelecionado !== 'undefined' && idProjetoSelecionado == p.id_projeto) ? 'selected' : '' %>>
+                  <%= p.titulo %>
+                </option>
+              <% }) %>
+            <% } %>
+          </select>
+        </div>
+        <div class="col-auto d-flex gap-2">
+          <button type="submit" class="btn btn-primary btn-sm"><i class="bi bi-search"></i> Filtrar</button>
+          <a href="/projeto_custo/consultas/projeto_custo" class="btn btn-secondary btn-sm"><i class="bi bi-x-circle"></i> Limpar</a>
+        </div>
       </form>
     </div>
 
@@ -54,7 +60,7 @@ if (dados && dados.length > 0) {
           Listagem de Custos
         <% } %>
       </span>
-      <a href="/projeto_custo/forms/projeto_custo" class="btn btn-success btn-sm"><i class="bi bi-plus-circle me-2"></i>Novo custo</a>
+      <a href="/projeto_custo/forms/projeto_custo" class="btn btn-primary btn-sm"><i class="bi bi-plus-circle"></i> Novo Custo</a>
     </div>
 
     <div id="form-feedback-message" class="alert d-none" role="alert"></div>
@@ -101,7 +107,7 @@ if (dados && dados.length > 0) {
                     <i class="bi bi-pencil"></i> Editar
                   </a>
                   <form action="/projeto_custo/<%= d.Id %>/delete" method="POST" class="d-inline">
-                    <button type="submit" class="btn btn-danger btn-sm" title="Deletar" onclick="return confirm('Tem certeza que deseja deletar este custo?')">
+                    <button type="submit" class="btn btn-danger btn-sm" title="Excluir" onclick="return confirm('Tem certeza que deseja excluir este custo?')">
                       <i class="bi bi-trash"></i> Excluir
                     </button>
                   </form>
@@ -125,7 +131,7 @@ if (dados && dados.length > 0) {
     </div>
 
     <div class="mt-3">
-      <a href="/logo" class="btn btn-secondary"><i class="bi bi-arrow-left me-2"></i>Voltar</a>
+      <a href="/logo" class="btn btn-secondary"><i class="bi bi-arrow-left"></i>Voltar</a>
     </div>
   </section>
 </main>

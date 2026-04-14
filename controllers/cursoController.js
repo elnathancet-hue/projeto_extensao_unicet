@@ -3,8 +3,10 @@ const cursoModel = require('../models/cursoModel');
 
 async function listcursos(req, res) {
  try {
- const cursos = await cursoModel.getAllCursos();
- res.render('consultas/curso', { dados: cursos });
+ const filters = { nome_curso: req.query.nome_curso || '' };
+ const hasFilter = Object.values(filters).some(v => v);
+ const cursos = hasFilter ? await cursoModel.getCursoByNome(filters.nome_curso) : await cursoModel.getAllCursos();
+ res.render('consultas/curso', { dados: cursos, filters });
  } catch (error) {
  console.error('Erro ao buscar cursos:', error);
  res.render('error', { message: 'Erro ao buscar cursos', returnLink: '/logo' });
@@ -30,7 +32,7 @@ async function addcurso(req, res) {
  const { nome_curso } = req.body;
  try {
  await cursoModel.insertCurso(nome_curso);
- res.redirect('/curso');
+ res.redirect('/configuracoes#secao-cadastro');
  } catch (error) {
  console.error('Erro ao inserir curso:', error);
  res.render('error', { message: 'Erro ao inserir curso', returnLink: '/logo' });
@@ -77,7 +79,7 @@ async function editcurso(req, res) {
  const { nome_curso } = req.body;
  try {
  await cursoModel.updateCurso(id, nome_curso);
- res.redirect('/curso');
+ res.redirect('/configuracoes#secao-cadastro');
  } catch (error) {
  console.error('Erro ao editar curso:', error);
  res.render('error', { message: 'Erro ao editar curso', returnLink: '/curso' });
@@ -103,7 +105,7 @@ async function deletecurso(req, res) {
  const id = req.params.id;
  try {
  await cursoModel.deleteCurso(id);
- res.redirect('/curso');
+ res.redirect('/configuracoes#secao-cadastro');
  } catch (error) {
  console.error('Erro ao excluir curso:', error);
  res.render('error', { message: 'Erro ao excluir curso', returnLink: '/curso' });

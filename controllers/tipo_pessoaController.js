@@ -3,8 +3,10 @@ const tipo_pessoaModel = require('../models/tipo_pessoaModel');
 
 async function listtipo_pessoa(req, res) {
  try {
- const tipo_pessoa = await tipo_pessoaModel.getAlltipo_pessoa();
- res.render('consultas/tipo_pessoa', { dados: tipo_pessoa });
+ const filters = { descricao: req.query.descricao || '' };
+ const hasFilter = Object.values(filters).some(v => v);
+ const tipo_pessoa = hasFilter ? await tipo_pessoaModel.gettipo_pessoaByNome(filters.descricao) : await tipo_pessoaModel.getAlltipo_pessoa();
+ res.render('consultas/tipo_pessoa', { dados: tipo_pessoa, filters });
  } catch (error) {
  console.error('Erro ao buscar cursos:', error);
  res.render('error', { message: 'Erro ao buscar cursos', returnLink: '/welcome' });
@@ -30,7 +32,7 @@ async function addtipo_pessoa(req, res) {
  const { descricao } = req.body;
  try {
  await tipo_pessoaModel.inserttipo_pessoa({ descricao });
- res.redirect('/tipo_pessoa');
+ res.redirect('/configuracoes');
  } catch (error) {
  console.error('Erro ao inserir curso:', error);
  res.render('error', { message: 'Erro ao inserir curso', returnLink: '/logo' });
@@ -72,7 +74,7 @@ async function edittipo_pessoa(req, res) {
  const { descricao } = req.body;
  try {
  await tipo_pessoaModel.updatetipo_pessoa(id, { descricao });
- res.redirect('/tipo_pessoa');
+ res.redirect('/configuracoes');
  } catch (error) {
  console.error('Erro ao editar curso:', error);
  res.render('error', { message: 'Erro ao editar tipo_pessoa', returnLink: '/tipo_pessoa' });
@@ -98,7 +100,7 @@ async function deletetipo_pessoa(req, res) {
  const id = req.params.id;
  try {
  await tipo_pessoaModel.deletetipo_pessoa(id);
- res.redirect('/tipo_pessoa');
+ res.redirect('/configuracoes');
  } catch (error) {
  console.error('Erro ao excluir curso:', error);
  res.render('error', { message: 'Erro ao excluir tipo_pessoa', returnLink: '/tipo_pessoa' });

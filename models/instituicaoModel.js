@@ -67,11 +67,24 @@ async function deleteInstituicao(id) {
   }
 }
 
+async function filterInstituicao(filters) {
+  let sql = 'SELECT i.id_instituicao, i.nome, i.sigla, ti.descricao as tipo FROM instituicao i LEFT JOIN tipo_instituicao ti ON i.id_tipo_instituicao = ti.id_tipo_instituicao';
+  const conditions = [];
+  const params = [];
+  if (filters.nome) { conditions.push('i.nome LIKE ?'); params.push('%' + filters.nome + '%'); }
+  if (filters.id_tipo_instituicao) { conditions.push('i.id_tipo_instituicao = ?'); params.push(filters.id_tipo_instituicao); }
+  if (conditions.length) sql += ' WHERE ' + conditions.join(' AND ');
+  sql += ' ORDER BY i.id_instituicao DESC';
+  const [rows] = await pool.query(sql, params);
+  return rows;
+}
+
 module.exports = {
   getAllInstituicao,
   getInstituicaoByNome,
   getInstituicaoById,
   insertInstituicao,
   updateInstituicao,
-  deleteInstituicao
+  deleteInstituicao,
+  filterInstituicao
 };

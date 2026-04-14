@@ -3,8 +3,10 @@ const tipo_acaoModel = require('../models/tipo_acaoModel');
 
 async function listAll(req, res) {
   try {
-    const registros = await tipo_acaoModel.getAlltipo_acao();
-    res.render('consultas/tipo_acao', { dados: registros });
+    const filters = { nome: req.query.nome || '' };
+    const hasFilter = Object.values(filters).some(v => v);
+    const registros = hasFilter ? await tipo_acaoModel.gettipo_acaoByNome(filters.nome) : await tipo_acaoModel.getAlltipo_acao();
+    res.render('consultas/tipo_acao', { dados: registros, filters });
   } catch (error) {
     console.error('Erro ao buscar tipos de ação:', error);
     res.render('error', { message: 'Erro ao buscar tipos de ação', returnLink: '/logo' });
@@ -26,7 +28,7 @@ async function insert(req, res) {
   const { nome } = req.body;
   try {
     await tipo_acaoModel.inserttipo_acao(nome);
-    res.redirect('/tipo_acao');
+    res.redirect('/configuracoes');
   } catch (error) {
     console.error('Erro ao inserir tipo de ação:', error);
     res.render('error', { message: 'Erro ao inserir', returnLink: '/logo' });
@@ -49,7 +51,7 @@ async function update(req, res) {
   const { nome } = req.body;
   try {
     await tipo_acaoModel.updatetipo_acao(id, nome);
-    res.redirect('/tipo_acao');
+    res.redirect('/configuracoes');
   } catch (error) {
     console.error('Erro ao editar tipo de ação:', error);
     res.render('error', { message: 'Erro ao editar', returnLink: '/tipo_acao' });
@@ -60,7 +62,7 @@ async function deleteRecord(req, res) {
   const { id } = req.params;
   try {
     await tipo_acaoModel.deletetipo_acao(id);
-    res.redirect('/tipo_acao');
+    res.redirect('/configuracoes');
   } catch (error) {
     console.error('Erro ao excluir tipo de ação:', error);
     res.render('error', { message: 'Erro ao excluir', returnLink: '/tipo_acao' });

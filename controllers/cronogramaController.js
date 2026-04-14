@@ -16,8 +16,13 @@ function mapRequestToRegistro(body) {
 // LISTAR
 async function listCronograma(req, res) {
   try {
-    const dados = await cronogramaModel.getAllCronograma();
-    res.render("consultas/cronograma", { dados });
+    const filters = {
+      etapa: req.query.etapa || '',
+      local: req.query.local || ''
+    };
+    const hasFilter = Object.values(filters).some(v => v);
+    const dados = hasFilter ? await cronogramaModel.filterCronograma(filters) : await cronogramaModel.getAllCronograma();
+    res.render("consultas/cronograma", { dados, filters });
   } catch (error) {
     console.error("Erro ao buscar cronograma:", error);
     res.render("error", {

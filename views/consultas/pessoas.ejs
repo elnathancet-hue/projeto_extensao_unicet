@@ -15,7 +15,7 @@
     <% if (dados && dados.length > 0) { %>
       <div class="table-responsive">
         <table class="table table-striped table-hover">
-          <thead class="table-dark">
+          <thead class="table-light">
             <tr>
               <th>ID</th>
               <th>Nome</th>
@@ -36,7 +36,7 @@
                 <td><%= pessoa.telefone %></td>
                 <td><%= pessoa.id_tipo_pessoa %></td>
                 <td>
-                  <a href="/pessoa/edit/<%= pessoa.id_pessoa %>" class="btn btn-sm btn-warning">Editar</a>
+                  <a href="/pessoa/edit/<%= pessoa.id_pessoa %>" class="btn btn-sm btn-primary">Editar</a>
                   <a href="/pessoa/delete/<%= pessoa.id_pessoa %>" class="btn btn-sm btn-danger">Excluir</a>
                 </td>
               </tr>
@@ -51,7 +51,7 @@
     <% } %>
     
     <div class="mt-4">
-      <a href="/pessoa/new" class="btn btn-success">Novo Registro</a>
+      <a href="/pessoa/new" class="btn btn-primary">Novo Registro</a>
       <a href="javascript:history.back()" class="btn btn-secondary">Voltar</a>
     </div>
   </div>

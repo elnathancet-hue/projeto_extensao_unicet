@@ -10,8 +10,8 @@
 
     <div class="d-flex justify-content-between align-items-center mb-3">
       <span class="fw-semibold">Inserir novo registro</span>
-      <a class="btn btn-success" href="/avaliacao_institucional/forms/avaliacao_institucional">
-        <i class="bi bi-plus-circle me-2"></i>Nova Avaliação
+      <a class="btn btn-primary btn-sm" href="/avaliacao_institucional/forms/avaliacao_institucional">
+        <i class="bi bi-plus-circle"></i> Nova Avaliação
       </a>
     </div>
 
@@ -40,11 +40,11 @@
                 <td><%= d.forma_apresentacao_relatorio || '-' %></td>
                 <td>
                   <a href="/avaliacao_institucional/<%= d.id_avaliacao %>/edit" class="btn btn-primary btn-sm" title="Editar">
-                   Editar
+                    <i class="bi bi-pencil"></i> Editar
                   </a>
                   <form action="/avaliacao_institucional/<%= d.id_avaliacao %>/delete" method="POST" class="d-inline">
-                    <button type="submit" class="btn btn-danger btn-sm" title="Deletar" onclick="return confirm('Tem certeza que deseja deletar permanentemente esta avaliação?')">
-                      Excluir
+                    <button type="submit" class="btn btn-danger btn-sm" title="Excluir" onclick="return confirm('Tem certeza que deseja excluir permanentemente esta avaliação?')">
+                      <i class="bi bi-trash"></i> Excluir
                     </button>
                   </form>
                 </td>
@@ -60,7 +60,7 @@
     </div>
     
     <div class="mt-3">
-      <a href="/logo" class="btn btn-secondary">Voltar ao Início</a>
+      <a href="/logo" class="btn btn-secondary"><i class="bi bi-arrow-left"></i> Voltar</a>
     </div>
 
   </section>

@@ -24,8 +24,16 @@ function mapRequestToRegistro(body) {
 
 async function listpessoas(req, res) {
   try {
-    const pessoas = await pessoaModel.getAllpessoas();
-    res.render('consultas/pessoa', { dados: pessoas });
+    const filters = {
+      nome: req.query.nome || '',
+      cpf: req.query.cpf || '',
+      email: req.query.email || '',
+      id_tipo_pessoa: req.query.id_tipo_pessoa || ''
+    };
+    const hasFilter = Object.values(filters).some(v => v);
+    const pessoas = hasFilter ? await pessoaModel.filterpessoa(filters) : await pessoaModel.getAllpessoas();
+    const tiposPessoa = await tipo_pessoaModel.getAlltipo_pessoa();
+    res.render('consultas/pessoa', { dados: pessoas, filters, tiposPessoa });
   } catch (error) {
     console.error('Erro ao buscar pessoas:', error);
     res.render('error', { message: 'Erro ao buscar pessoas', returnLink: '/logo' });
@@ -50,7 +58,7 @@ async function filterpessoas(req, res) {
 async function addpessoas(req, res) {
   try {
     await pessoaModel.insertpessoas(mapRequestToRegistro(req.body));
-    res.redirect('/pessoa');
+    res.redirect('/configuracoes#secao-cadastro');
   } catch (error) {
     console.error('Erro ao inserir pessoas:', error);
     res.render('error', { message: 'Erro ao inserir pessoas', returnLink: '/pessoa' });
@@ -92,7 +100,7 @@ async function editpessoas(req, res) {
   const id = req.params.id;
   try {
     await pessoaModel.updatepessoas(id, mapRequestToRegistro(req.body));
-    res.redirect('/pessoa');
+    res.redirect('/configuracoes#secao-cadastro');
   } catch (error) {
     console.error('Erro ao editar pessoas:', error);
     res.render('error', { message: 'Erro ao editar pessoas', returnLink: '/pessoa' });
@@ -118,7 +126,7 @@ async function deletepessoas(req, res) {
   const id = req.params.id;
   try {
     await pessoaModel.deletepessoas(id);
-    res.redirect('/pessoa');
+    res.redirect('/configuracoes#secao-cadastro');
   } catch (error) {
     console.error('Erro ao excluir pessoa:', error);
     res.render('error', { message: 'Erro ao excluir pessoas', returnLink: '/pessoa' });

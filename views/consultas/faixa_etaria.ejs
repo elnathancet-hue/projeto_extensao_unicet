@@ -1,53 +1,51 @@
-<%- include('../cabecalho', { titulo: 'Consulta de Faixa Etária' }) %>
+<%- include('../cabecalho', { titulo: 'Consulta de Faixa Et&#xE1;ria' }) %>
 
-<div class="d-flex justify-content-between align-items-center mb-4 pb-3 border-bottom">
-  <h1 class="h4 mb-0">
-    <i class="bi bi-list"></i> Faixas Etárias Cadastradas
-  </h1>
-  <a href="/faixa_etaria/forms/faixa_etaria" class="btn btn-success">
-    <i class="bi bi-plus-lg"></i> Nova Faixa Etária
-  </a>
-</div>
+<main id="conteudo-principal-form" class="container my-5">
+  <section class="card shadow p-4 p-md-5">
+    <div class="d-flex align-items-center mb-4 pb-3 border-bottom">
+      <i class="bi bi-calendar-check fs-4 me-2"></i>
+      <h1 class="fs-4 fw-bold mb-0">Faixas Et&#xE1;rias</h1>
+    </div>
 
-<div id="form-feedback-message" class="alert d-none" role="alert">
-</div>
+    <div class="d-flex justify-content-between align-items-center mb-3">
+      <span class="fw-semibold">Faixas Etarias Cadastradas</span>
+      <a href="/faixa_etaria/forms/faixa_etaria" class="btn btn-primary btn-sm"><i class="bi bi-plus-circle"></i> Novo</a>
+    </div>
 
-<div class="table-responsive">
-  <table class="table table-hover">
-    <thead class="table-light">
-      <tr>
-        <th><i class="bi bi-hash"></i> ID</th>
-        <th><i class="bi bi-calendar-check"></i> Descrição</th>
-        <th><i class="bi bi-gear"></i> Ações</th>
-      </tr>
-    </thead>
-    <tbody>
-      <% dados.forEach(d => { %>
-        <tr>
-          <td>
-            <span class="badge bg-primary"><%= d.id_faixa %></span>
-          </td>
-          <td><%= d.descricao %></td>
-          <td>
-            <a href="/faixa_etaria/<%= d.id_faixa %>/edit" class="btn btn-primary btn-sm">
-              <i class="bi bi-pencil"></i> Editar
-            </a>
-            <form method="POST" action="/faixa_etaria/<%= d.id_faixa %>/delete" style="display: inline;">
-                <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Tem certeza que deseja excluir?')">
-                  <i class="bi bi-trash"></i> Excluir
-                </button>
-              </form>
-          </td>
-        </tr>
-      <% }) %>
-    </tbody>
-  </table>
-</div>
+    <div class="table-responsive">
+      <table class="table table-hover">
+        <thead class="table-light">
+          <tr>
+            <th>ID</th>
+            <th>Descri&#xE7;&#xE3;o</th>
+            <th>A&#xE7;&#xF5;es</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% dados.forEach(d => { %>
+            <tr>
+              <td><span class="badge bg-secondary"><%= d.id_faixa %></span></td>
+              <td><%= d.descricao %></td>
+              <td>
+                <a href="/faixa_etaria/<%= d.id_faixa %>/edit" class="btn btn-primary btn-sm">
+                  <i class="bi bi-pencil"></i> Editar
+                </a>
+                <form method="POST" action="/faixa_etaria/<%= d.id_faixa %>/delete" style="display: inline;">
+                  <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Tem certeza que deseja excluir?')">
+                    <i class="bi bi-trash"></i> Excluir
+                  </button>
+                </form>
+              </td>
+            </tr>
+          <% }) %>
+        </tbody>
+      </table>
+    </div>
 
-<div class="mt-4">
-  <a href="/logo" class="btn btn-secondary">
-    <i class="bi bi-arrow-left"></i> Voltar
-  </a>
-</div>
+    <div class="mt-3">
+      <a href="/logo" class="btn btn-secondary"><i class="bi bi-arrow-left"></i>Voltar</a>
+    </div>
+  </section>
+</main>
 
 <%- include('../rodape') %>

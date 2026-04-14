@@ -1,11 +1,11 @@
-<%- include('../cabecalho', { titulo: isEdit ? 'Editar Avaliacao Institucional' : 'Cadastrar Avaliacao Institucional' }) %>
+<%- include('../cabecalho', { titulo: isEdit ? 'Editar Avaliação Institucional' : 'Cadastrar Avaliação Institucional' }) %>
 
 <% const registro = typeof avaliacao_institucional !== 'undefined' ? avaliacao_institucional : null; %>
 <% const registroId = registro && registro['id_avaliacao']; %>
 <main id="conteudo-principal-form" class="container my-5">
   <section class="card shadow p-4 p-md-5">
     <h1 class="fs-4 fw-bold mb-4 border-bottom pb-3">
-      <%= isEdit ? 'Editar avaliacao institucional' : 'Cadastrar avaliacao institucional' %>
+      <%= isEdit ? 'Editar avaliação institucional' : 'Cadastrar avaliação institucional' %>
     </h1>
 
     <% if (projetos && projetos.length === 0) { %>

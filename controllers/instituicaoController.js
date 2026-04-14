@@ -4,8 +4,14 @@ const tipo_instituicaoModel = require('../models/tipo_instituicaoModel');
 
 async function listAll(req, res) {
   try {
-    const registros = await instituicaoModel.getAllInstituicao();
-    res.render('consultas/instituicao', { dados: registros });
+    const filters = {
+      nome: req.query.nome || '',
+      id_tipo_instituicao: req.query.id_tipo_instituicao || ''
+    };
+    const hasFilter = Object.values(filters).some(v => v);
+    const registros = hasFilter ? await instituicaoModel.filterInstituicao(filters) : await instituicaoModel.getAllInstituicao();
+    const tiposInstituicao = await tipo_instituicaoModel.getAlltipo_instituicao();
+    res.render('consultas/instituicao', { dados: registros, filters, tiposInstituicao });
   } catch (error) {
     console.error('Erro ao buscar instituições:', error);
     res.render('error', { message: 'Erro ao buscar instituições', returnLink: '/logo' });
@@ -43,7 +49,7 @@ async function insert(req, res) {
   const { nome, sigla, id_tipo_instituicao } = req.body;
   try {
     await instituicaoModel.insertInstituicao(nome, sigla, id_tipo_instituicao);
-    res.redirect('/instituicao');
+    res.redirect('/configuracoes#secao-cadastro');
   } catch (error) {
     console.error('Erro ao inserir instituição:', error);
     res.render('error', { message: 'Erro ao inserir', returnLink: '/logo' });
@@ -68,7 +74,7 @@ async function update(req, res) {
   const { nome, sigla, id_tipo_instituicao } = req.body;
   try {
     await instituicaoModel.updateInstituicao(id, nome, sigla, id_tipo_instituicao);
-    res.redirect('/instituicao');
+    res.redirect('/configuracoes#secao-cadastro');
   } catch (error) {
     console.error('Erro ao editar instituição:', error);
     res.render('error', { message: 'Erro ao editar', returnLink: '/instituicao' });
@@ -79,7 +85,7 @@ async function deleteRecord(req, res) {
   const { id } = req.params;
   try {
     await instituicaoModel.deleteInstituicao(id);
-    res.redirect('/instituicao');
+    res.redirect('/configuracoes#secao-cadastro');
   } catch (error) {
     console.error('Erro ao excluir instituição:', error);
     res.render('error', { message: 'Erro ao excluir', returnLink: '/instituicao' });
