@@ -1,4 +1,4 @@
-<%- include('../cabecalho', { titulo: 'Relatorio de Extensao' }) %>
+<%- include('../cabecalho', { titulo: 'Relatório de Extensão' }) %>
 
 <%
   const p = projeto || {};
@@ -12,7 +12,7 @@
   <section class="card shadow p-4 p-md-5">
 
     <h1 class="fs-4 fw-bold mb-4 border-bottom pb-3">
-      <i class="bi bi-file-earmark-text"></i> Relatorio de Extensao - <%= p.titulo || '' %>
+      <i class="bi bi-file-earmark-text"></i> Relatório de Extensão - <%= p.titulo || '' %>
     </h1>
 
     <form method="POST" action="/projeto_extensao/<%= p.id_projeto %>/relatorio">
@@ -22,50 +22,46 @@
 
       <div class="row mb-3">
         <div class="col-md-6">
-          <label class="form-label fw-semibold">Tipo de Extensao</label>
+          <label class="form-label fw-semibold">Tipo de Extensão</label>
           <div class="form-control bg-light"><%= p.tipo_plano_nome || '---' %></div>
         </div>
         <div class="col-md-6">
-          <label class="form-label fw-semibold">Titulo</label>
+          <label class="form-label fw-semibold">Título</label>
           <div class="form-control bg-light"><%= p.titulo || '---' %></div>
         </div>
       </div>
 
       <div class="row mb-3">
         <div class="col-md-4">
-          <label class="form-label fw-semibold">Periodo</label>
+          <label class="form-label fw-semibold">Período</label>
           <div class="form-control bg-light">
             <%= formatDate(p.periodo_inicio) %> a <%= formatDate(p.periodo_fim) %>
           </div>
         </div>
         <div class="col-md-4">
-          <label class="form-label fw-semibold">Tipo de Acao</label>
+          <label class="form-label fw-semibold">Tipo de Ação</label>
           <div class="form-control bg-light">
             <%= (p.tiposAcao && p.tiposAcao.length > 0) ? p.tiposAcao.map(t => t.nome).join(', ') : '---' %>
           </div>
         </div>
         <div class="col-md-4">
-          <label class="form-label fw-semibold">Area Tematica</label>
-          <div class="form-control bg-light"><%= p.area_tematica || '---' %></div>
+          <label class="form-label fw-semibold">Área Temática / Linha Programática</label>
+          <div class="form-control bg-light">
+            <%= (p.linhas && p.linhas.length > 0) ? p.linhas.map(l => l.nome).join(', ') : '---' %>
+          </div>
         </div>
       </div>
 
       <div class="row mb-3">
         <div class="col-md-6">
-          <label class="form-label fw-semibold">Linha Programatica</label>
-          <div class="form-control bg-light">
-            <%= (p.linhas && p.linhas.length > 0) ? p.linhas.map(l => l.nome).join(', ') : '---' %>
-          </div>
-        </div>
-        <div class="col-md-6">
-          <label class="form-label fw-semibold">Carga Horaria</label>
+          <label class="form-label fw-semibold">Carga Horária</label>
           <div class="form-control bg-light"><%= p.carga_horaria_total || '---' %> h</div>
         </div>
       </div>
 
       <% if (p.locais && p.locais.length > 0) { %>
       <div class="mb-3">
-        <label class="form-label fw-semibold">Local de Execucao</label>
+        <label class="form-label fw-semibold">Local de Execução</label>
         <div class="form-control bg-light" style="height:auto; min-height:38px;">
           <% p.locais.forEach((loc, i) => { %>
             <%= loc.endereco %> - <%= loc.bairro %>, <%= loc.cidade %><%= i < p.locais.length - 1 ? '; ' : '' %>
@@ -74,8 +70,8 @@
       </div>
       <% } %>
 
-      <!-- ===== EQUIPE EXECUTORA (readonly) ===== -->
-      <h5 class="fw-bold mt-4 mb-3"><i class="bi bi-people"></i> Equipe Executora</h5>
+      <!-- ===== II - EQUIPE EXECUTORA (readonly) ===== -->
+      <h5 class="fw-bold mt-4 mb-3"><i class="bi bi-people"></i> II - Equipe Executora</h5>
 
       <div class="row mb-3">
         <div class="col-md-6">
@@ -92,7 +88,7 @@
 
       <% if (p.pessoas && p.pessoas.length > 0) { %>
       <div class="mb-3">
-        <label class="form-label fw-semibold">Professores / Tecnicos</label>
+        <label class="form-label fw-semibold">Professores / Técnicos</label>
         <div class="form-control bg-light" style="height:auto; min-height:38px;">
           <% p.pessoas.forEach((pe, i) => { %>
             <%= pe.nome %> (<%= pe.papel %>)<%= i < p.pessoas.length - 1 ? ', ' : '' %>
@@ -101,48 +97,53 @@
       </div>
       <% } %>
 
-      <!-- ===== PUBLICO-ALVO (readonly) ===== -->
-      <h5 class="fw-bold mt-4 mb-3"><i class="bi bi-person-lines-fill"></i> Publico-Alvo</h5>
+      <!-- ===== III - PÚBLICO-ALVO E ABRANGÊNCIA (readonly) ===== -->
+      <h5 class="fw-bold mt-4 mb-3"><i class="bi bi-person-lines-fill"></i> III - Público-Alvo e Abrangência</h5>
       <div class="mb-3">
         <div class="form-control bg-light"><%= p.publico_alvo_nome || '---' %></div>
       </div>
 
-      <!-- ===== OBJETIVOS (readonly) ===== -->
-      <h5 class="fw-bold mt-4 mb-3"><i class="bi bi-bullseye"></i> Objetivos</h5>
+      <!-- ===== IV - OBJETIVOS DA AÇÃO (readonly) ===== -->
+      <h5 class="fw-bold mt-4 mb-3"><i class="bi bi-bullseye"></i> IV - Objetivos da Ação</h5>
       <div class="mb-3">
         <div class="form-control bg-light" style="height:auto; min-height:80px; white-space:pre-wrap;"><%= p.objetivo || '---' %></div>
       </div>
 
-      <!-- ===== JUSTIFICATIVA (editavel) ===== -->
-      <h5 class="fw-bold mt-4 mb-3"><i class="bi bi-journal-text"></i> Justificativa</h5>
+      <!-- ===== V - JUSTIFICATIVA (editavel) ===== -->
+      <h5 class="fw-bold mt-4 mb-3"><i class="bi bi-journal-text"></i> V - Justificativa</h5>
       <div class="mb-3">
-        <textarea name="justificativa" class="form-control" rows="5" placeholder="Descreva a justificativa da acao..."><%= p.justificativa || '' %></textarea>
+        <p class="text-muted" style="font-size:0.7rem;margin-bottom:6px">Apresente a motivação da ação: demanda social identificada, problemas enfrentados, importância para a comunidade.</p>
+        <textarea name="justificativa" class="form-control" rows="5" placeholder="Descreva a justificativa da ação..."><%= p.justificativa || '' %></textarea>
       </div>
 
-      <!-- ===== METODOLOGIA (readonly) ===== -->
-      <h5 class="fw-bold mt-4 mb-3"><i class="bi bi-diagram-3"></i> Metodologia</h5>
+      <!-- ===== VI - METODOLOGIA (readonly) ===== -->
+      <h5 class="fw-bold mt-4 mb-3"><i class="bi bi-diagram-3"></i> VI - Metodologia</h5>
       <div class="mb-3">
         <div class="form-control bg-light" style="height:auto; min-height:80px; white-space:pre-wrap;"><%= p.metodologia || '---' %></div>
       </div>
 
-      <!-- ===== CRONOGRAMA / ATIVIDADES DESENVOLVIDAS (readonly) ===== -->
+      <!-- ===== VII - ATIVIDADES DESENVOLVIDAS (readonly) ===== -->
       <% if (p.cronograma && p.cronograma.length > 0) { %>
-      <h5 class="fw-bold mt-4 mb-3"><i class="bi bi-calendar-range"></i> Atividades Desenvolvidas</h5>
+      <h5 class="fw-bold mt-4 mb-3"><i class="bi bi-calendar-range"></i> VII - Atividades Desenvolvidas</h5>
       <div class="table-responsive mb-3">
         <table class="table table-bordered table-striped">
           <thead class="table-light">
             <tr>
-              <th>Atividade</th>
-              <th>Inicio</th>
-              <th>Fim</th>
+              <th>N&#186;</th>
+              <th>Etapa</th>
+              <th>Data</th>
+              <th>Hora</th>
+              <th>Local</th>
             </tr>
           </thead>
           <tbody>
             <% p.cronograma.forEach(c => { %>
             <tr>
-              <td><%= c.atividade || c.descricao || '' %></td>
-              <td><%= formatDate(c.data_inicio || c.inicio) %></td>
-              <td><%= formatDate(c.data_fim || c.fim) %></td>
+              <td><%= c.numero || '' %></td>
+              <td><%= c.etapa || '' %></td>
+              <td><%= formatDate(c.data) %></td>
+              <td><%= c.hora || '' %></td>
+              <td><%= c.local || '' %></td>
             </tr>
             <% }) %>
           </tbody>
@@ -150,57 +151,63 @@
       </div>
       <% } %>
 
-      <!-- ===== RESULTADOS ALCANCADOS (editavel) ===== -->
-      <h5 class="fw-bold mt-4 mb-3"><i class="bi bi-check2-circle"></i> Resultados Alcancados</h5>
+      <!-- ===== VIII - RESULTADOS ALCANÇADOS (editavel) ===== -->
+      <h5 class="fw-bold mt-4 mb-3"><i class="bi bi-check2-circle"></i> VIII - Resultados Alcançados</h5>
       <div class="mb-3">
-        <textarea name="resultados_alcancados" class="form-control" rows="5" placeholder="Descreva os resultados alcancados..."><%= p.resultados_alcancados || '' %></textarea>
+        <p class="text-muted" style="font-size:0.7rem;margin-bottom:6px">Inclua resultados qualitativos (mudanças percebidas) e quantitativos (número de beneficiados, atividades executadas).</p>
+        <textarea name="resultados_alcancados" class="form-control" rows="5" placeholder="Descreva os resultados alcançados..."><%= p.resultados_alcancados || '' %></textarea>
       </div>
 
-      <!-- ===== AVALIACAO DA COMUNIDADE (editavel) ===== -->
-      <h5 class="fw-bold mt-4 mb-3"><i class="bi bi-chat-left-text"></i> Avaliacao da Comunidade</h5>
+      <!-- ===== IX - AVALIAÇÃO DA AÇÃO (editavel) ===== -->
+      <h5 class="fw-bold mt-4 mb-3"><i class="bi bi-chat-left-text"></i> IX - Avaliação da Ação</h5>
+
       <div class="mb-3">
-        <textarea name="avaliacao_comunidade" class="form-control" rows="5" placeholder="Descreva a avaliacao da comunidade sobre a acao..."><%= p.avaliacao_comunidade || '' %></textarea>
+        <label class="form-label fw-semibold">Avaliação da Comunidade</label>
+        <p class="text-muted" style="font-size:0.7rem;margin-bottom:6px">Como foi coletado o feedback? O que foi positivo? O que pode ser melhorado?</p>
+        <textarea name="avaliacao_comunidade" class="form-control" rows="5" placeholder="Descreva a avaliação da comunidade sobre a ação..."><%= p.avaliacao_comunidade || '' %></textarea>
       </div>
 
-      <!-- ===== AVALIACAO DA EQUIPE (editavel) ===== -->
-      <h5 class="fw-bold mt-4 mb-3"><i class="bi bi-clipboard-data"></i> Avaliacao da Equipe</h5>
       <div class="mb-3">
-        <textarea name="avaliacao_equipe" class="form-control" rows="5" placeholder="Descreva a avaliacao da equipe executora sobre a acao..."><%= p.avaliacao_equipe || '' %></textarea>
+        <label class="form-label fw-semibold">Avaliação da Equipe</label>
+        <p class="text-muted" style="font-size:0.7rem;margin-bottom:6px">O que funcionou bem? Dificuldades enfrentadas? Aprendizagens para ações futuras?</p>
+        <textarea name="avaliacao_equipe" class="form-control" rows="5" placeholder="Descreva a avaliação da equipe executora sobre a ação..."><%= p.avaliacao_equipe || '' %></textarea>
       </div>
 
-      <!-- ===== PRODUTOS GERADOS (editavel) ===== -->
-      <h5 class="fw-bold mt-4 mb-3"><i class="bi bi-box-seam"></i> Produtos Gerados</h5>
+      <!-- ===== X - PRODUTOS GERADOS (editavel) ===== -->
+      <h5 class="fw-bold mt-4 mb-3"><i class="bi bi-box-seam"></i> X - Produtos Gerados</h5>
       <div class="mb-3">
-        <textarea name="produtos_gerados" class="form-control" rows="5" placeholder="Liste os produtos gerados pela acao..."><%= p.produtos_gerados || '' %></textarea>
+        <p class="text-muted" style="font-size:0.7rem;margin-bottom:6px">Materiais didáticos, artigos, cartilhas, vídeos, protótipos. Indicar links ou anexos.</p>
+        <textarea name="produtos_gerados" class="form-control" rows="5" placeholder="Liste os produtos gerados pela ação..."><%= p.produtos_gerados || '' %></textarea>
       </div>
 
-      <!-- ===== ODS (editavel) ===== -->
-      <h5 class="fw-bold mt-4 mb-3"><i class="bi bi-globe2"></i> Vinculacao com os ODS</h5>
+      <!-- ===== XI - VINCULAÇÃO COM OS ODS (editavel) ===== -->
+      <h5 class="fw-bold mt-4 mb-3"><i class="bi bi-globe2"></i> XI - Vinculação com os ODS</h5>
       <div class="mb-3">
-        <textarea name="ods" class="form-control" rows="4" placeholder="Indique os Objetivos de Desenvolvimento Sustentavel (ODS) vinculados..."><%= p.ods || '' %></textarea>
+        <p class="text-muted" style="font-size:0.7rem;margin-bottom:6px">Relacione com 1 a 3 ODS da Agenda 2030 da ONU (ex: ODS 4 – Educação de qualidade).</p>
+        <textarea name="ods" class="form-control" rows="4" placeholder="Indique os Objetivos de Desenvolvimento Sustentável (ODS) vinculados..."><%= p.ods || '' %></textarea>
       </div>
 
-      <!-- ===== OBSERVACAO FINAL (editavel) ===== -->
-      <h5 class="fw-bold mt-4 mb-3"><i class="bi bi-pencil-square"></i> Observacao Final</h5>
+      <!-- ===== XIII - OBSERVAÇÃO FINAL (editavel) ===== -->
+      <h5 class="fw-bold mt-4 mb-3"><i class="bi bi-pencil-square"></i> XIII - Observação Final</h5>
       <div class="mb-3">
-        <textarea name="observacao_final" class="form-control" rows="5" placeholder="Observacoes finais..."><%= p.observacao_final || 'Esta atividade de extensao foi desenvolvida em conformidade com a Resolucao CNE/CES n. 7, de 18 de dezembro de 2018, que estabelece as Diretrizes para a Extensao na Educacao Superior Brasileira.' %></textarea>
+        <textarea name="observacao_final" class="form-control" rows="5" placeholder="Observações finais..."><%= p.observacao_final || 'Este relatório atende às diretrizes da Resolução CNE/CES nº 7/2018 e às orientações da política de extensão da instituição, visando demonstrar o impacto social da ação, sua articulação com o ensino e a formação cidadã dos estudantes.' %></textarea>
       </div>
 
-      <!-- ===== ANEXOS (editavel) ===== -->
-      <h5 class="fw-bold mt-4 mb-3"><i class="bi bi-paperclip"></i> Anexos</h5>
+      <!-- ===== XV - ANEXOS (editavel) ===== -->
+      <h5 class="fw-bold mt-4 mb-3"><i class="bi bi-paperclip"></i> XV - Anexos</h5>
       <div class="mb-3">
-        <textarea name="anexos" class="form-control" rows="4" placeholder="Liste os anexos (fotos, listas de presenca, materiais, etc.)..."><%= p.anexos || '' %></textarea>
+        <textarea name="anexos" class="form-control" rows="4" placeholder="Liste os anexos (fotos, listas de presença, materiais, etc.)..."><%= p.anexos || '' %></textarea>
       </div>
 
-      <!-- ===== BOTOES ===== -->
+      <!-- ===== BOTÕES ===== -->
       <div class="d-flex gap-2 mt-4">
-        <button type="submit" class="btn btn-primary">
+        <button type="submit" class="btn btn-sm btn-primary">
           <i class="bi bi-save"></i> Salvar
         </button>
-        <a href="/projeto_extensao/<%= p.id_projeto %>/relatorio/pdf" class="btn btn-success" target="_blank">
+        <a href="/projeto_extensao/<%= p.id_projeto %>/relatorio/pdf" class="btn btn-sm btn-success" target="_blank">
           <i class="bi bi-filetype-pdf"></i> Baixar PDF
         </a>
-        <a href="/projeto_extensao" class="btn btn-secondary">
+        <a href="/projeto_extensao" class="btn btn-sm btn-secondary">
           <i class="bi bi-arrow-left"></i> Voltar
         </a>
       </div>
