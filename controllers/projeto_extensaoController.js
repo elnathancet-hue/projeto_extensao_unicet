@@ -1,4 +1,6 @@
 const projeto_extensaoModel = require('../models/projeto_extensaoModel');
+const cronogramaModel = require('../models/cronogramaModel');
+const projeto_custoModel = require('../models/projeto_custoModel');
 const tipo_acaoModel = require('../models/tipo_acaoModel');
 const linha_programaticaModel = require('../models/linha_programaticaModel');
 const tipo_planoModel = require('../models/tipo_planoModel');
@@ -345,6 +347,167 @@ async function gerarPdfRelatorio(req, res) {
   }
 }
 
+// ===== CRUD INLINE: CRONOGRAMA vinculado ao projeto =====
+function getRedirectUrl(req, id) {
+  const from = req.body.from || req.query.from || 'plano';
+  return from === 'relatorio'
+    ? '/projeto_extensao/' + id + '/relatorio'
+    : '/projeto_extensao/' + id + '/plano';
+}
+
+async function addCronogramaProjeto(req, res) {
+  try {
+    const id = req.params.id;
+    await cronogramaModel.insertCronograma({
+      id_projeto: id,
+      numero: req.body.numero,
+      etapa: req.body.etapa,
+      data: req.body.data,
+      hora: req.body.hora,
+      local: req.body.local
+    });
+    res.redirect(getRedirectUrl(req, id));
+  } catch (error) {
+    console.error('Erro ao adicionar atividade ao projeto:', error);
+    res.render('error', { message: 'Erro ao adicionar atividade', returnLink: '/projeto_extensao/' + req.params.id + '/plano' });
+  }
+}
+
+async function deleteCronogramaProjeto(req, res) {
+  try {
+    const id = req.params.id;
+    await cronogramaModel.deleteCronograma(req.params.cronId);
+    res.redirect(getRedirectUrl(req, id));
+  } catch (error) {
+    console.error('Erro ao remover atividade:', error);
+    res.render('error', { message: 'Erro ao remover atividade', returnLink: '/projeto_extensao/' + req.params.id + '/plano' });
+  }
+}
+
+async function editCronogramaProjeto(req, res) {
+  try {
+    const id = req.params.id;
+    await cronogramaModel.updateCronograma(req.params.cronId, {
+      numero: req.body.numero,
+      etapa: req.body.etapa,
+      data: req.body.data,
+      hora: req.body.hora,
+      local: req.body.local
+    });
+    res.redirect(getRedirectUrl(req, id));
+  } catch (error) {
+    console.error('Erro ao editar atividade:', error);
+    res.render('error', { message: 'Erro ao editar atividade', returnLink: '/projeto_extensao/' + req.params.id + '/plano' });
+  }
+}
+
+// ===== CRUD INLINE: CUSTOS vinculados ao projeto =====
+async function addCustoProjeto(req, res) {
+  try {
+    const id = req.params.id;
+    await projeto_custoModel.insertprojeto_custo({
+      id_projeto: id,
+      descricao: req.body.descricao,
+      quantitativo: req.body.quantitativo,
+      valor_unitario: req.body.valor_unitario,
+      justificativa: req.body.justificativa,
+      realizado: req.body.realizado || null,
+      tipo: req.body.tipo || null,
+      fonte_recurso: req.body.fonte_recurso || null
+    });
+    res.redirect(getRedirectUrl(req, id));
+  } catch (error) {
+    console.error('Erro ao adicionar custo ao projeto:', error);
+    res.render('error', { message: 'Erro ao adicionar custo', returnLink: '/projeto_extensao/' + req.params.id + '/plano' });
+  }
+}
+
+async function deleteCustoProjeto(req, res) {
+  try {
+    const id = req.params.id;
+    await projeto_custoModel.deleteprojeto_custo(req.params.custoId);
+    res.redirect(getRedirectUrl(req, id));
+  } catch (error) {
+    console.error('Erro ao remover custo:', error);
+    res.render('error', { message: 'Erro ao remover custo', returnLink: '/projeto_extensao/' + req.params.id + '/plano' });
+  }
+}
+
+async function editCustoProjeto(req, res) {
+  try {
+    const id = req.params.id;
+    await projeto_custoModel.updateprojeto_custo(req.params.custoId, {
+      id_projeto: id,
+      descricao: req.body.descricao,
+      quantitativo: req.body.quantitativo,
+      valor_unitario: req.body.valor_unitario,
+      justificativa: req.body.justificativa,
+      realizado: req.body.realizado || null,
+      tipo: req.body.tipo || null,
+      fonte_recurso: req.body.fonte_recurso || null
+    });
+    res.redirect(getRedirectUrl(req, id));
+  } catch (error) {
+    console.error('Erro ao editar custo:', error);
+    res.render('error', { message: 'Erro ao editar custo', returnLink: '/projeto_extensao/' + req.params.id + '/plano' });
+  }
+}
+
+// ===== VINCULAR/DESVINCULAR: LOCAIS =====
+async function addLocalProjeto(req, res) {
+  try {
+    const id = req.params.id;
+    await projeto_extensaoModel.addLocalProjeto(id, {
+      endereco: req.body.endereco,
+      bairro: req.body.bairro,
+      cidade: req.body.cidade,
+      cep: req.body.cep
+    });
+    res.redirect(getRedirectUrl(req, id));
+  } catch (error) {
+    console.error('Erro ao adicionar local ao projeto:', error);
+    res.render('error', { message: 'Erro ao adicionar local', returnLink: '/projeto_extensao/' + req.params.id + '/plano' });
+  }
+}
+
+async function deleteLocalProjeto(req, res) {
+  try {
+    const id = req.params.id;
+    await projeto_extensaoModel.removeLocalProjeto(id, req.params.localId);
+    res.redirect(getRedirectUrl(req, id));
+  } catch (error) {
+    console.error('Erro ao desvincular local:', error);
+    res.render('error', { message: 'Erro ao remover local', returnLink: '/projeto_extensao/' + req.params.id + '/plano' });
+  }
+}
+
+// ===== VINCULAR/DESVINCULAR: INSTITUICOES =====
+async function addInstituicaoProjeto(req, res) {
+  try {
+    const id = req.params.id;
+    await projeto_extensaoModel.addInstituicaoProjeto(id, {
+      nome: req.body.nome,
+      sigla: req.body.sigla,
+      id_tipo_instituicao: req.body.id_tipo_instituicao
+    });
+    res.redirect(getRedirectUrl(req, id));
+  } catch (error) {
+    console.error('Erro ao adicionar instituicao ao projeto:', error);
+    res.render('error', { message: 'Erro ao adicionar instituicao', returnLink: '/projeto_extensao/' + req.params.id + '/plano' });
+  }
+}
+
+async function deleteInstituicaoProjeto(req, res) {
+  try {
+    const id = req.params.id;
+    await projeto_extensaoModel.removeInstituicaoProjeto(id, req.params.instId);
+    res.redirect(getRedirectUrl(req, id));
+  } catch (error) {
+    console.error('Erro ao desvincular instituicao:', error);
+    res.render('error', { message: 'Erro ao remover instituicao', returnLink: '/projeto_extensao/' + req.params.id + '/plano' });
+  }
+}
+
 module.exports = {
   listprojeto_extensaos,
   filterprojeto_extensao,
@@ -360,5 +523,15 @@ module.exports = {
   showRelatorio,
   saveRelatorio,
   gerarPdfPlano,
-  gerarPdfRelatorio
+  gerarPdfRelatorio,
+  addCronogramaProjeto,
+  deleteCronogramaProjeto,
+  editCronogramaProjeto,
+  addCustoProjeto,
+  deleteCustoProjeto,
+  editCustoProjeto,
+  addLocalProjeto,
+  deleteLocalProjeto,
+  addInstituicaoProjeto,
+  deleteInstituicaoProjeto
 };

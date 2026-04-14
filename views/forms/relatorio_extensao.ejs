@@ -15,99 +15,152 @@
       <i class="bi bi-file-earmark-text"></i> Relatório de Extensão - <%= p.titulo || '' %>
     </h1>
 
+    <!-- ===== DADOS DO PROJETO (readonly) ===== -->
+    <h5 class="fw-bold mt-4 mb-3"><i class="bi bi-info-circle"></i> Dados do Projeto</h5>
+
+    <div class="row mb-3">
+      <div class="col-md-6">
+        <label class="form-label fw-semibold">Tipo de Extensão</label>
+        <div class="form-control bg-light"><%= p.tipo_plano_nome || '---' %></div>
+      </div>
+      <div class="col-md-6">
+        <label class="form-label fw-semibold">Título</label>
+        <div class="form-control bg-light"><%= p.titulo || '---' %></div>
+      </div>
+    </div>
+
+    <div class="row mb-3">
+      <div class="col-md-4">
+        <label class="form-label fw-semibold">Período</label>
+        <div class="form-control bg-light">
+          <%= formatDate(p.periodo_inicio) %> a <%= formatDate(p.periodo_fim) %>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <label class="form-label fw-semibold">Tipo de Ação</label>
+        <div class="form-control bg-light">
+          <%= (p.tiposAcao && p.tiposAcao.length > 0) ? p.tiposAcao.map(t => t.nome).join(', ') : '---' %>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <label class="form-label fw-semibold">Área Temática / Linha Programática</label>
+        <div class="form-control bg-light">
+          <%= (p.linhas && p.linhas.length > 0) ? p.linhas.map(l => l.nome).join(', ') : '---' %>
+        </div>
+      </div>
+    </div>
+
+    <div class="row mb-3">
+      <div class="col-md-6">
+        <label class="form-label fw-semibold">Carga Horária</label>
+        <div class="form-control bg-light"><%= p.carga_horaria_total || '---' %> h</div>
+      </div>
+    </div>
+
+    <% if (p.locais && p.locais.length > 0) { %>
+    <div class="mb-3">
+      <label class="form-label fw-semibold">Local de Execução</label>
+      <div class="form-control bg-light" style="height:auto; min-height:38px;">
+        <% p.locais.forEach((loc, i) => { %>
+          <%= loc.endereco %> - <%= loc.bairro %>, <%= loc.cidade %><%= i < p.locais.length - 1 ? '; ' : '' %>
+        <% }) %>
+      </div>
+    </div>
+    <% } %>
+
+    <!-- ===== II - EQUIPE EXECUTORA (readonly) ===== -->
+    <h5 class="fw-bold mt-4 mb-3"><i class="bi bi-people"></i> II - Equipe Executora</h5>
+
+    <div class="row mb-3">
+      <div class="col-md-6">
+        <label class="form-label fw-semibold">Coordenador</label>
+        <div class="form-control bg-light"><%= p.coordenador_nome || '---' %></div>
+      </div>
+      <div class="col-md-6">
+        <label class="form-label fw-semibold">Cursos</label>
+        <div class="form-control bg-light">
+          <%= (p.cursos && p.cursos.length > 0) ? p.cursos.map(c => c.nome_curso).join(', ') : '---' %>
+        </div>
+      </div>
+    </div>
+
+    <% if (p.pessoas && p.pessoas.length > 0) { %>
+    <div class="mb-3">
+      <label class="form-label fw-semibold">Professores / Técnicos</label>
+      <div class="form-control bg-light" style="height:auto; min-height:38px;">
+        <% p.pessoas.forEach((pe, i) => { %>
+          <%= pe.nome %> (<%= pe.papel %>)<%= i < p.pessoas.length - 1 ? ', ' : '' %>
+        <% }) %>
+      </div>
+    </div>
+    <% } %>
+
+    <!-- ===== III - PÚBLICO-ALVO E ABRANGÊNCIA (readonly) ===== -->
+    <h5 class="fw-bold mt-4 mb-3"><i class="bi bi-person-lines-fill"></i> III - Público-Alvo e Abrangência</h5>
+    <div class="mb-3">
+      <div class="form-control bg-light"><%= p.publico_alvo_nome || '---' %></div>
+    </div>
+
+    <!-- ===== IV - OBJETIVOS DA AÇÃO (readonly) ===== -->
+    <h5 class="fw-bold mt-4 mb-3"><i class="bi bi-bullseye"></i> IV - Objetivos da Ação</h5>
+    <div class="mb-3">
+      <div class="form-control bg-light" style="height:auto; min-height:80px; white-space:pre-wrap;"><%= p.objetivo || '---' %></div>
+    </div>
+
+    <!-- ===== VII - ATIVIDADES DESENVOLVIDAS (gerenciavel - FORA do form principal) ===== -->
+    <h5 class="fw-bold mt-4 mb-3">
+      <i class="bi bi-calendar-range"></i> VII - Atividades Desenvolvidas
+      <button type="button" class="btn btn-sm btn-outline-primary float-end" style="font-size:0.688rem" onclick="document.getElementById('form-add-cronograma-rel').style.display = document.getElementById('form-add-cronograma-rel').style.display === 'none' ? 'block' : 'none'"><i class="bi bi-plus"></i> Adicionar Atividade</button>
+    </h5>
+    <% if (p.cronograma && p.cronograma.length > 0) { %>
+    <div class="table-responsive mb-3">
+      <table class="table table-bordered table-striped">
+        <thead class="table-light">
+          <tr>
+            <th>Nº</th>
+            <th>Etapa</th>
+            <th>Data</th>
+            <th>Hora</th>
+            <th>Local</th>
+            <th style="width:60px"></th>
+          </tr>
+        </thead>
+        <tbody>
+          <% p.cronograma.forEach(c => { %>
+          <tr>
+            <td><%= c.numero || '' %></td>
+            <td><%= c.etapa || '' %></td>
+            <td><%= formatDate(c.data) %></td>
+            <td><%= c.hora || '' %></td>
+            <td><%= c.local || '' %></td>
+            <td>
+              <form method="POST" action="/projeto_extensao/<%= p.id_projeto %>/cronograma/<%= c.id %>/delete" onsubmit="return confirm('Excluir esta atividade?')">
+                <input type="hidden" name="from" value="relatorio">
+                <button type="submit" class="btn btn-sm btn-outline-danger" style="font-size:0.625rem; padding:1px 4px" title="Excluir"><i class="bi bi-trash"></i></button>
+              </form>
+            </td>
+          </tr>
+          <% }) %>
+        </tbody>
+      </table>
+    </div>
+    <% } else { %>
+    <p class="text-muted text-center py-3" style="font-size:0.75rem"><i class="bi bi-info-circle"></i> Nenhuma atividade cadastrada. Clique em "Adicionar Atividade" para incluir.</p>
+    <% } %>
+    <div id="form-add-cronograma-rel" style="display:none; border:1px solid #dee2e6; border-radius:6px; padding:12px; margin-bottom:16px; background:#f9fafb">
+      <form method="POST" action="/projeto_extensao/<%= p.id_projeto %>/cronograma" class="row g-2 align-items-end">
+        <input type="hidden" name="from" value="relatorio">
+        <div class="col-md-1"><label class="form-label" style="font-size:0.688rem">Nº</label><input name="numero" type="number" class="form-control form-control-sm" placeholder="1" required style="font-size:0.75rem"></div>
+        <div class="col-md-3"><label class="form-label" style="font-size:0.688rem">Etapa</label><input name="etapa" class="form-control form-control-sm" placeholder="Descrição da atividade" required style="font-size:0.75rem"></div>
+        <div class="col-md-2"><label class="form-label" style="font-size:0.688rem">Data</label><input name="data" type="date" class="form-control form-control-sm" style="font-size:0.75rem"></div>
+        <div class="col-md-2"><label class="form-label" style="font-size:0.688rem">Hora</label><input name="hora" type="time" class="form-control form-control-sm" style="font-size:0.75rem"></div>
+        <div class="col-md-3"><label class="form-label" style="font-size:0.688rem">Local</label><input name="local" class="form-control form-control-sm" placeholder="Sala, Auditório..." style="font-size:0.75rem"></div>
+        <div class="col-md-1"><button type="submit" class="btn btn-sm btn-primary" style="font-size:0.688rem"><i class="bi bi-check-lg"></i> Salvar</button></div>
+      </form>
+    </div>
+
+    <!-- ===== FORM DO RELATÓRIO (campos editáveis) ===== -->
     <form method="POST" action="/projeto_extensao/<%= p.id_projeto %>/relatorio">
-
-      <!-- ===== DADOS DO PROJETO (readonly) ===== -->
-      <h5 class="fw-bold mt-4 mb-3"><i class="bi bi-info-circle"></i> Dados do Projeto</h5>
-
-      <div class="row mb-3">
-        <div class="col-md-6">
-          <label class="form-label fw-semibold">Tipo de Extensão</label>
-          <div class="form-control bg-light"><%= p.tipo_plano_nome || '---' %></div>
-        </div>
-        <div class="col-md-6">
-          <label class="form-label fw-semibold">Título</label>
-          <div class="form-control bg-light"><%= p.titulo || '---' %></div>
-        </div>
-      </div>
-
-      <div class="row mb-3">
-        <div class="col-md-4">
-          <label class="form-label fw-semibold">Período</label>
-          <div class="form-control bg-light">
-            <%= formatDate(p.periodo_inicio) %> a <%= formatDate(p.periodo_fim) %>
-          </div>
-        </div>
-        <div class="col-md-4">
-          <label class="form-label fw-semibold">Tipo de Ação</label>
-          <div class="form-control bg-light">
-            <%= (p.tiposAcao && p.tiposAcao.length > 0) ? p.tiposAcao.map(t => t.nome).join(', ') : '---' %>
-          </div>
-        </div>
-        <div class="col-md-4">
-          <label class="form-label fw-semibold">Área Temática / Linha Programática</label>
-          <div class="form-control bg-light">
-            <%= (p.linhas && p.linhas.length > 0) ? p.linhas.map(l => l.nome).join(', ') : '---' %>
-          </div>
-        </div>
-      </div>
-
-      <div class="row mb-3">
-        <div class="col-md-6">
-          <label class="form-label fw-semibold">Carga Horária</label>
-          <div class="form-control bg-light"><%= p.carga_horaria_total || '---' %> h</div>
-        </div>
-      </div>
-
-      <% if (p.locais && p.locais.length > 0) { %>
-      <div class="mb-3">
-        <label class="form-label fw-semibold">Local de Execução</label>
-        <div class="form-control bg-light" style="height:auto; min-height:38px;">
-          <% p.locais.forEach((loc, i) => { %>
-            <%= loc.endereco %> - <%= loc.bairro %>, <%= loc.cidade %><%= i < p.locais.length - 1 ? '; ' : '' %>
-          <% }) %>
-        </div>
-      </div>
-      <% } %>
-
-      <!-- ===== II - EQUIPE EXECUTORA (readonly) ===== -->
-      <h5 class="fw-bold mt-4 mb-3"><i class="bi bi-people"></i> II - Equipe Executora</h5>
-
-      <div class="row mb-3">
-        <div class="col-md-6">
-          <label class="form-label fw-semibold">Coordenador</label>
-          <div class="form-control bg-light"><%= p.coordenador_nome || '---' %></div>
-        </div>
-        <div class="col-md-6">
-          <label class="form-label fw-semibold">Cursos</label>
-          <div class="form-control bg-light">
-            <%= (p.cursos && p.cursos.length > 0) ? p.cursos.map(c => c.nome_curso).join(', ') : '---' %>
-          </div>
-        </div>
-      </div>
-
-      <% if (p.pessoas && p.pessoas.length > 0) { %>
-      <div class="mb-3">
-        <label class="form-label fw-semibold">Professores / Técnicos</label>
-        <div class="form-control bg-light" style="height:auto; min-height:38px;">
-          <% p.pessoas.forEach((pe, i) => { %>
-            <%= pe.nome %> (<%= pe.papel %>)<%= i < p.pessoas.length - 1 ? ', ' : '' %>
-          <% }) %>
-        </div>
-      </div>
-      <% } %>
-
-      <!-- ===== III - PÚBLICO-ALVO E ABRANGÊNCIA (readonly) ===== -->
-      <h5 class="fw-bold mt-4 mb-3"><i class="bi bi-person-lines-fill"></i> III - Público-Alvo e Abrangência</h5>
-      <div class="mb-3">
-        <div class="form-control bg-light"><%= p.publico_alvo_nome || '---' %></div>
-      </div>
-
-      <!-- ===== IV - OBJETIVOS DA AÇÃO (readonly) ===== -->
-      <h5 class="fw-bold mt-4 mb-3"><i class="bi bi-bullseye"></i> IV - Objetivos da Ação</h5>
-      <div class="mb-3">
-        <div class="form-control bg-light" style="height:auto; min-height:80px; white-space:pre-wrap;"><%= p.objetivo || '---' %></div>
-      </div>
 
       <!-- ===== V - JUSTIFICATIVA (editavel) ===== -->
       <h5 class="fw-bold mt-4 mb-3"><i class="bi bi-journal-text"></i> V - Justificativa</h5>
@@ -121,35 +174,6 @@
       <div class="mb-3">
         <div class="form-control bg-light" style="height:auto; min-height:80px; white-space:pre-wrap;"><%= p.metodologia || '---' %></div>
       </div>
-
-      <!-- ===== VII - ATIVIDADES DESENVOLVIDAS (readonly) ===== -->
-      <% if (p.cronograma && p.cronograma.length > 0) { %>
-      <h5 class="fw-bold mt-4 mb-3"><i class="bi bi-calendar-range"></i> VII - Atividades Desenvolvidas</h5>
-      <div class="table-responsive mb-3">
-        <table class="table table-bordered table-striped">
-          <thead class="table-light">
-            <tr>
-              <th>N&#186;</th>
-              <th>Etapa</th>
-              <th>Data</th>
-              <th>Hora</th>
-              <th>Local</th>
-            </tr>
-          </thead>
-          <tbody>
-            <% p.cronograma.forEach(c => { %>
-            <tr>
-              <td><%= c.numero || '' %></td>
-              <td><%= c.etapa || '' %></td>
-              <td><%= formatDate(c.data) %></td>
-              <td><%= c.hora || '' %></td>
-              <td><%= c.local || '' %></td>
-            </tr>
-            <% }) %>
-          </tbody>
-        </table>
-      </div>
-      <% } %>
 
       <!-- ===== VIII - RESULTADOS ALCANÇADOS (editavel) ===== -->
       <h5 class="fw-bold mt-4 mb-3"><i class="bi bi-check2-circle"></i> VIII - Resultados Alcançados</h5>

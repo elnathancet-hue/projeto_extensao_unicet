@@ -306,9 +306,9 @@ async function getProjetoCompletoById(id) {
   const [cursos] = await pool.query('SELECT c.nome_curso FROM projeto_curso pc JOIN curso c ON pc.id_curso = c.id_curso WHERE pc.id_projeto = ?', [id]);
   const [pessoas] = await pool.query('SELECT p.nome, pp2.descricao AS papel FROM projeto_pessoa pp JOIN pessoa p ON pp.id_pessoa = p.id_pessoa LEFT JOIN papel_projeto pp2 ON pp.id_papel = pp2.id_papel WHERE pp.id_projeto = ?', [id]);
   const [custos] = await pool.query('SELECT * FROM projeto_custo WHERE id_projeto = ?', [id]);
-  const [cronograma] = await pool.query('SELECT * FROM cronograma_atividades ORDER BY numero');
+  const [cronograma] = await pool.query('SELECT * FROM cronograma_atividades WHERE id_projeto = ? ORDER BY numero', [id]);
   const [locais] = await pool.query('SELECT le.* FROM projeto_local pl JOIN local_execucao le ON pl.id_local = le.id_local WHERE pl.id_projeto = ?', [id]);
-  const [instituicoes] = await pool.query('SELECT i.nome, i.sigla, ti.descricao AS tipo FROM projeto_instituicao pi JOIN instituicao i ON pi.id_instituicao = i.id_instituicao LEFT JOIN tipo_instituicao ti ON i.id_tipo_instituicao = ti.id_tipo_instituicao WHERE pi.id_projeto = ?', [id]);
+  const [instituicoes] = await pool.query('SELECT i.id_instituicao, i.nome, i.sigla, ti.descricao AS tipo FROM projeto_instituicao pi JOIN instituicao i ON pi.id_instituicao = i.id_instituicao LEFT JOIN tipo_instituicao ti ON i.id_tipo_instituicao = ti.id_tipo_instituicao WHERE pi.id_projeto = ?', [id]);
 
   proj.tiposAcao = tiposAcao;
   proj.linhas = linhas;
@@ -332,6 +332,36 @@ async function updateRelatorio(id, campos) {
     [campos.justificativa || null, campos.resultados_alcancados || null, campos.avaliacao_comunidade || null, campos.avaliacao_equipe || null, campos.produtos_gerados || null, campos.ods || null, campos.observacao_final || null, campos.anexos || null, id]);
 }
 
+// ===== HELPERS: LOCAIS vinculados ao projeto =====
+async function addLocalProjeto(id_projeto, localData) {
+  const [result] = await pool.query(
+    'INSERT INTO local_execucao (endereco, bairro, cidade, cep) VALUES (?, ?, ?, ?)',
+    [localData.endereco || null, localData.bairro || null, localData.cidade || null, localData.cep || null]
+  );
+  const id_local = result.insertId;
+  await pool.query('INSERT INTO projeto_local (id_projeto, id_local) VALUES (?, ?)', [id_projeto, id_local]);
+  return id_local;
+}
+
+async function removeLocalProjeto(id_projeto, id_local) {
+  await pool.query('DELETE FROM projeto_local WHERE id_projeto = ? AND id_local = ?', [id_projeto, id_local]);
+}
+
+// ===== HELPERS: INSTITUICOES vinculadas ao projeto =====
+async function addInstituicaoProjeto(id_projeto, instData) {
+  const [result] = await pool.query(
+    'INSERT INTO instituicao (nome, sigla, id_tipo_instituicao) VALUES (?, ?, ?)',
+    [instData.nome || null, instData.sigla || null, instData.id_tipo_instituicao || null]
+  );
+  const id_instituicao = result.insertId;
+  await pool.query('INSERT INTO projeto_instituicao (id_projeto, id_instituicao) VALUES (?, ?)', [id_projeto, id_instituicao]);
+  return id_instituicao;
+}
+
+async function removeInstituicaoProjeto(id_projeto, id_instituicao) {
+  await pool.query('DELETE FROM projeto_instituicao WHERE id_projeto = ? AND id_instituicao = ?', [id_projeto, id_instituicao]);
+}
+
 module.exports = {
   getAllprojeto_extensaos,
   getprojeto_extensaosByNome,
@@ -350,5 +380,9 @@ module.exports = {
   filterprojeto_extensao,
   getProjetoCompletoById,
   updatePlano,
-  updateRelatorio
+  updateRelatorio,
+  addLocalProjeto,
+  removeLocalProjeto,
+  addInstituicaoProjeto,
+  removeInstituicaoProjeto
 };

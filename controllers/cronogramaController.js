@@ -2,9 +2,10 @@
 const cronogramaModel = require("../models/cronogramaModel");
 
 function mapRequestToRegistro(body) {
-  const { numero, etapa, data, hora, local } = body;
+  const { id_projeto, numero, etapa, data, hora, local } = body;
 
   return {
+    id_projeto: id_projeto || null,
     numero,
     etapa,
     data,

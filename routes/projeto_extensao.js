@@ -21,6 +21,24 @@ router.post('/cadastrar', projeto_extensaoController.addprojeto_extensao);
 // Consulta
 router.get('/consultas/projeto_extensao', projeto_extensaoController.listprojeto_extensaos);
 
+// CRUD inline: Cronograma vinculado ao projeto
+router.post('/:id/cronograma', projeto_extensaoController.addCronogramaProjeto);
+router.post('/:id/cronograma/:cronId/delete', projeto_extensaoController.deleteCronogramaProjeto);
+router.post('/:id/cronograma/:cronId/edit', projeto_extensaoController.editCronogramaProjeto);
+
+// CRUD inline: Custos vinculados ao projeto
+router.post('/:id/custo', projeto_extensaoController.addCustoProjeto);
+router.post('/:id/custo/:custoId/delete', projeto_extensaoController.deleteCustoProjeto);
+router.post('/:id/custo/:custoId/edit', projeto_extensaoController.editCustoProjeto);
+
+// Vincular/Desvincular: Locais
+router.post('/:id/local', projeto_extensaoController.addLocalProjeto);
+router.post('/:id/local/:localId/delete', projeto_extensaoController.deleteLocalProjeto);
+
+// Vincular/Desvincular: Instituicoes
+router.post('/:id/instituicao', projeto_extensaoController.addInstituicaoProjeto);
+router.post('/:id/instituicao/:instId/delete', projeto_extensaoController.deleteInstituicaoProjeto);
+
 // Plano de Extensão
 router.get('/:id/plano', projeto_extensaoController.showPlano);
 router.post('/:id/plano', projeto_extensaoController.savePlano);

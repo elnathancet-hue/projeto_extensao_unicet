@@ -30,10 +30,11 @@ async function getCronogramaById(id) {
 async function insertCronograma(registro) {
   try {
     await pool.query(
-      `INSERT INTO cronograma_atividades 
-      (numero, etapa, data, hora, local) 
-      VALUES (?, ?, ?, ?, ?)`,
+      `INSERT INTO cronograma_atividades
+      (id_projeto, numero, etapa, data, hora, local)
+      VALUES (?, ?, ?, ?, ?, ?)`,
       [
+        registro.id_projeto ?? null,
         registro.numero ?? null,
         registro.etapa ?? null,
         registro.data ?? null,
@@ -52,7 +53,7 @@ async function insertCronograma(registro) {
 async function updateCronograma(id, registro) {
   try {
     await pool.query(
-      `UPDATE cronograma_atividades 
+      `UPDATE cronograma_atividades
        SET numero = ?, etapa = ?, data = ?, hora = ?, local = ?
        WHERE id = ?`,
       [
@@ -66,6 +67,19 @@ async function updateCronograma(id, registro) {
     );
 
     return await getCronogramaById(id);
+  } catch (error) {
+    throw error;
+  }
+}
+
+// BUSCAR POR PROJETO
+async function getCronogramaByProjetoId(id_projeto) {
+  try {
+    const [dados] = await pool.query(
+      "SELECT * FROM cronograma_atividades WHERE id_projeto = ? ORDER BY numero",
+      [id_projeto],
+    );
+    return dados;
   } catch (error) {
     throw error;
   }
@@ -95,6 +109,7 @@ async function filterCronograma(filters) {
 module.exports = {
   getAllCronograma,
   getCronogramaById,
+  getCronogramaByProjetoId,
   insertCronograma,
   updateCronograma,
   deleteCronograma,
