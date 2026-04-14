@@ -108,40 +108,40 @@
   <% if (typeof logoSrc !== 'undefined' && logoSrc) { %>
     <img src="<%= logoSrc %>" alt="UNI-CET">
   <% } %>
-  <h2>CENTRO DE EDUCACAO TECNOLOGICA DE TERESINA - CET</h2>
-  <h2>CENTRO UNIVERSITARIO TECNOLOGICO DE TERESINA - UNI-CET</h2>
+  <h2>CENTRO DE EDUCAÇÃO TECNOLÓGICA DE TERESINA - CET</h2>
+  <h2>CENTRO UNIVERSITÁRIO TECNOLÓGICO DE TERESINA - UNI-CET</h2>
 </div>
 
-<div class="title">RELATORIO DA ATIVIDADE DE EXTENSAO</div>
+<div class="title">RELATÓRIO DA ATIVIDADE DE EXTENSÃO</div>
 
-<!-- TIPO DE EXTENSAO -->
-<div class="section-title">TIPO DE EXTENSAO</div>
+<!-- TIPO DE EXTENSÃO -->
+<div class="section-title">TIPO DE EXTENSÃO</div>
 <p class="field-value"><%= safe(p.tipo_plano_nome) %></p>
 
 <table>
   <tr>
-    <td class="field-label" style="width:35%">Titulo</td>
+    <td class="field-label" style="width:35%">Título</td>
     <td><%= safe(p.titulo) %></td>
   </tr>
   <tr>
-    <td class="field-label">Periodo de Execucao</td>
+    <td class="field-label">Período de Execução</td>
     <td><%= formatDate(p.periodo_inicio) %> a <%= formatDate(p.periodo_fim) %></td>
   </tr>
 </table>
 
-<!-- I - IDENTIFICACAO DA ACAO -->
-<div class="section-title">I - IDENTIFICACAO DA ACAO</div>
+<!-- I - IDENTIFICAÇÃO DA AÇÃO -->
+<div class="section-title">I - IDENTIFICAÇÃO DA AÇÃO</div>
 <table>
   <tr>
-    <td class="field-label" style="width:35%">Tipo de Acao</td>
+    <td class="field-label" style="width:35%">Tipo de Ação</td>
     <td><%= (p.tiposAcao && p.tiposAcao.length > 0) ? p.tiposAcao.map(t => t.nome).join(', ') : '___' %></td>
   </tr>
   <tr>
-    <td class="field-label">Area Tematica</td>
+    <td class="field-label">Área Temática</td>
     <td><%= safe(p.area_tematica) %></td>
   </tr>
   <tr>
-    <td class="field-label">Linha Programatica</td>
+    <td class="field-label">Linha Programática</td>
     <td><%= (p.linhas && p.linhas.length > 0) ? p.linhas.map(l => l.nome).join(', ') : '___' %></td>
   </tr>
   <tr>
@@ -150,7 +150,7 @@
   </tr>
   <% if (p.locais && p.locais.length > 0) { %>
   <tr>
-    <td class="field-label">Local de Execucao</td>
+    <td class="field-label">Local de Execução</td>
     <td>
       <% p.locais.forEach((loc, i) => { %>
         <%= loc.endereco %> - <%= loc.bairro %>, <%= loc.cidade %><%= i < p.locais.length - 1 ? '; ' : '' %>
@@ -160,7 +160,7 @@
   <% } %>
   <% if (p.instituicoes && p.instituicoes.length > 0) { %>
   <tr>
-    <td class="field-label">Instituicoes Parceiras</td>
+    <td class="field-label">Instituições Parceiras</td>
     <td>
       <% p.instituicoes.forEach((inst, i) => { %>
         <%= inst.nome %> (<%= inst.sigla %> - <%= inst.tipo %>)<%= i < p.instituicoes.length - 1 ? '; ' : '' %>
@@ -184,7 +184,7 @@
     <thead>
       <tr>
         <th>Nome</th>
-        <th>Funcao</th>
+        <th>Função</th>
       </tr>
     </thead>
     <tbody>
@@ -199,12 +199,12 @@
 </div>
 <% } %>
 
-<!-- III - PUBLICO-ALVO E ABRANGENCIA -->
-<div class="section-title">III - PUBLICO-ALVO E ABRANGENCIA</div>
+<!-- III - PÚBLICO-ALVO E ABRANGÊNCIA -->
+<div class="section-title">III - PÚBLICO-ALVO E ABRANGÊNCIA</div>
 <div class="text-block"><%= safe(p.publico_alvo_nome) %></div>
 
-<!-- IV - OBJETIVOS DA ACAO -->
-<div class="section-title">IV - OBJETIVOS DA ACAO</div>
+<!-- IV - OBJETIVOS DA AÇÃO -->
+<div class="section-title">IV - OBJETIVOS DA AÇÃO</div>
 <div class="text-block"><%= safe(p.objetivo) %></div>
 
 <!-- V - JUSTIFICATIVA -->
@@ -240,35 +240,35 @@
 <p>___</p>
 <% } %>
 
-<!-- VIII - RESULTADOS ALCANCADOS -->
-<div class="section-title">VIII - RESULTADOS ALCANCADOS</div>
+<!-- VIII - RESULTADOS ALCANÇADOS -->
+<div class="section-title">VIII - RESULTADOS ALCANÇADOS</div>
 <div class="text-block"><%= safe(p.resultados_alcancados) %></div>
 
-<!-- IX - AVALIACAO DA ACAO -->
-<div class="section-title">IX - AVALIACAO DA ACAO</div>
-<p class="fw-bold" style="margin-top:8px;">Avaliacao da Comunidade:</p>
+<!-- IX - AVALIAÇÃO DA AÇÃO -->
+<div class="section-title">IX - AVALIAÇÃO DA AÇÃO</div>
+<p class="fw-bold" style="margin-top:8px;">Avaliação da Comunidade:</p>
 <div class="text-block"><%= safe(p.avaliacao_comunidade) %></div>
-<p class="fw-bold">Avaliacao da Equipe Executora:</p>
+<p class="fw-bold">Avaliação da Equipe Executora:</p>
 <div class="text-block"><%= safe(p.avaliacao_equipe) %></div>
 
 <!-- X - PRODUTOS GERADOS -->
 <div class="section-title">X - PRODUTOS GERADOS</div>
 <div class="text-block"><%= safe(p.produtos_gerados) %></div>
 
-<!-- XI - VINCULACAO COM OS ODS -->
-<div class="section-title">XI - VINCULACAO COM OS ODS</div>
+<!-- XI - VINCULAÇÃO COM OS ODS -->
+<div class="section-title">XI - VINCULAÇÃO COM OS ODS</div>
 <div class="text-block"><%= safe(p.ods) %></div>
 
-<!-- XII - CARGA HORARIA TOTAL -->
-<div class="section-title">XII - CARGA HORARIA TOTAL</div>
+<!-- XII - CARGA HORÁRIA TOTAL -->
+<div class="section-title">XII - CARGA HORÁRIA TOTAL</div>
 <div class="text-block"><%= p.carga_horaria_total ? p.carga_horaria_total + ' horas' : '___' %></div>
 
-<!-- XIII - OBSERVACAO FINAL -->
-<div class="section-title">XIII - OBSERVACAO FINAL</div>
+<!-- XIII - OBSERVAÇÃO FINAL -->
+<div class="section-title">XIII - OBSERVAÇÃO FINAL</div>
 <div class="text-block"><%= safe(p.observacao_final) %></div>
 
-<!-- XIV - AUTENTICACAO -->
-<div class="section-title">XIV - AUTENTICACAO</div>
+<!-- XIV - AUTENTICAÇÃO -->
+<div class="section-title">XIV - AUTENTICAÇÃO</div>
 
 <div class="mt-20">
   <p style="text-align:center; margin-bottom:4px;">Teresina - PI, ______ de ____________________ de ________</p>
@@ -282,12 +282,12 @@
 
 <div class="mt-20">
   <div class="signature-line"></div>
-  <p class="signature-label">Coordenador(a) de Extensao</p>
+  <p class="signature-label">Coordenador(a) de Extensão</p>
 </div>
 
 <div class="mt-20">
   <div class="signature-line"></div>
-  <p class="signature-label">Pro-Reitor(a) de Extensao</p>
+  <p class="signature-label">Pró-Reitor(a) de Extensão</p>
 </div>
 
 <!-- XV - ANEXOS -->

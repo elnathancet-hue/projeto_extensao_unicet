@@ -113,21 +113,21 @@
   <% if (typeof logoSrc !== 'undefined' && logoSrc) { %>
     <img src="<%= logoSrc %>" alt="UNI-CET">
   <% } %>
-  <h2>CENTRO DE EDUCACAO TECNOLOGICA DE TERESINA - CET</h2>
-  <h2>CENTRO UNIVERSITARIO TECNOLOGICO DE TERESINA - UNI-CET</h2>
+  <h2>CENTRO DE EDUCAÇÃO TECNOLÓGICA DE TERESINA - CET</h2>
+  <h2>CENTRO UNIVERSITÁRIO TECNOLÓGICO DE TERESINA - UNI-CET</h2>
 </div>
 
-<div class="title">PLANO DE ATIVIDADE DE EXTENSAO</div>
+<div class="title">PLANO DE ATIVIDADE DE EXTENSÃO</div>
 
-<!-- TIPO DE EXTENSAO -->
-<div class="section-title">TIPO DE EXTENSAO</div>
+<!-- TIPO DE EXTENSÃO -->
+<div class="section-title">TIPO DE EXTENSÃO</div>
 <p class="field-value"><%= safe(p.tipo_plano_nome) %></p>
 
-<!-- I - IDENTIFICACAO -->
-<div class="section-title">I - IDENTIFICACAO</div>
+<!-- I - IDENTIFICAÇÃO -->
+<div class="section-title">I - IDENTIFICAÇÃO</div>
 <table>
   <tr>
-    <td class="field-label" style="width:35%">Titulo do Projeto</td>
+    <td class="field-label" style="width:35%">Título do Projeto</td>
     <td><%= safe(p.titulo) %></td>
   </tr>
   <tr>
@@ -135,11 +135,11 @@
     <td><%= safe(p.coordenador_nome) %></td>
   </tr>
   <tr>
-    <td class="field-label">Linha Programatica</td>
+    <td class="field-label">Linha Programática</td>
     <td><%= (p.linhas && p.linhas.length > 0) ? p.linhas.map(l => l.nome).join(', ') : '___' %></td>
   </tr>
   <tr>
-    <td class="field-label">Tipo de Acao</td>
+    <td class="field-label">Tipo de Ação</td>
     <td><%= (p.tiposAcao && p.tiposAcao.length > 0) ? p.tiposAcao.map(t => t.nome).join(', ') : '___' %></td>
   </tr>
   <tr>
@@ -147,20 +147,20 @@
     <td><%= (p.cursos && p.cursos.length > 0) ? p.cursos.map(c => c.nome_curso).join(', ') : '___' %></td>
   </tr>
   <tr>
-    <td class="field-label">Periodo de Execucao</td>
+    <td class="field-label">Período de Execução</td>
     <td><%= formatDate(p.periodo_inicio) %> a <%= formatDate(p.periodo_fim) %></td>
   </tr>
   <tr>
-    <td class="field-label">Carga Horaria Total</td>
+    <td class="field-label">Carga Horária Total</td>
     <td><%= p.carga_horaria_total ? p.carga_horaria_total + ' horas' : '___' %></td>
   </tr>
   <tr>
-    <td class="field-label">Publico-Alvo</td>
+    <td class="field-label">Público-Alvo</td>
     <td><%= safe(p.publico_alvo_nome) %></td>
   </tr>
   <% if (p.locais && p.locais.length > 0) { %>
   <tr>
-    <td class="field-label">Local de Execucao</td>
+    <td class="field-label">Local de Execução</td>
     <td>
       <% p.locais.forEach((loc, i) => { %>
         <%= loc.endereco %> - <%= loc.bairro %>, <%= loc.cidade %><%= i < p.locais.length - 1 ? '; ' : '' %>
@@ -170,7 +170,7 @@
   <% } %>
   <% if (p.instituicoes && p.instituicoes.length > 0) { %>
   <tr>
-    <td class="field-label">Instituicoes Parceiras</td>
+    <td class="field-label">Instituições Parceiras</td>
     <td>
       <% p.instituicoes.forEach((inst, i) => { %>
         <%= inst.nome %> (<%= inst.sigla %> - <%= inst.tipo %>)<%= i < p.instituicoes.length - 1 ? '; ' : '' %>
@@ -187,7 +187,7 @@
     <thead>
       <tr>
         <th>Nome</th>
-        <th>Funcao</th>
+        <th>Função</th>
       </tr>
     </thead>
     <tbody>
@@ -241,7 +241,7 @@
 <table>
   <thead>
     <tr>
-      <th>Descricao</th>
+      <th>Descrição</th>
       <th>Qtd</th>
       <th>Valor Unit. (R$)</th>
       <th>Valor Total (R$)</th>
@@ -279,16 +279,16 @@
 <div class="section-title">VI - RESULTADOS ESPERADOS</div>
 <div class="text-block"><%= safe(p.resultados_esperados) %></div>
 
-<!-- VII - AVALIACAO -->
-<div class="section-title">VII - AVALIACAO</div>
+<!-- VII - AVALIAÇÃO -->
+<div class="section-title">VII - AVALIAÇÃO</div>
 <div class="text-block"><%= safe(p.avaliacao_descricao) %></div>
 
-<!-- IX - REFERENCIAS -->
-<div class="section-title">IX - REFERENCIAS</div>
+<!-- IX - REFERÊNCIAS -->
+<div class="section-title">IX - REFERÊNCIAS</div>
 <div class="text-block"><%= safe(p.referencias) %></div>
 
-<!-- X - AUTENTICACAO -->
-<div class="section-title">X - AUTENTICACAO</div>
+<!-- X - AUTENTICAÇÃO -->
+<div class="section-title">X - AUTENTICAÇÃO</div>
 
 <div class="mt-20">
   <p style="text-align:center; margin-bottom:4px;">Teresina - PI, ______ de ____________________ de ________</p>
@@ -302,12 +302,12 @@
 
 <div class="mt-20">
   <div class="signature-line"></div>
-  <p class="signature-label">Coordenador(a) de Extensao</p>
+  <p class="signature-label">Coordenador(a) de Extensão</p>
 </div>
 
 <div class="mt-20">
   <div class="signature-line"></div>
-  <p class="signature-label">Pro-Reitor(a) de Extensao</p>
+  <p class="signature-label">Pró-Reitor(a) de Extensão</p>
 </div>
 
 <script>
