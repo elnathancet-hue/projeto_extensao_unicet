@@ -4,13 +4,18 @@
 <% const registroId = registro.id_projeto; %>
 <% const listaTipoPlanos = Array.isArray(tipoPlanos) ? tipoPlanos : []; %>
 <% const listaPublicosAlvo = Array.isArray(publicosAlvo) ? publicosAlvo : []; %>
+<% const listaTiposAcao = Array.isArray(todosTiposAcao) ? todosTiposAcao : []; %>
+<% const listaLinhas = Array.isArray(todasLinhas) ? todasLinhas : []; %>
+<% const tiposAcaoSel = Array.isArray(relTiposAcao) ? relTiposAcao.map(r => r.id_acao || r.id_tipo_acao) : []; %>
+<% const linhasSel = Array.isArray(relLinhas) ? relLinhas.map(r => r.id_linha) : []; %>
 
 <main class="container my-5">
   <section class="card shadow p-4 p-md-5">
 
-    <h1 class="fw-bold mb-4">
-      <%= isEdit ? 'Editar Projeto de Extensão' : 'Cadastrar Projeto de Extensão' %>
+    <h1 class="fs-4 fw-bold mb-1">
+      <i class="bi bi-briefcase"></i> <%= isEdit ? 'Editar Projeto de Extensão' : 'Cadastrar Projeto de Extensão' %>
     </h1>
+    <p class="text-muted mb-4" style="font-size:0.75rem">Preencha os campos seguindo a ordem do Plano de Extensão UNI-CET</p>
 
     <form method="POST"
       action="<%= isEdit && registroId ? '/projeto_extensao/' + registroId + '/edit' : '/projeto_extensao/cadastrar' %>"
@@ -18,109 +23,120 @@
 
       <input type="hidden" name="dadosCursos" id="dadosCursos">
 
-      <div class="mb-3">
-        <label class="form-label">Título</label>
-        <input
-          name="titulo"
-          class="form-control"
-          value="<%= registro.titulo || '' %>"
-          required
-        >
-      </div>
-
-      <div class="mb-3">
-        <label class="form-label">Tipo de Plano</label>
+      <!-- ===== TIPO DE EXTENSÃO ===== -->
+      <div class="border rounded p-3 mb-4 bg-light">
+        <h6 class="fw-bold mb-3"><i class="bi bi-tag"></i> Tipo de Extensão</h6>
         <select name="id_tipo_plano" class="form-select" required>
-          <option value="">Selecione</option>
+          <option value="">Selecione o tipo</option>
           <% listaTipoPlanos.forEach(item => { %>
-            <option
-              value="<%= item.id_tipo_plano %>"
-              <%= registro.id_tipo_plano == item.id_tipo_plano ? 'selected' : '' %>
-            >
-              <%= item.descricao %>
-            </option>
+            <option value="<%= item.id_tipo_plano %>" <%= registro.id_tipo_plano == item.id_tipo_plano ? 'selected' : '' %>><%= item.descricao %></option>
           <% }) %>
         </select>
       </div>
 
-      <div class="row">
-        <div class="col-md-6 mb-3">
-          <label class="form-label">Início</label>
-          <input
-            type="date"
-            name="periodo_inicio"
-            class="form-control"
-            value="<%= registro.periodo_inicio ? registro.periodo_inicio.toISOString().split('T')[0] : '' %>"
-          >
+      <!-- ===== I - IDENTIFICAÇÃO ===== -->
+      <div class="border rounded p-3 mb-4">
+        <h6 class="fw-bold mb-3"><i class="bi bi-1-circle"></i> I - Identificação</h6>
+
+        <div class="mb-3">
+          <label class="form-label">Título do Projeto <span class="text-danger">*</span></label>
+          <input name="titulo" class="form-control" value="<%= registro.titulo || '' %>" required placeholder="Nome completo do projeto de extensão">
         </div>
 
-        <div class="col-md-6 mb-3">
-          <label class="form-label">Fim</label>
-          <input
-            type="date"
-            name="periodo_fim"
-            class="form-control"
-            value="<%= registro.periodo_fim ? registro.periodo_fim.toISOString().split('T')[0] : '' %>"
-          >
-        </div>
-      </div>
-
-      <div class="row">
-        <div class="col-md-6 mb-3">
-          <label class="form-label">Carga Horária</label>
-          <input
-            type="number"
-            name="carga_horaria_total"
-            min="0"
-            class="form-control"
-            value="<%= registro.carga_horaria_total || '' %>"
-          >
+        <!-- Linha Programática -->
+        <div class="mb-3">
+          <label class="form-label">Linha Programática / Programa</label>
+          <p class="text-muted" style="font-size:0.7rem;margin-bottom:6px">Selecione uma ou mais linhas programáticas</p>
+          <div class="row">
+            <% listaLinhas.forEach(item => { %>
+              <div class="col-md-3 col-6 mb-1">
+                <div class="form-check">
+                  <input class="form-check-input" type="checkbox" name="linha_programatica_ids" value="<%= item.id_linha %>" id="linha_<%= item.id_linha %>"
+                    <%= linhasSel.includes(item.id_linha) ? 'checked' : '' %>>
+                  <label class="form-check-label" for="linha_<%= item.id_linha %>" style="font-size:0.813rem"><%= item.nome %></label>
+                </div>
+              </div>
+            <% }) %>
+          </div>
         </div>
 
-        <div class="col-md-6 mb-3">
-          <label class="form-label">Público Alvo</label>
+        <!-- Tipo de Ação -->
+        <div class="mb-3">
+          <label class="form-label">Tipo de Ação</label>
+          <p class="text-muted" style="font-size:0.7rem;margin-bottom:6px">Selecione o tipo de ação extensionista</p>
+          <div class="row">
+            <% listaTiposAcao.forEach(item => { %>
+              <div class="col-md-4 col-6 mb-1">
+                <div class="form-check">
+                  <input class="form-check-input" type="checkbox" name="tipo_acao_ids" value="<%= item.id_tipo_acao %>" id="acao_<%= item.id_tipo_acao %>"
+                    <%= tiposAcaoSel.includes(item.id_tipo_acao) ? 'checked' : '' %>>
+                  <label class="form-check-label" for="acao_<%= item.id_tipo_acao %>" style="font-size:0.813rem"><%= item.nome %></label>
+                </div>
+              </div>
+            <% }) %>
+          </div>
+        </div>
+
+        <!-- Período -->
+        <div class="row mb-3">
+          <div class="col-md-4">
+            <label class="form-label">Período - Início</label>
+            <input type="date" name="periodo_inicio" class="form-control"
+              value="<%= registro.periodo_inicio ? registro.periodo_inicio.toISOString().split('T')[0] : '' %>">
+          </div>
+          <div class="col-md-4">
+            <label class="form-label">Período - Fim</label>
+            <input type="date" name="periodo_fim" class="form-control"
+              value="<%= registro.periodo_fim ? registro.periodo_fim.toISOString().split('T')[0] : '' %>">
+          </div>
+          <div class="col-md-4">
+            <label class="form-label">Carga Horária Total</label>
+            <input type="number" name="carga_horaria_total" min="0" class="form-control"
+              value="<%= registro.carga_horaria_total || '' %>" placeholder="Ex: 40">
+          </div>
+        </div>
+
+        <!-- Público-Alvo -->
+        <div class="mb-3">
+          <label class="form-label">Público-Alvo</label>
           <select name="id_publico_alvo" class="form-select">
             <option value="">Selecione</option>
             <% listaPublicosAlvo.forEach(item => { %>
-              <option
-                value="<%= item.id_publico_alvo %>"
-                <%= registro.id_publico_alvo == item.id_publico_alvo ? 'selected' : '' %>
-              >
-                <%= item.descricao %>
-              </option>
+              <option value="<%= item.id_publico_alvo %>" <%= registro.id_publico_alvo == item.id_publico_alvo ? 'selected' : '' %>><%= item.descricao %></option>
             <% }) %>
           </select>
+          <small class="text-muted" style="font-size:0.7rem">Perfil da clientela alcançada pelo projeto</small>
         </div>
       </div>
 
-      <div class="mb-3">
-        <label class="form-label">Objetivo</label>
-        <textarea name="objetivo" class="form-control" rows="4"><%= registro.objetivo || '' %></textarea>
+      <!-- ===== CURSOS E EQUIPE ===== -->
+      <div class="border rounded p-3 mb-4">
+        <h6 class="fw-bold mb-3"><i class="bi bi-people"></i> Cursos Envolvidos e Equipe</h6>
+        <p class="text-muted" style="font-size:0.7rem;margin-bottom:12px">Adicione os cursos vinculados ao projeto e selecione os professores responsáveis de cada curso</p>
+        <div id="lista-global-cursos"></div>
+        <button type="button" class="btn btn-primary btn-sm w-100" onclick="adicionarBlocoCurso()">
+          <i class="bi bi-plus-circle"></i> Adicionar Curso
+        </button>
       </div>
 
-      <div class="mb-3">
-        <label class="form-label">Metodologia</label>
-        <textarea name="metodologia" class="form-control" rows="4"><%= registro.metodologia || '' %></textarea>
+      <!-- ===== II - OBJETIVOS ===== -->
+      <div class="border rounded p-3 mb-4">
+        <h6 class="fw-bold mb-3"><i class="bi bi-2-circle"></i> II - Objetivo(s)</h6>
+        <p class="text-muted" style="font-size:0.7rem;margin-bottom:6px">Estabeleça os objetivos usando verbos como: desenvolver, organizar, capacitar, demonstrar, contribuir, colaborar, valorizar, aplicar.</p>
+        <textarea name="objetivo" class="form-control" rows="4" placeholder="Descreva os objetivos da atividade de extensão..."><%= registro.objetivo || '' %></textarea>
       </div>
 
-      <div class="card mb-3">
-        <div class="card-header fw-bold">Cursos e Equipe</div>
-        <div class="card-body">
-          <div id="lista-global-cursos"></div>
-
-          <button
-            type="button"
-            class="btn btn-primary w-100 mb-3"
-            onclick="adicionarBlocoCurso()"
-          >
-            + Adicionar Curso
-          </button>
-        </div>
+      <!-- ===== III - METODOLOGIA ===== -->
+      <div class="border rounded p-3 mb-4">
+        <h6 class="fw-bold mb-3"><i class="bi bi-3-circle"></i> III - Metodologia</h6>
+        <p class="text-muted" style="font-size:0.7rem;margin-bottom:6px">Descreva os procedimentos, o roteiro claro e detalhado das etapas e atividades a serem executadas.</p>
+        <textarea name="metodologia" class="form-control" rows="4" placeholder="Descreva a metodologia do projeto..."><%= registro.metodologia || '' %></textarea>
       </div>
 
+      <!-- ===== AÇÕES ===== -->
       <div class="d-flex gap-2">
-        <a href="/projeto_extensao" class="btn btn-secondary">Voltar</a>
-        <button class="btn btn-primary" type="submit">Salvar</button>
+        <a href="/projeto_extensao" class="btn btn-secondary btn-sm"><i class="bi bi-arrow-left"></i> Voltar</a>
+        <button class="btn btn-primary btn-sm" type="submit"><i class="bi bi-check-lg"></i> Salvar Projeto</button>
       </div>
 
     </form>
