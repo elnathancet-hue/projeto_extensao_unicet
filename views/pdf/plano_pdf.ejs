@@ -210,23 +210,27 @@
 <div class="section-title">III - METODOLOGIA</div>
 <div class="text-block"><%= safe(p.metodologia) %></div>
 
-<!-- IV - CRONOGRAMA -->
-<div class="section-title">IV - CRONOGRAMA</div>
+<!-- IV - CRONOGRAMA DE ATIVIDADES E AÇÕES -->
+<div class="section-title">IV - CRONOGRAMA DE ATIVIDADES E AÇÕES</div>
 <% if (p.cronograma && p.cronograma.length > 0) { %>
 <table>
   <thead>
     <tr>
-      <th>Atividade</th>
-      <th>Inicio</th>
-      <th>Fim</th>
+      <th style="width:40px">Nº</th>
+      <th>Etapa</th>
+      <th style="width:90px">Data</th>
+      <th style="width:60px">Hora</th>
+      <th>Local</th>
     </tr>
   </thead>
   <tbody>
     <% p.cronograma.forEach(c => { %>
     <tr>
-      <td><%= c.atividade || c.descricao || '' %></td>
-      <td><%= formatDate(c.data_inicio || c.inicio) %></td>
-      <td><%= formatDate(c.data_fim || c.fim) %></td>
+      <td><%= c.numero || '' %></td>
+      <td><%= c.etapa || '' %></td>
+      <td><%= formatDate(c.data) %></td>
+      <td><%= c.hora || '' %></td>
+      <td><%= c.local || '' %></td>
     </tr>
     <% }) %>
   </tbody>
@@ -235,39 +239,39 @@
 <p>___</p>
 <% } %>
 
-<!-- V - CUSTOS -->
-<div class="section-title">V - CUSTOS</div>
+<!-- V - CUSTOS DO PROJETO -->
+<div class="section-title">V - CUSTOS DO PROJETO</div>
 <% if (p.custos && p.custos.length > 0) { %>
 <table>
   <thead>
     <tr>
-      <th>Descrição</th>
-      <th>Qtd</th>
-      <th>Valor Unit. (R$)</th>
-      <th>Valor Total (R$)</th>
+      <th style="width:35px">Nº</th>
+      <th>Descrição da Despesa</th>
+      <th style="width:50px">Qtd</th>
+      <th style="width:90px">Valor Unit. (R$)</th>
+      <th style="width:90px">Valor Total (R$)</th>
       <th>Justificativa</th>
-      <th>Fonte</th>
     </tr>
   </thead>
   <tbody>
     <% let totalGeral = 0; %>
-    <% p.custos.forEach(cu => { %>
-      <% const vt = Number(cu.valor_total || 0); totalGeral += vt; %>
+    <% p.custos.forEach((cu, idx) => { %>
+      <% const qtd = Number(cu.quantitativo || 0); const unit = Number(cu.valor_unitario || 0); const vt = qtd * unit; totalGeral += vt; %>
     <tr>
+      <td><%= idx + 1 %></td>
       <td><%= cu.descricao || '' %></td>
       <td><%= cu.quantitativo || '' %></td>
-      <td><%= formatBR(cu.valor_unitario) %></td>
-      <td><%= formatBR(cu.valor_total) %></td>
+      <td>R$ <%= formatBR(unit) %></td>
+      <td>R$ <%= formatBR(vt) %></td>
       <td><%= cu.justificativa || '' %></td>
-      <td><%= cu.fonte_recurso || '' %></td>
     </tr>
     <% }) %>
   </tbody>
   <tfoot>
     <tr>
-      <td colspan="3" class="text-right fw-bold">Total Geral:</td>
-      <td class="fw-bold">R$ <%= formatBR(totalGeral) %></td>
-      <td colspan="2"></td>
+      <td colspan="4" style="text-align:right; font-weight:bold;">Total Geral:</td>
+      <td style="font-weight:bold;">R$ <%= formatBR(totalGeral) %></td>
+      <td></td>
     </tr>
   </tfoot>
 </table>
@@ -291,23 +295,70 @@
 <div class="section-title">X - AUTENTICAÇÃO</div>
 
 <div class="mt-20">
-  <p style="text-align:center; margin-bottom:4px;">Teresina - PI, ______ de ____________________ de ________</p>
+  <p style="text-align:center; margin-bottom:4px;">Teresina, ______ de ____________________ de ________</p>
 </div>
 
 <div class="mt-20">
   <div class="signature-line"></div>
-  <p class="signature-label"><%= safe(p.coordenador_nome) %></p>
-  <p class="signature-label">Coordenador(a) do Projeto</p>
+  <p class="signature-label">Docente responsável</p>
 </div>
 
 <div class="mt-20">
   <div class="signature-line"></div>
-  <p class="signature-label">Coordenador(a) de Extensão</p>
+  <p class="signature-label">Coordenador(a) de Curso responsável</p>
 </div>
 
-<div class="mt-20">
+<div style="margin-top:30px; padding:12px; border:1px solid #999; page-break-inside:avoid;">
+  <p style="font-weight:bold; font-size:10pt; margin-bottom:4px;">PARECER TÉCNICO</p>
+  <p style="font-weight:bold; font-size:9pt;">PRÓ-REITORIA DE PÓS-GRADUAÇÃO, PESQUISA, EXTENSÃO E CURSOS LIVRES</p>
+  <p>PARECER: _______________________________________________________________</p>
+  <p style="margin-top:8px;">Teresina, ______ de ____________________ de ________</p>
   <div class="signature-line"></div>
-  <p class="signature-label">Pró-Reitor(a) de Extensão</p>
+  <p class="signature-label">Assinatura</p>
+</div>
+
+<div style="margin-top:16px; padding:12px; border:1px solid #999; page-break-inside:avoid;">
+  <p style="font-weight:bold; font-size:9pt;">PRÓ-REITORIA EXECUTIVA DE ADMINISTRAÇÃO, INOVAÇÃO E TECNOLOGIA</p>
+  <p>PARECER: _______________________________________________________________</p>
+  <p style="margin-top:8px;">Teresina, ______ de ____________________ de ________</p>
+  <div class="signature-line"></div>
+  <p class="signature-label">Assinatura</p>
+</div>
+
+<div style="margin-top:16px; padding:12px; border:1px solid #999; page-break-inside:avoid;">
+  <p style="font-weight:bold; font-size:9pt;">PRÓ-REITORIA DE ENSINO DE GRADUAÇÃO E APRENDIZAGEM, CULTURA, RELAÇÃO COMUNITÁRIA E RESPONSABILIDADE SOCIAL</p>
+  <p>PARECER: _______________________________________________________________</p>
+  <p style="margin-top:8px;">Teresina, ______ de ____________________ de ________</p>
+  <div class="signature-line"></div>
+  <p class="signature-label">Assinatura</p>
+</div>
+
+<div style="margin-top:16px; padding:12px; border:1px solid #999; page-break-inside:avoid;">
+  <p style="font-weight:bold; font-size:9pt;">GERÊNCIA DE PESQUISA, EXTENSÃO E CURSOS LIVRES</p>
+  <p>PARECER: _______________________________________________________________</p>
+  <p style="margin-top:8px;">Teresina, ______ de ____________________ de ________</p>
+  <div class="signature-line"></div>
+  <p class="signature-label">Assinatura</p>
+</div>
+
+<div style="margin-top:16px; padding:12px; border:1px solid #999; page-break-inside:avoid;">
+  <p style="font-weight:bold; font-size:9pt;">COORDENADORIA DO NÚCLEO DE APOIO PEDAGÓGICO - NAP</p>
+  <p>PARECER: _______________________________________________________________</p>
+  <p style="margin-top:8px;">Teresina, ______ de ____________________ de ________</p>
+  <div class="signature-line"></div>
+  <p class="signature-label">Assinatura</p>
+</div>
+
+<div style="margin-top:16px; padding:12px; border:1px solid #999; page-break-inside:avoid;">
+  <p style="font-weight:bold; font-size:9pt;">NÚCLEO DOCENTE ESTRUTURANTE – NDE</p>
+  <p>PARECER: _______________________________________________________________</p>
+  <p style="margin-top:8px;">Teresina, ______ de ____________________ de ________</p>
+  <p style="margin-top:16px;">Assinaturas:</p>
+  <div class="signature-line"></div>
+  <div class="signature-line"></div>
+  <div class="signature-line"></div>
+  <div class="signature-line"></div>
+  <div class="signature-line"></div>
 </div>
 
 <script>
