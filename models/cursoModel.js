@@ -87,7 +87,7 @@ async function getProfessoresByCurso(id_curso) {
   try {
     const [rows] = await pool.query(`
       SELECT p.id_pessoa, p.nome
-      FROM curso_Pessoa cp
+      FROM curso_pessoa cp
       INNER JOIN pessoa p ON p.id_pessoa = cp.id_pessoa
       WHERE cp.id_curso = ?
       ORDER BY p.nome
