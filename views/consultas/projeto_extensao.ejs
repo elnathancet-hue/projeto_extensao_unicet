@@ -53,8 +53,8 @@
             <th>Projeto</th>
             <th style="width:120px">Período</th>
             <th style="width:50px">CH</th>
-            <th style="width:200px">Documentos</th>
-            <th style="width:80px">Ações</th>
+            <th>Acessar</th>
+            <th style="width:70px"></th>
           </tr>
         </thead>
         <tbody>
@@ -76,12 +76,26 @@
                   <span class="badge bg-info"><%= d.carga_horaria_total || 0 %>h</span>
                 </td>
                 <td>
-                  <a href="/projeto_extensao/<%= d.id_projeto %>/plano" class="btn btn-sm btn-outline-primary" style="font-size:0.688rem">
-                    <i class="bi bi-file-text"></i> Plano
-                  </a>
-                  <a href="/projeto_extensao/<%= d.id_projeto %>/relatorio" class="btn btn-sm btn-outline-success" style="font-size:0.688rem">
-                    <i class="bi bi-journal-text"></i> Relatório
-                  </a>
+                  <div class="d-flex flex-wrap gap-1">
+                    <a href="/projeto_extensao/<%= d.id_projeto %>/plano" class="btn btn-sm btn-outline-primary" style="font-size:0.625rem;padding:3px 6px">
+                      <i class="bi bi-file-text"></i> Plano
+                    </a>
+                    <a href="/projeto_extensao/<%= d.id_projeto %>/relatorio" class="btn btn-sm btn-outline-success" style="font-size:0.625rem;padding:3px 6px">
+                      <i class="bi bi-journal-text"></i> Relatório
+                    </a>
+                    <a href="/projeto_custo/consultas/projeto_custo?id_projeto=<%= d.id_projeto %>" class="btn btn-sm btn-outline-warning" style="font-size:0.625rem;padding:3px 6px">
+                      <i class="bi bi-currency-dollar"></i> Custos
+                    </a>
+                    <a href="/cronograma" class="btn btn-sm btn-outline-secondary" style="font-size:0.625rem;padding:3px 6px">
+                      <i class="bi bi-clock"></i> Cronograma
+                    </a>
+                    <a href="/avaliacao_institucional" class="btn btn-sm btn-outline-info" style="font-size:0.625rem;padding:3px 6px">
+                      <i class="bi bi-star"></i> Avaliação
+                    </a>
+                    <a href="/questionario" class="btn btn-sm btn-outline-dark" style="font-size:0.625rem;padding:3px 6px">
+                      <i class="bi bi-clipboard-check"></i> Questionário
+                    </a>
+                  </div>
                 </td>
                 <td>
                   <div class="cfg-actions">
