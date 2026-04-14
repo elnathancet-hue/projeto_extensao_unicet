@@ -317,22 +317,12 @@ async function gerarPdfPlano(req, res) {
   try {
     const projeto = await projeto_extensaoModel.getProjetoCompletoById(req.params.id);
     if (!projeto) return res.status(404).send('Projeto não encontrado');
-    const ejs = require('ejs');
-    const path = require('path');
     const fs = require('fs');
+    const path = require('path');
     const logoPath = path.join(__dirname, '..', 'views', 'imagens', 'logo-unicet.png');
     const logoBase64 = fs.readFileSync(logoPath).toString('base64');
     const logoSrc = 'data:image/png;base64,' + logoBase64;
-    const html = await ejs.renderFile(path.join(__dirname, '..', 'views', 'pdf', 'plano_pdf.ejs'), { projeto, logoSrc });
-    const puppeteer = require('puppeteer');
-    const browser = await puppeteer.launch({ headless: true, args: ['--no-sandbox', '--disable-setuid-sandbox'] });
-    const page = await browser.newPage();
-    await page.setContent(html, { waitUntil: 'networkidle0' });
-    const pdf = await page.pdf({ format: 'A4', margin: { top: '20mm', bottom: '20mm', left: '20mm', right: '20mm' }, printBackground: true });
-    await browser.close();
-    res.setHeader('Content-Type', 'application/pdf');
-    res.setHeader('Content-Disposition', 'attachment; filename=Plano_Extensao_' + projeto.id_projeto + '.pdf');
-    res.send(pdf);
+    res.render('pdf/plano_pdf', { projeto, logoSrc });
   } catch (error) {
     console.error('Erro ao gerar PDF do plano:', error);
     res.render('error', { message: 'Erro ao gerar PDF', returnLink: '/projeto_extensao/' + req.params.id + '/plano' });
@@ -343,22 +333,12 @@ async function gerarPdfRelatorio(req, res) {
   try {
     const projeto = await projeto_extensaoModel.getProjetoCompletoById(req.params.id);
     if (!projeto) return res.status(404).send('Projeto não encontrado');
-    const ejs = require('ejs');
-    const path = require('path');
     const fs = require('fs');
+    const path = require('path');
     const logoPath = path.join(__dirname, '..', 'views', 'imagens', 'logo-unicet.png');
     const logoBase64 = fs.readFileSync(logoPath).toString('base64');
     const logoSrc = 'data:image/png;base64,' + logoBase64;
-    const html = await ejs.renderFile(path.join(__dirname, '..', 'views', 'pdf', 'relatorio_pdf.ejs'), { projeto, logoSrc });
-    const puppeteer = require('puppeteer');
-    const browser = await puppeteer.launch({ headless: true, args: ['--no-sandbox', '--disable-setuid-sandbox'] });
-    const page = await browser.newPage();
-    await page.setContent(html, { waitUntil: 'networkidle0' });
-    const pdf = await page.pdf({ format: 'A4', margin: { top: '20mm', bottom: '20mm', left: '20mm', right: '20mm' }, printBackground: true });
-    await browser.close();
-    res.setHeader('Content-Type', 'application/pdf');
-    res.setHeader('Content-Disposition', 'attachment; filename=Relatorio_Extensao_' + projeto.id_projeto + '.pdf');
-    res.send(pdf);
+    res.render('pdf/relatorio_pdf', { projeto, logoSrc });
   } catch (error) {
     console.error('Erro ao gerar PDF do relatório:', error);
     res.render('error', { message: 'Erro ao gerar PDF', returnLink: '/projeto_extensao/' + req.params.id + '/relatorio' });
