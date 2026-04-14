@@ -18,49 +18,50 @@
         <small>UNI-CET</small>
       </div>
 
-      <% if (sessionUsuario) { %>
-        <div class="user-info">
-          <strong><i class="bi bi-person-circle"></i> <%= sessionUsuario %></strong>
-          <br>
-          <small><%= sessionTipo || '' %></small>
-        </div>
-      <% } %>
-
-      <a href="/logo" class="<%= currentPath === '/logo' ? 'active' : '' %>">
-        <i class="bi bi-house"></i> Home
-      </a>
-
-      <!-- Projetos -->
-      <div class="sidebar-group">
-        <a href="#menuProjetos" class="sidebar-toggle" data-bs-toggle="collapse"
-           aria-expanded="<%= ['/projeto_extensao','/projeto_custo','/avaliacao_institucional','/cronograma','/questionario'].some(p => currentPath.startsWith(p)) ? 'true' : 'false' %>">
-          <i class="bi bi-briefcase"></i> Projetos
-          <i class="bi bi-chevron-down sidebar-chevron ms-auto"></i>
+      <div class="sidebar-menu">
+        <a href="/logo" class="<%= currentPath === '/logo' ? 'active' : '' %>">
+          <i class="bi bi-house"></i> Home
         </a>
-        <div class="collapse <%= ['/projeto_extensao','/projeto_custo','/avaliacao_institucional','/cronograma','/questionario'].some(p => currentPath.startsWith(p)) ? 'show' : '' %>" id="menuProjetos">
-          <a href="/projeto_extensao" class="sidebar-sub <%= currentPath.startsWith('/projeto_extensao') ? 'active' : '' %>"><i class="bi bi-briefcase"></i> Projetos de Extensão</a>
-          <a href="/projeto_custo" class="sidebar-sub <%= currentPath.startsWith('/projeto_custo') ? 'active' : '' %>"><i class="bi bi-currency-dollar"></i> Custo Projetos</a>
-          <a href="/avaliacao_institucional" class="sidebar-sub <%= currentPath.startsWith('/avaliacao_institucional') ? 'active' : '' %>"><i class="bi bi-star"></i> Avaliações</a>
-          <a href="/cronograma" class="sidebar-sub <%= currentPath.startsWith('/cronograma') ? 'active' : '' %>"><i class="bi bi-clock"></i> Cronograma</a>
-          <a href="/questionario" class="sidebar-sub <%= currentPath.startsWith('/questionario') ? 'active' : '' %>"><i class="bi bi-clipboard-check"></i> Questionário</a>
-        </div>
-      </div>
 
-      <!-- Configuração -->
-      <div class="sidebar-group">
-        <a href="#menuConfig" class="sidebar-toggle" data-bs-toggle="collapse"
-           aria-expanded="<%= currentPath.startsWith('/configuracoes') || ['/tipo_pessoa','/tipo_plano','/tipo_instituicao','/tipo_acao','/publico_alvo','/papel_projeto','/faixa_etaria','/escolaridade','/linha_programatica','/pessoa','/curso','/instituicao','/local_execucao'].some(p => currentPath.startsWith(p)) ? 'true' : 'false' %>">
-          <i class="bi bi-gear"></i> Configuração
-          <i class="bi bi-chevron-down sidebar-chevron ms-auto"></i>
-        </a>
-        <div class="collapse <%= currentPath.startsWith('/configuracoes') || ['/tipo_pessoa','/tipo_plano','/tipo_instituicao','/tipo_acao','/publico_alvo','/papel_projeto','/faixa_etaria','/escolaridade','/linha_programatica','/pessoa','/curso','/instituicao','/local_execucao'].some(p => currentPath.startsWith(p)) ? 'show' : '' %>" id="menuConfig">
-          <a href="/configuracoes" id="sidebar-link-formulario" class="sidebar-sub <%= (currentPath.startsWith('/configuracoes') || ['/tipo_pessoa','/tipo_plano','/tipo_instituicao','/tipo_acao','/publico_alvo','/papel_projeto','/faixa_etaria','/escolaridade','/linha_programatica'].some(p => currentPath.startsWith(p))) && !['/pessoa','/curso','/instituicao','/local_execucao'].some(p => currentPath.startsWith(p)) ? 'active' : '' %>"><i class="bi bi-sliders"></i> Formulário</a>
-          <a href="/configuracoes#secao-cadastro" id="sidebar-link-cadastro" class="sidebar-sub <%= ['/pessoa','/curso','/instituicao','/local_execucao'].some(p => currentPath.startsWith(p)) ? 'active' : '' %>"><i class="bi bi-database"></i> Cadastro</a>
+        <!-- Projetos -->
+        <div class="sidebar-group">
+          <a href="#menuProjetos" class="sidebar-toggle" data-bs-toggle="collapse"
+             aria-expanded="<%= ['/projeto_extensao','/projeto_custo','/avaliacao_institucional','/cronograma','/questionario'].some(p => currentPath.startsWith(p)) ? 'true' : 'false' %>">
+            <i class="bi bi-briefcase"></i> Projetos
+            <i class="bi bi-chevron-down sidebar-chevron ms-auto"></i>
+          </a>
+          <div class="collapse <%= ['/projeto_extensao','/projeto_custo','/avaliacao_institucional','/cronograma','/questionario'].some(p => currentPath.startsWith(p)) ? 'show' : '' %>" id="menuProjetos">
+            <a href="/projeto_extensao" class="sidebar-sub <%= currentPath.startsWith('/projeto_extensao') ? 'active' : '' %>"><i class="bi bi-briefcase"></i> Projetos de Extensão</a>
+            <a href="/projeto_custo" class="sidebar-sub <%= currentPath.startsWith('/projeto_custo') ? 'active' : '' %>"><i class="bi bi-currency-dollar"></i> Custo Projetos</a>
+            <a href="/avaliacao_institucional" class="sidebar-sub <%= currentPath.startsWith('/avaliacao_institucional') ? 'active' : '' %>"><i class="bi bi-star"></i> Avaliações</a>
+            <a href="/cronograma" class="sidebar-sub <%= currentPath.startsWith('/cronograma') ? 'active' : '' %>"><i class="bi bi-clock"></i> Cronograma</a>
+            <a href="/questionario" class="sidebar-sub <%= currentPath.startsWith('/questionario') ? 'active' : '' %>"><i class="bi bi-clipboard-check"></i> Questionário</a>
+          </div>
+        </div>
+
+        <!-- Configuração -->
+        <div class="sidebar-group">
+          <a href="#menuConfig" class="sidebar-toggle" data-bs-toggle="collapse"
+             aria-expanded="<%= currentPath.startsWith('/configuracoes') || ['/tipo_pessoa','/tipo_plano','/tipo_instituicao','/tipo_acao','/publico_alvo','/papel_projeto','/faixa_etaria','/escolaridade','/linha_programatica','/pessoa','/curso','/instituicao','/local_execucao'].some(p => currentPath.startsWith(p)) ? 'true' : 'false' %>">
+            <i class="bi bi-gear"></i> Configuração
+            <i class="bi bi-chevron-down sidebar-chevron ms-auto"></i>
+          </a>
+          <div class="collapse <%= currentPath.startsWith('/configuracoes') || ['/tipo_pessoa','/tipo_plano','/tipo_instituicao','/tipo_acao','/publico_alvo','/papel_projeto','/faixa_etaria','/escolaridade','/linha_programatica','/pessoa','/curso','/instituicao','/local_execucao'].some(p => currentPath.startsWith(p)) ? 'show' : '' %>" id="menuConfig">
+            <a href="/configuracoes" id="sidebar-link-formulario" class="sidebar-sub <%= (currentPath.startsWith('/configuracoes') || ['/tipo_pessoa','/tipo_plano','/tipo_instituicao','/tipo_acao','/publico_alvo','/papel_projeto','/faixa_etaria','/escolaridade','/linha_programatica'].some(p => currentPath.startsWith(p))) && !['/pessoa','/curso','/instituicao','/local_execucao'].some(p => currentPath.startsWith(p)) ? 'active' : '' %>"><i class="bi bi-sliders"></i> Formulário</a>
+            <a href="/configuracoes#secao-cadastro" id="sidebar-link-cadastro" class="sidebar-sub <%= ['/pessoa','/curso','/instituicao','/local_execucao'].some(p => currentPath.startsWith(p)) ? 'active' : '' %>"><i class="bi bi-database"></i> Cadastro</a>
+          </div>
         </div>
       </div>
 
       <div class="sidebar-bottom">
-        <a href="/logout"><i class="bi bi-box-arrow-right"></i> Sair</a>
+        <div class="sidebar-user-mini">
+          <div class="sidebar-avatar"><%= sessionUsuario ? sessionUsuario.charAt(0).toUpperCase() : 'U' %></div>
+          <div class="sidebar-user-detail">
+            <span class="sidebar-user-name"><%= sessionUsuario || 'Usuário' %></span>
+            <span class="sidebar-user-role"><%= sessionTipo || '' %></span>
+          </div>
+        </div>
+        <a href="/logout" class="sidebar-logout"><i class="bi bi-box-arrow-right"></i> Sair</a>
       </div>
     </nav>
 
@@ -69,5 +70,32 @@
       <i class="bi bi-list"></i>
     </button>
 
-    <!-- Conteúdo principal (aberto aqui, fechado no rodape.ejs) -->
+    <!-- Conteúdo principal -->
     <div class="layout-content">
+
+      <!-- Top bar -->
+      <div class="topbar">
+        <div class="topbar-left">
+          <nav class="topbar-breadcrumb">
+            <a href="/logo">Home</a>
+            <% if (currentPath !== '/logo') { %>
+              <span class="topbar-sep">/</span>
+              <span><%= typeof titulo !== 'undefined' ? titulo : '' %></span>
+            <% } %>
+          </nav>
+        </div>
+        <div class="topbar-right">
+          <button class="topbar-icon-btn" title="Notificações">
+            <i class="bi bi-bell"></i>
+            <span class="topbar-badge">0</span>
+          </button>
+          <div class="topbar-divider"></div>
+          <div class="topbar-user">
+            <div class="topbar-avatar"><%= sessionUsuario ? sessionUsuario.charAt(0).toUpperCase() : 'U' %></div>
+            <div class="topbar-user-info d-none d-md-block">
+              <span class="topbar-user-name"><%= sessionUsuario || 'Usuário' %></span>
+              <span class="topbar-user-role"><%= sessionTipo || '' %></span>
+            </div>
+          </div>
+        </div>
+      </div>
