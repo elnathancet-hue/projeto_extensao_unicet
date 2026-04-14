@@ -102,7 +102,10 @@
       "Bash(find consultas/ -name \"*.ejs\" -exec sed -i 's/> Filtrar<\\\\/button>/> Buscar<\\\\/button>/g' {} +)",
       "Bash(sed -i 's/placeholder=\"Filtrar por nome\\\\.\\\\.\\\\./placeholder=\"Buscar por nome.../g' configuracoes.ejs)",
       "Bash(sed -i 's/placeholder=\"Filtrar por cidade ou bairro\\\\.\\\\.\\\\./placeholder=\"Buscar por cidade ou bairro.../g' configuracoes.ejs)",
-      "Bash(grep -rn 'placeholder=.*filtrar\\\\|placeholder=.*Filtrar' consultas/)"
+      "Bash(grep -rn 'placeholder=.*filtrar\\\\|placeholder=.*Filtrar' consultas/)",
+      "Bash(\"/c/Program Files/MySQL/MySQL Server 8.0/bin/mysql.exe\" -h switchback.proxy.rlwy.net -P 57664 -u root -pThIRFYADpLXAVnsGcIuYensedMdHoJQM railway -e \"SHOW TABLES\")",
+      "Bash(grep -n \"FROM [A-Z]\" *.js)",
+      "Bash(grep -n \"INSERT INTO [A-Z]\\\\|UPDATE [A-Z]\\\\|DELETE FROM [A-Z]\" *.js)"
     ]
   }
 }

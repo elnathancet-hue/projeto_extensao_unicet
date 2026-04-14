@@ -3,7 +3,7 @@ const pool = require('../db');
 
 async function getAllpublico_alvo() {
   try {
-    const [registros] = await pool.query('SELECT id_publico_alvo, descricao FROM Publico_Alvo ORDER BY id_publico_alvo DESC');
+    const [registros] = await pool.query('SELECT id_publico_alvo, descricao FROM publico_alvo ORDER BY id_publico_alvo DESC');
     return registros;
   } catch (error) {
     throw error;
@@ -13,7 +13,7 @@ async function getAllpublico_alvo() {
 async function getpublico_alvoByNome(nome) {
   try {
     const [registros] = await pool.query(
-      'SELECT * FROM Publico_Alvo WHERE descricao LIKE ? ORDER BY id_publico_alvo DESC',
+      'SELECT * FROM publico_alvo WHERE descricao LIKE ? ORDER BY id_publico_alvo DESC',
       [`%${nome}%`]
     );
     return registros;
@@ -24,7 +24,7 @@ async function getpublico_alvoByNome(nome) {
 
 async function getpublico_alvoById(id) {
   try {
-    const [registros] = await pool.query('SELECT * FROM Publico_Alvo WHERE id_publico_alvo = ?', [id]);
+    const [registros] = await pool.query('SELECT * FROM publico_alvo WHERE id_publico_alvo = ?', [id]);
     return registros[0];
   } catch (error) {
     throw error;
@@ -33,8 +33,8 @@ async function getpublico_alvoById(id) {
 
 async function insertpublico_alvo(descricao) {
   try {
-    await pool.query('INSERT INTO Publico_Alvo (descricao) VALUES (?)', [descricao]);
-    const [registros] = await pool.query('SELECT * FROM Publico_Alvo WHERE descricao LIKE ? ORDER BY id_publico_alvo DESC', [`%${descricao}%`]);
+    await pool.query('INSERT INTO publico_alvo (descricao) VALUES (?)', [descricao]);
+    const [registros] = await pool.query('SELECT * FROM publico_alvo WHERE descricao LIKE ? ORDER BY id_publico_alvo DESC', [`%${descricao}%`]);
     return registros;
   } catch (error) {
     throw error;
@@ -43,7 +43,7 @@ async function insertpublico_alvo(descricao) {
 
 async function updatepublico_alvo(id, descricao) {
   try {
-    await pool.query('UPDATE Publico_Alvo SET descricao = ? WHERE id_publico_alvo = ?', [descricao, id]);
+    await pool.query('UPDATE publico_alvo SET descricao = ? WHERE id_publico_alvo = ?', [descricao, id]);
   } catch (error) {
     throw error;
   }
@@ -51,7 +51,7 @@ async function updatepublico_alvo(id, descricao) {
 
 async function deletepublico_alvo(id) {
   try {
-    await pool.query('DELETE FROM Publico_Alvo WHERE id_publico_alvo = ?', [id]);
+    await pool.query('DELETE FROM publico_alvo WHERE id_publico_alvo = ?', [id]);
   } catch (error) {
     throw error;
   }

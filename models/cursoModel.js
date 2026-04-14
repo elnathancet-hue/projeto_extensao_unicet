@@ -4,7 +4,7 @@ async function getAllCursos() {
   try {
     const [cursos] = await pool.query(`
       SELECT id_curso, nome_curso, coordenador_id
-      FROM Curso
+      FROM curso
       ORDER BY nome_curso
     `);
     return cursos;
@@ -16,7 +16,7 @@ async function getAllCursos() {
 async function getCursoByNome(nome) {
   try {
     const [cursos] = await pool.query(
-      'SELECT * FROM Curso WHERE nome_curso LIKE ? ORDER BY id_curso DESC',
+      'SELECT * FROM curso WHERE nome_curso LIKE ? ORDER BY id_curso DESC',
       [`%${nome}%`]
     );
     return cursos;
@@ -28,7 +28,7 @@ async function getCursoByNome(nome) {
 async function getCursoByNomeDelete(nome) {
   try {
     const [cursos] = await pool.query(
-      'SELECT * FROM Curso WHERE nome_curso = ? ORDER BY id_curso DESC',
+      'SELECT * FROM curso WHERE nome_curso = ? ORDER BY id_curso DESC',
       [nome]
     );
     return cursos[0];
@@ -40,7 +40,7 @@ async function getCursoByNomeDelete(nome) {
 async function insertCurso(nome_curso, coordenador_id = null) {
   try {
     const [result] = await pool.query(
-      'INSERT INTO Curso (nome_curso, coordenador_id) VALUES (?, ?)',
+      'INSERT INTO curso (nome_curso, coordenador_id) VALUES (?, ?)',
       [nome_curso, coordenador_id]
     );
 
@@ -53,7 +53,7 @@ async function insertCurso(nome_curso, coordenador_id = null) {
 async function getCursoById(id) {
   try {
     const [curso] = await pool.query(
-      'SELECT * FROM Curso WHERE id_curso = ?',
+      'SELECT * FROM curso WHERE id_curso = ?',
       [id]
     );
     return curso[0];
@@ -64,7 +64,7 @@ async function getCursoById(id) {
 
 async function deleteCurso(id) {
   try {
-    await pool.query('DELETE FROM Curso WHERE id_curso = ?', [id]);
+    await pool.query('DELETE FROM curso WHERE id_curso = ?', [id]);
   } catch (error) {
     throw error;
   }
@@ -73,7 +73,7 @@ async function deleteCurso(id) {
 async function updateCurso(id, nome_curso, coordenador_id = null) {
   try {
     await pool.query(
-      'UPDATE Curso SET nome_curso = ?, coordenador_id = ? WHERE id_curso = ?',
+      'UPDATE curso SET nome_curso = ?, coordenador_id = ? WHERE id_curso = ?',
       [nome_curso, coordenador_id, id]
     );
   } catch (error) {
@@ -87,8 +87,8 @@ async function getProfessoresByCurso(id_curso) {
   try {
     const [rows] = await pool.query(`
       SELECT p.id_pessoa, p.nome
-      FROM Curso_Pessoa cp
-      INNER JOIN Pessoa p ON p.id_pessoa = cp.id_pessoa
+      FROM curso_Pessoa cp
+      INNER JOIN pessoa p ON p.id_pessoa = cp.id_pessoa
       WHERE cp.id_curso = ?
       ORDER BY p.nome
     `, [id_curso]);
@@ -107,8 +107,8 @@ async function getCursoComEquipeById(id_curso) {
         c.nome_curso,
         c.coordenador_id,
         coord.nome AS coordenador_nome
-      FROM Curso c
-      LEFT JOIN Pessoa coord ON coord.id_pessoa = c.coordenador_id
+      FROM curso c
+      LEFT JOIN pessoa coord ON coord.id_pessoa = c.coordenador_id
       WHERE c.id_curso = ?
     `, [id_curso]);
 
@@ -141,8 +141,8 @@ async function getAllCursosComEquipe() {
         c.nome_curso,
         c.coordenador_id,
         coord.nome AS coordenador_nome
-      FROM Curso c
-      LEFT JOIN Pessoa coord ON coord.id_pessoa = c.coordenador_id
+      FROM curso c
+      LEFT JOIN pessoa coord ON coord.id_pessoa = c.coordenador_id
       ORDER BY c.nome_curso
     `);
 

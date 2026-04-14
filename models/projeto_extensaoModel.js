@@ -13,7 +13,7 @@ async function getAllprojeto_extensaos() {
       id_publico_alvo,
       objetivo,
       metodologia
-    FROM Projeto_Extensao
+    FROM projeto_extensao
     ORDER BY id_projeto DESC
   `);
   return rows;
@@ -21,7 +21,7 @@ async function getAllprojeto_extensaos() {
 
 async function getprojeto_extensaosByNome(nome) {
   const [rows] = await pool.query(
-    'SELECT * FROM Projeto_Extensao WHERE titulo LIKE ? ORDER BY id_projeto DESC',
+    'SELECT * FROM projeto_extensao WHERE titulo LIKE ? ORDER BY id_projeto DESC',
     [`%${nome}%`]
   );
   return rows;
@@ -29,7 +29,7 @@ async function getprojeto_extensaosByNome(nome) {
 
 async function getprojeto_extensaosById(id) {
   const [rows] = await pool.query(
-    'SELECT * FROM Projeto_Extensao WHERE id_projeto = ?',
+    'SELECT * FROM projeto_extensao WHERE id_projeto = ?',
     [id]
   );
   return rows[0];
@@ -37,7 +37,7 @@ async function getprojeto_extensaosById(id) {
 
 async function insertprojeto_extensaos(registro) {
   const [result] = await pool.query(
-    `INSERT INTO Projeto_Extensao
+    `INSERT INTO projeto_extensao
       (titulo, id_tipo_plano, coordenador_id, periodo_inicio, periodo_fim, carga_horaria_total, id_publico_alvo, objetivo, metodologia)
      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
     [
@@ -58,7 +58,7 @@ async function insertprojeto_extensaos(registro) {
 
 async function updateprojeto_extensaos(id, registro) {
   await pool.query(
-    `UPDATE Projeto_Extensao
+    `UPDATE projeto_extensao
      SET
        titulo = ?,
        id_tipo_plano = ?,
@@ -102,7 +102,7 @@ async function deleteprojeto_extensaos(id) {
     await connection.query('DELETE FROM projeto_pessoa WHERE id_projeto = ?', [id]);
     await connection.query('DELETE FROM projeto_tipoacao WHERE id_projeto = ?', [id]);
 
-    await connection.query('DELETE FROM Projeto_Extensao WHERE id_projeto = ?', [id]);
+    await connection.query('DELETE FROM projeto_extensao WHERE id_projeto = ?', [id]);
 
     await connection.commit();
   } catch (error) {
@@ -117,7 +117,7 @@ async function deleteprojeto_extensaos(id) {
 
 async function getTipoAcaoByProjeto(id_projeto) {
   const [rows] = await pool.query(
-    'SELECT * FROM Projeto_TipoAcao WHERE id_projeto = ?',
+    'SELECT * FROM projeto_tipoacao WHERE id_projeto = ?',
     [id_projeto]
   );
   return rows;
@@ -129,14 +129,14 @@ async function updateTipoAcaoProjeto(id_projeto, itens) {
     await connection.beginTransaction();
 
     await connection.query(
-      'DELETE FROM Projeto_TipoAcao WHERE id_projeto = ?',
+      'DELETE FROM projeto_tipoacao WHERE id_projeto = ?',
       [id_projeto]
     );
 
     if (itens?.length) {
       for (const item of itens) {
         await connection.query(
-          'INSERT INTO Projeto_TipoAcao (id_projeto, id_acao) VALUES (?, ?)',
+          'INSERT INTO projeto_tipoacao (id_projeto, id_acao) VALUES (?, ?)',
           [id_projeto, item.id_acao]
         );
       }
@@ -155,7 +155,7 @@ async function updateTipoAcaoProjeto(id_projeto, itens) {
 
 async function getLinhaProgramaticaByProjeto(id_projeto) {
   const [rows] = await pool.query(
-    'SELECT * FROM Projeto_LinhaProgramatica WHERE id_projeto = ?',
+    'SELECT * FROM projeto_linhaprogramatica WHERE id_projeto = ?',
     [id_projeto]
   );
   return rows;
@@ -167,14 +167,14 @@ async function updateLinhaProgramaticaProjeto(id_projeto, itens) {
     await connection.beginTransaction();
 
     await connection.query(
-      'DELETE FROM Projeto_LinhaProgramatica WHERE id_projeto = ?',
+      'DELETE FROM projeto_linhaprogramatica WHERE id_projeto = ?',
       [id_projeto]
     );
 
     if (itens?.length) {
       for (const item of itens) {
         await connection.query(
-          'INSERT INTO Projeto_LinhaProgramatica (id_projeto, id_linha) VALUES (?, ?)',
+          'INSERT INTO projeto_linhaprogramatica (id_projeto, id_linha) VALUES (?, ?)',
           [id_projeto, item.id_linha]
         );
       }
@@ -193,7 +193,7 @@ async function updateLinhaProgramaticaProjeto(id_projeto, itens) {
 
 async function getCursosByProjeto(id_projeto) {
   const [rows] = await pool.query(
-    'SELECT * FROM Projeto_Curso WHERE id_projeto = ?',
+    'SELECT * FROM projeto_curso WHERE id_projeto = ?',
     [id_projeto]
   );
   return rows;
@@ -205,14 +205,14 @@ async function updateCursosProjeto(id_projeto, cursos) {
     await connection.beginTransaction();
 
     await connection.query(
-      'DELETE FROM Projeto_Curso WHERE id_projeto = ?',
+      'DELETE FROM projeto_curso WHERE id_projeto = ?',
       [id_projeto]
     );
 
     if (cursos?.length) {
       for (const item of cursos) {
         await connection.query(
-          'INSERT INTO Projeto_Curso (id_projeto, id_curso) VALUES (?, ?)',
+          'INSERT INTO projeto_curso (id_projeto, id_curso) VALUES (?, ?)',
           [id_projeto, item.cursoId]
         );
       }
@@ -229,7 +229,7 @@ async function updateCursosProjeto(id_projeto, cursos) {
 
 async function getPessoasByProjeto(id_projeto) {
   const [rows] = await pool.query(
-      'SELECT * FROM Projeto_Pessoa WHERE id_projeto = ?',
+      'SELECT * FROM projeto_pessoa WHERE id_projeto = ?',
       [id_projeto]
     );
     return rows;
@@ -241,7 +241,7 @@ async function getPessoasByProjeto(id_projeto) {
       await connection.beginTransaction();
   
       await connection.query(
-        'DELETE FROM Projeto_Pessoa WHERE id_projeto = ? AND id_papel = ?',
+        'DELETE FROM projeto_pessoa WHERE id_projeto = ? AND id_papel = ?',
         [id_projeto, idPapelProfessor]
       );
   
@@ -255,7 +255,7 @@ async function getPessoasByProjeto(id_projeto) {
   
               if (!pessoasJaInseridas.has(chave)) {
                 await connection.query(
-                  'INSERT INTO Projeto_Pessoa (id_projeto, id_pessoa, id_papel) VALUES (?, ?, ?)',
+                  'INSERT INTO projeto_pessoa (id_projeto, id_pessoa, id_papel) VALUES (?, ?, ?)',
                   [id_projeto, id_pessoa, idPapelProfessor]
                 );
                 pessoasJaInseridas.add(chave);
@@ -275,7 +275,7 @@ async function getPessoasByProjeto(id_projeto) {
   }
 
 async function filterprojeto_extensao(filters) {
-  let sql = `SELECT id_projeto, titulo, id_tipo_plano, coordenador_id, periodo_inicio, periodo_fim, carga_horaria_total, id_publico_alvo, objetivo, metodologia FROM Projeto_Extensao`;
+  let sql = `SELECT id_projeto, titulo, id_tipo_plano, coordenador_id, periodo_inicio, periodo_fim, carga_horaria_total, id_publico_alvo, objetivo, metodologia FROM projeto_extensao`;
   const conditions = [];
   const params = [];
   if (filters.titulo) { conditions.push('titulo LIKE ?'); params.push('%' + filters.titulo + '%'); }

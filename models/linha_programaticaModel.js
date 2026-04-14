@@ -3,7 +3,7 @@ const pool = require('../db');
 async function getAllinha_programatica() {
   try {
     const [registros] = await pool.query(
-      'SELECT id_linha, nome FROM Linha_Programatica ORDER BY id_linha DESC'
+      'SELECT id_linha, nome FROM linha_programatica ORDER BY id_linha DESC'
     );
     return registros;
   } catch (error) {
@@ -14,7 +14,7 @@ async function getAllinha_programatica() {
 async function getlinha_programaticaByNome(nome) {
   try {
     const [registros] = await pool.query(
-      'SELECT * FROM Linha_Programatica WHERE nome LIKE ? ORDER BY id_linha DESC',
+      'SELECT * FROM linha_programatica WHERE nome LIKE ? ORDER BY id_linha DESC',
       [`%${nome}%`]
     );
     return registros;
@@ -26,7 +26,7 @@ async function getlinha_programaticaByNome(nome) {
 async function getlinha_programaticaById(id) {
   try {
     const [registros] = await pool.query(
-      'SELECT * FROM Linha_Programatica WHERE id_linha = ?',
+      'SELECT * FROM linha_programatica WHERE id_linha = ?',
       [id]
     );
     return registros[0];
@@ -38,12 +38,12 @@ async function getlinha_programaticaById(id) {
 async function insertlinha_programatica(nome) {
   try {
     await pool.query(
-      'INSERT INTO Linha_Programatica (nome) VALUES (?)',
+      'INSERT INTO linha_programatica (nome) VALUES (?)',
       [nome]
     );
 
     const [registros] = await pool.query(
-      'SELECT * FROM Linha_Programatica WHERE nome LIKE ? ORDER BY id_linha DESC',
+      'SELECT * FROM linha_programatica WHERE nome LIKE ? ORDER BY id_linha DESC',
       [`%${nome}%`]
     );
 
@@ -56,7 +56,7 @@ async function insertlinha_programatica(nome) {
 async function updatelinha_programatica(id, nome) {
   try {
     await pool.query(
-      'UPDATE Linha_Programatica SET nome = ? WHERE id_linha = ?',
+      'UPDATE linha_programatica SET nome = ? WHERE id_linha = ?',
       [nome, id]
     );
   } catch (error) {
@@ -67,7 +67,7 @@ async function updatelinha_programatica(id, nome) {
 async function deletelinha_programatica(id) {
   try {
     await pool.query(
-      'DELETE FROM Linha_Programatica WHERE id_linha = ?',
+      'DELETE FROM linha_programatica WHERE id_linha = ?',
       [id]
     );
   } catch (error) {

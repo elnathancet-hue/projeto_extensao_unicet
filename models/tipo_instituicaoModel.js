@@ -3,7 +3,7 @@ const pool = require('../db');
 
 async function getAlltipo_instituicao() {
   try {
-    const [registros] = await pool.query('SELECT id_tipo_instituicao, descricao FROM Tipo_Instituicao ORDER BY id_tipo_instituicao DESC');
+    const [registros] = await pool.query('SELECT id_tipo_instituicao, descricao FROM tipo_instituicao ORDER BY id_tipo_instituicao DESC');
     return registros;
   } catch (error) {
     throw error;
@@ -13,7 +13,7 @@ async function getAlltipo_instituicao() {
 async function gettipo_instituicaoByNome(nome) {
   try {
     const [registros] = await pool.query(
-      'SELECT * FROM Tipo_Instituicao WHERE descricao LIKE ? ORDER BY id_tipo_instituicao DESC',
+      'SELECT * FROM tipo_instituicao WHERE descricao LIKE ? ORDER BY id_tipo_instituicao DESC',
       [`%${nome}%`]
     );
     return registros;
@@ -24,7 +24,7 @@ async function gettipo_instituicaoByNome(nome) {
 
 async function gettipo_instituicaoById(id) {
   try {
-    const [registros] = await pool.query('SELECT * FROM Tipo_Instituicao WHERE id_tipo_instituicao = ?', [id]);
+    const [registros] = await pool.query('SELECT * FROM tipo_instituicao WHERE id_tipo_instituicao = ?', [id]);
     return registros[0];
   } catch (error) {
     throw error;
@@ -33,8 +33,8 @@ async function gettipo_instituicaoById(id) {
 
 async function inserttipo_instituicao(descricao) {
   try {
-    await pool.query('INSERT INTO Tipo_Instituicao (descricao) VALUES (?)', [descricao]);
-    const [registros] = await pool.query('SELECT * FROM Tipo_Instituicao WHERE descricao LIKE ? ORDER BY id_tipo_instituicao DESC', [`%${descricao}%`]);
+    await pool.query('INSERT INTO tipo_instituicao (descricao) VALUES (?)', [descricao]);
+    const [registros] = await pool.query('SELECT * FROM tipo_instituicao WHERE descricao LIKE ? ORDER BY id_tipo_instituicao DESC', [`%${descricao}%`]);
     return registros;
   } catch (error) {
     throw error;
@@ -43,7 +43,7 @@ async function inserttipo_instituicao(descricao) {
 
 async function updatetipo_instituicao(id, descricao) {
   try {
-    await pool.query('UPDATE Tipo_Instituicao SET descricao = ? WHERE id_tipo_instituicao = ?', [descricao, id]);
+    await pool.query('UPDATE tipo_instituicao SET descricao = ? WHERE id_tipo_instituicao = ?', [descricao, id]);
   } catch (error) {
     throw error;
   }
@@ -51,7 +51,7 @@ async function updatetipo_instituicao(id, descricao) {
 
 async function deletetipo_instituicao(id) {
   try {
-    await pool.query('DELETE FROM Tipo_Instituicao WHERE id_tipo_instituicao = ?', [id]);
+    await pool.query('DELETE FROM tipo_instituicao WHERE id_tipo_instituicao = ?', [id]);
   } catch (error) {
     throw error;
   }
