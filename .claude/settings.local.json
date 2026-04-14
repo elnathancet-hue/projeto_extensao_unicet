@@ -111,7 +111,8 @@
       "Bash(grep -rn \"[A-Z]\" *.js)",
       "Bash(grep -rn \"Projeto_\\\\|Tipo_\\\\|Publico_\\\\|Papel_\\\\|Linha_\\\\|Local_\\\\|Faixa_\\\\|Curso_P\\\\|Avaliacao_\\\\|Questionario_\\\\|Cronograma_\\\\|Escolaridade\\\\b\" models/*.js)",
       "Bash('/c/Program Files/MySQL/MySQL Server 8.0/bin/mysql.exe' -h switchback.proxy.rlwy.net -P 57664 -u root -pThIRFYADpLXAVnsGcIuYensedMdHoJQM railway -e ':*)",
-      "Bash(/c/xampp/mysql/bin/mysql.exe -u root projetos_extensao -e ':*)"
+      "Bash(/c/xampp/mysql/bin/mysql.exe -u root projetos_extensao -e ':*)",
+      "Bash(\"/c/Program Files/MySQL/MySQL Server 8.0/bin/mysql.exe\" -h switchback.proxy.rlwy.net -P 57664 -u root -pThIRFYADpLXAVnsGcIuYensedMdHoJQM railway -e \"DESCRIBE cronograma_atividades\")"
     ]
   }
 }

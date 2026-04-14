@@ -306,7 +306,7 @@ async function getProjetoCompletoById(id) {
   const [cursos] = await pool.query('SELECT c.nome_curso FROM projeto_curso pc JOIN curso c ON pc.id_curso = c.id_curso WHERE pc.id_projeto = ?', [id]);
   const [pessoas] = await pool.query('SELECT p.nome, pp2.descricao AS papel FROM projeto_pessoa pp JOIN pessoa p ON pp.id_pessoa = p.id_pessoa LEFT JOIN papel_projeto pp2 ON pp.id_papel = pp2.id_papel WHERE pp.id_projeto = ?', [id]);
   const [custos] = await pool.query('SELECT * FROM projeto_custo WHERE id_projeto = ?', [id]);
-  const [cronograma] = await pool.query('SELECT * FROM cronograma_atividades WHERE id_projeto = ? ORDER BY numero', [id]);
+  const [cronograma] = await pool.query('SELECT * FROM cronograma_atividades ORDER BY numero');
   const [locais] = await pool.query('SELECT le.* FROM projeto_local pl JOIN local_execucao le ON pl.id_local = le.id_local WHERE pl.id_projeto = ?', [id]);
   const [instituicoes] = await pool.query('SELECT i.nome, i.sigla, ti.descricao AS tipo FROM projeto_instituicao pi JOIN instituicao i ON pi.id_instituicao = i.id_instituicao LEFT JOIN tipo_instituicao ti ON i.id_tipo_instituicao = ti.id_tipo_instituicao WHERE pi.id_projeto = ?', [id]);
 
