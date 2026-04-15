@@ -53,8 +53,9 @@ app.use((err, req, res, next) => {
   res.status(500).send('Algo deu errado!')
 })
 
-// Executar migrations pendentes na inicialização
+// Executar migrations e seed na inicialização
 const runMigration = require('./run_migration_status');
+const seedAdmin = require('./seed_admin');
 const pool = require('./db');
 
 (async () => {
@@ -62,8 +63,9 @@ const pool = require('./db');
     const conn = await pool.getConnection();
     await runMigration(conn);
     conn.release();
+    await seedAdmin(pool);
   } catch (err) {
-    console.warn('[migration] Não foi possível executar migration:', err.message);
+    console.warn('[startup] Não foi possível executar migration/seed:', err.message);
   }
 })();
 
