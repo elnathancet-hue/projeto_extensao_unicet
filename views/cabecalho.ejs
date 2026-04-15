@@ -12,7 +12,7 @@
   <div class="layout-wrapper">
 
     <!-- Sidebar -->
-    <nav class="sidebar" id="sidebarNav">
+    <nav class="sidebar" id="sidebarNav" aria-label="Menu principal">
       <div class="logo-section">
         <h5><i class="bi bi-mortarboard"></i> Extensão</h5>
         <small>UNI-CET</small>
@@ -57,12 +57,12 @@
             <span class="sidebar-user-role"><%= sessionTipo || '' %></span>
           </div>
         </div>
-        <a href="/logout" class="sidebar-logout"><i class="bi bi-box-arrow-right"></i> Sair</a>
+        <a href="/logout" class="sidebar-logout" onclick="return confirm('Deseja sair do sistema?')"><i class="bi bi-box-arrow-right"></i> Sair</a>
       </div>
     </nav>
 
     <!-- Botão hamburger mobile -->
-    <button class="sidebar-toggle-mobile d-md-none" id="sidebarToggle" type="button">
+    <button class="sidebar-toggle-mobile d-md-none" id="sidebarToggle" type="button" aria-label="Abrir menu">
       <i class="bi bi-list"></i>
     </button>
 

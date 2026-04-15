@@ -39,8 +39,12 @@ function logout(req, res) {
 
 async function listUsuarios(req, res) {
   try {
-    const usuarios = await usuarioModel.getAllUsuarios();
-    res.render('consultas/usuarios', { dados: usuarios });
+    const page = parseInt(req.query.page) || 1;
+    const result = await usuarioModel.getAllUsuarios(page);
+    res.render('consultas/usuarios', {
+      dados: result.rows,
+      pagination: { page: result.page, totalPages: result.totalPages, total: result.total }
+    });
   } catch (error) {
     console.error('Erro ao listar usuarios:', error);
     res.render('error', { message: 'Erro ao listar usuários', returnLink: '/logo' });

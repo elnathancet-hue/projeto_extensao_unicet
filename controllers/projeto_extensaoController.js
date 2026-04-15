@@ -62,6 +62,7 @@ function mapRequestToRegistro(body) {
 
 async function listprojeto_extensaos(req, res) {
   try {
+    const page = parseInt(req.query.page) || 1;
     const filters = {
       titulo: req.query.titulo || '',
       id_tipo_plano: req.query.id_tipo_plano || '',
@@ -70,9 +71,14 @@ async function listprojeto_extensaos(req, res) {
       periodo_inicio_ate: req.query.periodo_inicio_ate || ''
     };
     const hasFilter = Object.values(filters).some(v => v);
-    const projeto_extensaos = hasFilter ? await projeto_extensaoModel.filterprojeto_extensao(filters) : await projeto_extensaoModel.getAllprojeto_extensaos();
+    const result = hasFilter ? await projeto_extensaoModel.filterprojeto_extensao(filters, page) : await projeto_extensaoModel.getAllprojeto_extensaos(page);
     const tipoPlanos = await tipo_planoModel.getAlltipo_plano();
-    res.render('consultas/projeto_extensao', { dados: projeto_extensaos, filters, tipoPlanos });
+    res.render('consultas/projeto_extensao', {
+      dados: result.rows,
+      filters,
+      tipoPlanos,
+      pagination: { page: result.page, totalPages: result.totalPages, total: result.total }
+    });
   } catch (error) {
     console.error('Erro ao buscar projeto_extensaos:', error);
     res.render('error', {

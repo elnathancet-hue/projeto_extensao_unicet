@@ -12,18 +12,18 @@
     <form method="POST" action="<%= isEdit ? '/usuarios/' + u.id_usuario + '/edit' : '/usuarios/cadastrar' %>">
 
       <div class="mb-3">
-        <label class="form-label">Login <span class="text-danger">*</span></label>
-        <input name="usuario" class="form-control" value="<%= u.usuario || '' %>" required placeholder="Nome de acesso ao sistema" autocomplete="off">
+        <label class="form-label" for="campo-usuario">Login <span class="text-danger">*</span></label>
+        <input name="usuario" id="campo-usuario" class="form-control" value="<%= u.usuario || '' %>" required placeholder="Nome de acesso ao sistema" autocomplete="off">
       </div>
 
       <div class="mb-3">
-        <label class="form-label">Senha <%= isEdit ? '(deixe vazio para manter)' : '' %> <% if (!isEdit) { %><span class="text-danger">*</span><% } %></label>
-        <input name="senha" type="password" class="form-control" placeholder="<%= isEdit ? 'Nova senha (opcional)' : 'Defina a senha' %>" <%= !isEdit ? 'required' : '' %> autocomplete="new-password">
+        <label class="form-label" for="campo-senha">Senha <%= isEdit ? '(deixe vazio para manter)' : '' %> <% if (!isEdit) { %><span class="text-danger">*</span><% } %></label>
+        <input name="senha" id="campo-senha" type="password" class="form-control" placeholder="<%= isEdit ? 'Nova senha (opcional)' : 'Defina a senha' %>" <%= !isEdit ? 'required' : '' %> autocomplete="new-password">
       </div>
 
       <div class="mb-3">
-        <label class="form-label">Perfil de Acesso <span class="text-danger">*</span></label>
-        <select name="tipo" class="form-select" required>
+        <label class="form-label" for="campo-tipo">Perfil de Acesso <span class="text-danger">*</span></label>
+        <select name="tipo" id="campo-tipo" class="form-select" required>
           <option value="professor" <%= u.tipo === 'professor' ? 'selected' : '' %>>Professor (Docente)</option>
           <option value="coordenador" <%= u.tipo === 'coordenador' ? 'selected' : '' %>>Coordenador de Curso</option>
           <option value="admin" <%= u.tipo === 'admin' ? 'selected' : '' %>>Administrador (Pró-Reitoria)</option>
@@ -34,8 +34,8 @@
       </div>
 
       <div class="mb-3">
-        <label class="form-label">Vincular a Pessoa (opcional)</label>
-        <select name="id_pessoa" class="form-select">
+        <label class="form-label" for="campo-pessoa">Vincular a Pessoa (opcional)</label>
+        <select name="id_pessoa" id="campo-pessoa" class="form-select">
           <option value="">-- Nenhuma --</option>
           <% if (typeof pessoas !== 'undefined' && pessoas) { %>
             <% pessoas.forEach(p => { %>

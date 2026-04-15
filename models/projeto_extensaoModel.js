@@ -1,6 +1,9 @@
 const pool = require('../db');
 
-async function getAllprojeto_extensaos() {
+async function getAllprojeto_extensaos(page = 1, limit = 10) {
+  const offset = (page - 1) * limit;
+  const [countResult] = await pool.query('SELECT COUNT(*) as total FROM projeto_extensao');
+  const total = countResult[0].total;
   const [rows] = await pool.query(`
     SELECT
       pe.id_projeto,
@@ -18,8 +21,9 @@ async function getAllprojeto_extensaos() {
     FROM projeto_extensao pe
     LEFT JOIN pessoa p ON pe.coordenador_id = p.id_pessoa
     ORDER BY pe.id_projeto DESC
+    LIMIT ${limit} OFFSET ${offset}
   `);
-  return rows;
+  return { rows, total, page, limit, totalPages: Math.ceil(total / limit) };
 }
 
 async function getprojeto_extensaosByNome(nome) {
@@ -277,8 +281,9 @@ async function getPessoasByProjeto(id_projeto) {
     }
   }
 
-async function filterprojeto_extensao(filters) {
-  let sql = `SELECT pe.id_projeto, pe.titulo, pe.id_tipo_plano, pe.coordenador_id, pe.periodo_inicio, pe.periodo_fim, pe.carga_horaria_total, pe.id_publico_alvo, pe.objetivo, pe.metodologia, pe.status, p.nome AS coordenador_nome FROM projeto_extensao pe LEFT JOIN pessoa p ON pe.coordenador_id = p.id_pessoa`;
+async function filterprojeto_extensao(filters, page = 1, limit = 10) {
+  const offset = (page - 1) * limit;
+  let whereSql = '';
   const conditions = [];
   const params = [];
   if (filters.titulo) { conditions.push('pe.titulo LIKE ?'); params.push('%' + filters.titulo + '%'); }
@@ -286,10 +291,14 @@ async function filterprojeto_extensao(filters) {
   if (filters.status) { conditions.push('pe.status = ?'); params.push(filters.status); }
   if (filters.periodo_inicio_de) { conditions.push('pe.periodo_inicio >= ?'); params.push(filters.periodo_inicio_de); }
   if (filters.periodo_inicio_ate) { conditions.push('pe.periodo_inicio <= ?'); params.push(filters.periodo_inicio_ate); }
-  if (conditions.length) sql += ' WHERE ' + conditions.join(' AND ');
-  sql += ' ORDER BY pe.id_projeto DESC';
+  if (conditions.length) whereSql = ' WHERE ' + conditions.join(' AND ');
+
+  const [countResult] = await pool.query(`SELECT COUNT(*) as total FROM projeto_extensao pe${whereSql}`, params);
+  const total = countResult[0].total;
+
+  let sql = `SELECT pe.id_projeto, pe.titulo, pe.id_tipo_plano, pe.coordenador_id, pe.periodo_inicio, pe.periodo_fim, pe.carga_horaria_total, pe.id_publico_alvo, pe.objetivo, pe.metodologia, pe.status, p.nome AS coordenador_nome FROM projeto_extensao pe LEFT JOIN pessoa p ON pe.coordenador_id = p.id_pessoa${whereSql} ORDER BY pe.id_projeto DESC LIMIT ${limit} OFFSET ${offset}`;
   const [rows] = await pool.query(sql, params);
-  return rows;
+  return { rows, total, page, limit, totalPages: Math.ceil(total / limit) };
 }
 
 async function updateStatus(id, status) {

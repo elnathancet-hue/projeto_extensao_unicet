@@ -9,14 +9,18 @@ async function getUserByUsernameAndPassword(username, password) {
   return rows[0];
 }
 
-async function getAllUsuarios() {
+async function getAllUsuarios(page = 1, limit = 10) {
+  const offset = (page - 1) * limit;
+  const [countResult] = await pool.query('SELECT COUNT(*) as total FROM usuario');
+  const total = countResult[0].total;
   const [rows] = await pool.query(`
     SELECT u.*, p.nome AS nome_pessoa
     FROM usuario u
     LEFT JOIN pessoa p ON u.id_pessoa = p.id_pessoa
     ORDER BY u.id_usuario DESC
+    LIMIT ${limit} OFFSET ${offset}
   `);
-  return rows;
+  return { rows, total, page, limit, totalPages: Math.ceil(total / limit) };
 }
 
 async function getUsuarioById(id) {

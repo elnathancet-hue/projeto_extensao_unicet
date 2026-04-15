@@ -26,7 +26,8 @@
       <!-- ===== TIPO DE EXTENSÃO ===== -->
       <div class="border rounded p-3 mb-4 bg-light">
         <h6 class="fw-bold mb-3"><i class="bi bi-tag"></i> Tipo de Extensão</h6>
-        <select name="id_tipo_plano" class="form-select" required>
+        <label class="form-label visually-hidden" for="campo-tipo-plano">Tipo de Extensão</label>
+        <select name="id_tipo_plano" id="campo-tipo-plano" class="form-select" required>
           <option value="">Selecione o tipo</option>
           <% listaTipoPlanos.forEach(item => { %>
             <option value="<%= item.id_tipo_plano %>" <%= registro.id_tipo_plano == item.id_tipo_plano ? 'selected' : '' %>><%= item.descricao %></option>
@@ -39,8 +40,8 @@
         <h6 class="fw-bold mb-3"><i class="bi bi-1-circle"></i> I - Identificação</h6>
 
         <div class="mb-3">
-          <label class="form-label">Título do Projeto <span class="text-danger">*</span></label>
-          <input name="titulo" class="form-control" value="<%= registro.titulo || '' %>" required placeholder="Nome completo do projeto de extensão">
+          <label class="form-label" for="campo-titulo">Título do Projeto <span class="text-danger">*</span></label>
+          <input name="titulo" id="campo-titulo" class="form-control" value="<%= registro.titulo || '' %>" required placeholder="Nome completo do projeto de extensão">
         </div>
 
         <!-- Linha Programática -->
@@ -80,26 +81,26 @@
         <!-- Período -->
         <div class="row mb-3">
           <div class="col-md-4">
-            <label class="form-label">Período - Início</label>
-            <input type="date" name="periodo_inicio" class="form-control"
+            <label class="form-label" for="campo-inicio">Período - Início</label>
+            <input type="date" name="periodo_inicio" id="campo-inicio" class="form-control"
               value="<%= registro.periodo_inicio ? registro.periodo_inicio.toISOString().split('T')[0] : '' %>">
           </div>
           <div class="col-md-4">
-            <label class="form-label">Período - Fim</label>
-            <input type="date" name="periodo_fim" class="form-control"
+            <label class="form-label" for="campo-fim">Período - Fim</label>
+            <input type="date" name="periodo_fim" id="campo-fim" class="form-control"
               value="<%= registro.periodo_fim ? registro.periodo_fim.toISOString().split('T')[0] : '' %>">
           </div>
           <div class="col-md-4">
-            <label class="form-label">Carga Horária Total</label>
-            <input type="number" name="carga_horaria_total" min="0" class="form-control"
+            <label class="form-label" for="campo-ch">Carga Horária Total</label>
+            <input type="number" name="carga_horaria_total" id="campo-ch" min="0" class="form-control"
               value="<%= registro.carga_horaria_total || '' %>" placeholder="Ex: 40">
           </div>
         </div>
 
         <!-- Público-Alvo -->
         <div class="mb-3">
-          <label class="form-label">Público-Alvo</label>
-          <select name="id_publico_alvo" class="form-select">
+          <label class="form-label" for="campo-publico">Público-Alvo</label>
+          <select name="id_publico_alvo" id="campo-publico" class="form-select">
             <option value="">Selecione</option>
             <% listaPublicosAlvo.forEach(item => { %>
               <option value="<%= item.id_publico_alvo %>" <%= registro.id_publico_alvo == item.id_publico_alvo ? 'selected' : '' %>><%= item.descricao %></option>
@@ -123,14 +124,16 @@
       <div class="border rounded p-3 mb-4">
         <h6 class="fw-bold mb-3"><i class="bi bi-2-circle"></i> II - Objetivo(s)</h6>
         <p class="text-muted" style="font-size:0.7rem;margin-bottom:6px">Estabeleça os objetivos usando verbos como: desenvolver, organizar, capacitar, demonstrar, contribuir, colaborar, valorizar, aplicar.</p>
-        <textarea name="objetivo" class="form-control" rows="4" placeholder="Descreva os objetivos da atividade de extensão..."><%= registro.objetivo || '' %></textarea>
+        <label class="visually-hidden" for="campo-objetivo">Objetivo</label>
+        <textarea name="objetivo" id="campo-objetivo" class="form-control" rows="4" placeholder="Descreva os objetivos da atividade de extensão..."><%= registro.objetivo || '' %></textarea>
       </div>
 
       <!-- ===== III - METODOLOGIA ===== -->
       <div class="border rounded p-3 mb-4">
         <h6 class="fw-bold mb-3"><i class="bi bi-3-circle"></i> III - Metodologia</h6>
         <p class="text-muted" style="font-size:0.7rem;margin-bottom:6px">Descreva os procedimentos, o roteiro claro e detalhado das etapas e atividades a serem executadas.</p>
-        <textarea name="metodologia" class="form-control" rows="4" placeholder="Descreva a metodologia do projeto..."><%= registro.metodologia || '' %></textarea>
+        <label class="visually-hidden" for="campo-metodologia">Metodologia</label>
+        <textarea name="metodologia" id="campo-metodologia" class="form-control" rows="4" placeholder="Descreva a metodologia do projeto..."><%= registro.metodologia || '' %></textarea>
       </div>
 
       <!-- ===== AÇÕES ===== -->
