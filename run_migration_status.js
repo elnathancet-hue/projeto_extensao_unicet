@@ -43,6 +43,18 @@ async function runMigration(poolOrConfig) {
     await conn.execute(`ALTER TABLE usuario ADD CONSTRAINT fk_usuario_pessoa FOREIGN KEY (id_pessoa) REFERENCES pessoa(id_pessoa) ON DELETE SET NULL`);
   } catch (e) { /* já existe */ }
 
+  // Add id_projeto to questionario_impacto if not exists
+  try {
+    const [qCols] = await conn.query("SHOW COLUMNS FROM questionario_impacto LIKE 'id_projeto'");
+    if (qCols.length === 0) {
+      await conn.query("ALTER TABLE questionario_impacto ADD COLUMN id_projeto INT NULL AFTER id");
+      await conn.query("ALTER TABLE questionario_impacto ADD CONSTRAINT fk_quest_projeto FOREIGN KEY (id_projeto) REFERENCES projeto_extensao(id_projeto) ON DELETE CASCADE");
+      console.log('[migration] Coluna id_projeto adicionada em questionario_impacto');
+    }
+  } catch (e) {
+    console.warn('[migration] questionario_impacto skip:', e.message.substring(0, 80));
+  }
+
   console.log('[migration] Status + RBAC migration complete.');
 
   if (!poolOrConfig || !poolOrConfig.execute) {

@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const projeto_extensaoController = require('../controllers/projeto_extensaoController');
+const questionarioController = require('../controllers/questionarioController');
 
 // Listagem
 router.get('/', projeto_extensaoController.listprojeto_extensaos);
@@ -51,6 +52,27 @@ router.get('/:id/plano/pdf', projeto_extensaoController.gerarPdfPlano);
 router.get('/:id/relatorio', projeto_extensaoController.showRelatorio);
 router.post('/:id/relatorio', projeto_extensaoController.saveRelatorio);
 router.get('/:id/relatorio/pdf', projeto_extensaoController.gerarPdfRelatorio);
+
+// Questionários de impacto vinculados ao projeto
+router.get('/:id/questionarios', questionarioController.list);
+router.get('/:id/questionarios/novo', questionarioController.renderForm);
+
+// PDF questionário em branco
+router.get('/:id/questionarios/pdf', async (req, res) => {
+  try {
+    const projeto_extensaoModel = require('../models/projeto_extensaoModel');
+    const projeto = await projeto_extensaoModel.getprojeto_extensaosById(req.params.id);
+    if (!projeto) return res.status(404).send('Projeto não encontrado');
+    res.render('pdf/questionario_pdf', { projeto });
+  } catch (error) {
+    res.render('error', { message: 'Erro ao gerar PDF', returnLink: '/projeto_extensao' });
+  }
+});
+
+router.post('/:id/questionarios/cadastrar', questionarioController.add);
+router.get('/:id/questionarios/:questId/edit', questionarioController.showEdit);
+router.post('/:id/questionarios/:questId/edit', questionarioController.edit);
+router.post('/:id/questionarios/:questId/delete', questionarioController.remove);
 
 // Exibir um projeto
 router.get('/:id', projeto_extensaoController.showprojeto_extensao);

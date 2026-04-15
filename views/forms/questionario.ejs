@@ -1,4 +1,4 @@
-<%- include('../cabecalho') %>
+<%- include('../cabecalho', { titulo: 'Questionário de Impacto' }) %>
 <% 
   // Garante que 'quest' seja um objeto (mesmo que vazio) para evitar erros de 'null'
   const quest = (typeof questionario !== 'undefined' && questionario) ? questionario : {}; 
@@ -15,12 +15,12 @@
 
     <hr class="my-4" style="border-color: var(--line);">
 
-    <form method="POST" action="<%= isEdit ? '/questionario/' + (quest.id || '') + '/edit' : '/questionario/cadastrar' %>">
+    <form method="POST" action="<%= isEdit ? '/projeto_extensao/' + idProjeto + '/questionarios/' + (quest.id || '') + '/edit' : '/projeto_extensao/' + idProjeto + '/questionarios/cadastrar' %>">
       
       <div class="row">
         <div class="col-12 mb-3">
           <label for="nome_acao">Nome da Ação Extensionista:</label>
-          <input type="text" id="nome_acao" name="nome_acao" value="<%= quest.nome_acao || '' %>" required class="form-control">
+          <input type="text" id="nome_acao" name="nome_acao" value="<%= quest.nome_acao || '' %>" required class="form-control" <%= !isEdit && quest.nome_acao ? 'readonly' : '' %>>
         </div>
         <div class="col-md-7 mb-3">
           <label for="instituicao">Instituição:</label>
@@ -123,6 +123,20 @@
         <textarea name="aplicacao_conhecimento" rows="2" class="form-control" placeholder="Por quê?"><%= quest.aplicacao_conhecimento || '' %></textarea>
       </div>
 
+      <div class="mt-5 mb-4 border-start border-4 border-success ps-3">
+        <h3 class="fs-5 fw-bold mb-0">4. Sugestões</h3>
+      </div>
+
+      <div class="mb-3">
+        <label for="gostou">4.1. O que você mais gostou?</label>
+        <textarea name="gostou" id="gostou" rows="2" class="form-control" placeholder="Descreva o que mais gostou na ação"><%= quest.gostou || '' %></textarea>
+      </div>
+
+      <div class="mb-3">
+        <label for="melhorias">4.2. O que poderia ser melhorado?</label>
+        <textarea name="melhorias" id="melhorias" rows="2" class="form-control" placeholder="Sugestões de melhoria"><%= quest.melhorias || '' %></textarea>
+      </div>
+
       <div class="p-4 mt-5 mb-4 bg-light border-rounded">
   <p class="fw-bold mb-1">5. Consentimento</p>
   <p class="small text-muted mb-3">Autorizo o uso das informações para fins de avaliação.</p>
@@ -141,14 +155,10 @@
       <div class="d-flex justify-content-between align-items-center mt-5 pt-4 border-top">
         <div class="d-flex gap-2">
           <button type="submit" class="btn btn-primary px-4">
-            <i class="fas fa-save"></i> <%= isEdit ? 'Salvar Alterações' : 'Finalizar e Enviar' %>
+            <i class="bi bi-check-lg"></i> <%= isEdit ? 'Salvar Alterações' : 'Finalizar e Enviar' %>
           </button>
-          
-          <a href="/questionario" class="btn btn-primary px-4">
-            <i class="bi bi-arrow-left"></i> Voltar
-          </a>
 
-          <a href="/logo" class="btn btn-secondary px-4">
+          <a href="/projeto_extensao/<%= idProjeto %>/questionarios" class="btn btn-secondary px-4">
             <i class="bi bi-x-circle"></i> Cancelar
           </a>
         </div>
