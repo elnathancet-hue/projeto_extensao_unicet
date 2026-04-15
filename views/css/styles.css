@@ -140,12 +140,38 @@ h4, h5, h6 { font-size: 1rem; }
 }
 label, .form-label {
   display: block;
-  margin: 10px 0 5px;
+  margin: 12px 0 6px;
   color: var(--text);
   font-size: 0.813rem;
   font-weight: 600;
   letter-spacing: 0.01em;
 }
+
+/* Form-check (checkboxes e radios) */
+.form-check {
+  position: relative;
+  display: flex;
+  align-items: flex-start;
+  padding-left: 1.75em;
+  min-height: 1.75rem;
+  margin-bottom: 4px;
+}
+.form-check-input {
+  width: 1em;
+  height: 1em;
+  margin-top: 0.3em;
+  margin-left: -1.75em;
+  flex-shrink: 0;
+}
+.form-check-label {
+  display: inline-block;
+  margin: 0;
+  padding-left: 4px;
+  line-height: 1.6;
+  cursor: pointer;
+  font-weight: 500;
+}
+
 input, select, textarea {
   width: 100%;
   padding: 10px 12px;

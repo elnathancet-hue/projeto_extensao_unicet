@@ -73,11 +73,13 @@
           <label>1.3. Você reside na comunidade/localidade atendida?</label>
           <div class="d-flex gap-4 mt-2">
           <div class="form-check">
-            <input type="radio" name="reside_local" value="1" <%= (quest.reside_local == '1' || quest.reside_local === 'Sim') ? 'checked' : '' %> required> Sim
+            <input class="form-check-input" type="radio" name="reside_local" value="1" id="reside_sim" <%= (quest.reside_local == '1' || quest.reside_local === 'Sim') ? 'checked' : '' %> required>
+            <label class="form-check-label" for="reside_sim">Sim</label>
           </div>
           <div class="form-check">
-             <input type="radio" name="reside_local" value="0" <%= (quest.reside_local == '0' || quest.reside_local === 'Não') ? 'checked' : '' %>> Não
-            </div>
+            <input class="form-check-input" type="radio" name="reside_local" value="0" id="reside_nao" <%= (quest.reside_local == '0' || quest.reside_local === 'Não') ? 'checked' : '' %>>
+            <label class="form-check-label" for="reside_nao">Não</label>
+          </div>
           </div>
         </div>
       </div>
@@ -125,8 +127,14 @@
   <p class="fw-bold mb-1">5. Consentimento</p>
   <p class="small text-muted mb-3">Autorizo o uso das informações para fins de avaliação.</p>
   <div class="d-flex gap-4">
-    <label><input type="radio" name="consentimento" value="1" <%= (quest.consentimento == '1' || quest.consentimento === 'Sim') ? 'checked' : '' %> required> Sim, autorizo</label>
-    <label><input type="radio" name="consentimento" value="0" <%= (quest.consentimento == '0' || quest.consentimento === 'Não') ? 'checked' : '' %>> Não autorizo</label>
+    <div class="form-check">
+      <input class="form-check-input" type="radio" name="consentimento" value="1" id="consent_sim" <%= (quest.consentimento == '1' || quest.consentimento === 'Sim') ? 'checked' : '' %> required>
+      <label class="form-check-label" for="consent_sim">Sim, autorizo</label>
+    </div>
+    <div class="form-check">
+      <input class="form-check-input" type="radio" name="consentimento" value="0" id="consent_nao" <%= (quest.consentimento == '0' || quest.consentimento === 'Não') ? 'checked' : '' %>>
+      <label class="form-check-label" for="consent_nao">Não autorizo</label>
+    </div>
   </div>
 </div>
 

@@ -49,11 +49,11 @@
           <p class="text-muted" style="font-size:0.7rem;margin-bottom:6px">Selecione uma ou mais linhas programáticas</p>
           <div class="row">
             <% listaLinhas.forEach(item => { %>
-              <div class="col-md-3 col-6 mb-1">
+              <div class="col-md-3 col-6 mb-2">
                 <div class="form-check">
                   <input class="form-check-input" type="checkbox" name="linha_programatica_ids" value="<%= item.id_linha %>" id="linha_<%= item.id_linha %>"
                     <%= linhasSel.includes(item.id_linha) ? 'checked' : '' %>>
-                  <label class="form-check-label" for="linha_<%= item.id_linha %>" style="font-size:0.813rem"><%= item.nome %></label>
+                  <label class="form-check-label" for="linha_<%= item.id_linha %>" style="font-size:0.875rem"><%= item.nome %></label>
                 </div>
               </div>
             <% }) %>
@@ -66,11 +66,11 @@
           <p class="text-muted" style="font-size:0.7rem;margin-bottom:6px">Selecione o tipo de ação extensionista</p>
           <div class="row">
             <% listaTiposAcao.forEach(item => { %>
-              <div class="col-md-4 col-6 mb-1">
+              <div class="col-md-4 col-6 mb-2">
                 <div class="form-check">
                   <input class="form-check-input" type="checkbox" name="tipo_acao_ids" value="<%= item.id_tipo_acao %>" id="acao_<%= item.id_tipo_acao %>"
                     <%= tiposAcaoSel.includes(item.id_tipo_acao) ? 'checked' : '' %>>
-                  <label class="form-check-label" for="acao_<%= item.id_tipo_acao %>" style="font-size:0.813rem"><%= item.nome %></label>
+                  <label class="form-check-label" for="acao_<%= item.id_tipo_acao %>" style="font-size:0.875rem"><%= item.nome %></label>
                 </div>
               </div>
             <% }) %>
