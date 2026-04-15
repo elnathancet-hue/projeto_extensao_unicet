@@ -180,14 +180,11 @@
           </button>
         </div>
 
-        <input type="hidden" name="redirect_success_professor" value="form.html">
-        <input type="hidden" name="redirect_success_admin" value="admin_dashboard.html">
-        <input type="hidden" name="redirect_error" value="login.html?erro=Falha no login. Verifique suas credenciais.">
       </form>
     </div>
 
     <div class="login-footer">
-      UNI-CET &copy; 2025 - Extensão Acadêmica
+      UNI-CET &copy; <%= new Date().getFullYear() %> - Extensão Acadêmica
     </div>
   </div>
 
@@ -205,6 +202,24 @@
         icon.classList.add('bi-eye');
       }
     }
+    // Show error message from URL param
+    (function() {
+      var params = new URLSearchParams(window.location.search);
+      var erro = params.get('erro');
+      if (erro) {
+        var el = document.getElementById('login-feedback-message');
+        if (el) {
+          el.querySelector('span').textContent = erro;
+          el.classList.remove('d-none');
+        }
+      }
+    })();
+    // Disable button on submit to prevent double-click
+    document.getElementById('formulario-login').addEventListener('submit', function() {
+      var btn = document.getElementById('botao-entrar');
+      btn.disabled = true;
+      btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span> Entrando...';
+    });
   </script>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>

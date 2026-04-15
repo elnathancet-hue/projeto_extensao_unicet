@@ -95,3 +95,15 @@
           </div>
         </div>
       </div>
+
+      <!-- Flash Messages -->
+      <% if (typeof flash !== 'undefined' && flash) { %>
+        <div style="padding:16px 24px 0">
+          <div class="alert alert-<%= flash.type === 'error' ? 'danger' : flash.type === 'warning' ? 'warning' : 'success' %> alert-dismissible fade show d-flex align-items-center" role="alert" style="font-size:0.85rem; border-radius:8px; margin:0;">
+            <i class="bi <%= flash.type === 'error' ? 'bi-exclamation-triangle' : flash.type === 'warning' ? 'bi-exclamation-circle' : 'bi-check-circle' %> me-2"></i>
+            <span><%= flash.message %></span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" style="font-size:0.65rem"></button>
+          </div>
+        </div>
+        <script>setTimeout(function(){var a=document.querySelector('.alert-dismissible');if(a){var b=bootstrap.Alert.getOrCreateInstance(a);b.close();}},4000);</script>
+      <% } %>

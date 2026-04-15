@@ -24,6 +24,13 @@ app.use(
   })
 )
 
+// Flash messages middleware
+app.use((req, res, next) => {
+  res.locals.flash = req.session.flash || null;
+  delete req.session.flash;
+  next();
+});
+
 // Middleware para injetar dados da sessão em todas as views
 app.use((req, res, next) => {
   res.locals.sessionUsuario = req.session ? req.session.usuario : null;

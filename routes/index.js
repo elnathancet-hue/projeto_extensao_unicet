@@ -93,7 +93,7 @@ router.get('/usuarios/forms/usuario', authorize('admin'), usuarioController.show
 router.post('/usuarios/cadastrar', authorize('admin'), usuarioController.addUsuario);
 router.get('/usuarios/:id/edit', authorize('admin'), usuarioController.showEditForm);
 router.post('/usuarios/:id/edit', authorize('admin'), usuarioController.editUsuario);
-router.get('/usuarios/:id/delete', authorize('admin'), usuarioController.deleteUsuario);
+router.post('/usuarios/:id/delete', authorize('admin'), usuarioController.deleteUsuario);
 
 // Rotas de recursos (protegidas pelo authMiddleware acima)
 router.use('/curso', cursoRouter);

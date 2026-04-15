@@ -72,6 +72,7 @@ async function addUsuario(req, res) {
     }
 
     await usuarioModel.insertUsuario({ usuario, senha, tipo, id_pessoa: id_pessoa || null });
+    req.session.flash = { type: 'success', message: 'Usuário criado com sucesso!' };
     res.redirect('/usuarios');
   } catch (error) {
     console.error('Erro ao criar usuario:', error);
@@ -107,6 +108,7 @@ async function editUsuario(req, res) {
     }
 
     await usuarioModel.updateUsuario(id, { usuario, senha, tipo, id_pessoa: id_pessoa || null });
+    req.session.flash = { type: 'success', message: 'Usuário atualizado com sucesso!' };
     res.redirect('/usuarios');
   } catch (error) {
     console.error('Erro ao editar usuario:', error);
@@ -117,6 +119,7 @@ async function editUsuario(req, res) {
 async function deleteUsuario(req, res) {
   try {
     await usuarioModel.deleteUsuario(req.params.id);
+    req.session.flash = { type: 'success', message: 'Usuário excluído com sucesso!' };
     res.redirect('/usuarios');
   } catch (error) {
     console.error('Erro ao excluir usuario:', error);

@@ -89,11 +89,11 @@
                 <td>
                   <strong style="font-size:0.813rem"><%= d.titulo %></strong>
                   <% if (d.coordenador_nome) { %>
-                    <br><small class="text-muted" style="font-size:0.625rem"><i class="bi bi-person"></i> <%= d.coordenador_nome %></small>
+                    <br><small class="text-muted" style="font-size:0.75rem"><i class="bi bi-person"></i> <%= d.coordenador_nome %></small>
                   <% } %>
                 </td>
                 <td>
-                  <span class="badge <%= stInfo.bg %>" style="font-size:0.625rem">
+                  <span class="badge <%= stInfo.bg %>" style="font-size:0.75rem">
                     <i class="bi <%= stInfo.icon %>"></i> <%= stInfo.text %>
                   </span>
                 </td>
@@ -109,11 +109,11 @@
                 </td>
                 <td>
                   <div class="d-flex gap-1">
-                    <a href="/projeto_extensao/<%= d.id_projeto %>/plano" class="btn btn-sm btn-outline-primary" style="font-size:0.625rem; padding:2px 6px">
+                    <a href="/projeto_extensao/<%= d.id_projeto %>/plano" class="btn btn-sm btn-outline-primary" style="font-size:0.75rem; padding:2px 6px">
                       <i class="bi bi-file-text"></i> Plano
                     </a>
                     <% if (st === 'aprovado' || st === 'em_execucao' || st === 'concluido' || isAdmin) { %>
-                    <a href="/projeto_extensao/<%= d.id_projeto %>/relatorio" class="btn btn-sm btn-outline-success" style="font-size:0.625rem; padding:2px 6px">
+                    <a href="/projeto_extensao/<%= d.id_projeto %>/relatorio" class="btn btn-sm btn-outline-success" style="font-size:0.75rem; padding:2px 6px">
                       <i class="bi bi-journal-text"></i> Relatório
                     </a>
                     <% } %>
@@ -125,48 +125,48 @@
                     <% if (st === 'rascunho' && (perfil === 'professor' || isAdmin)) { %>
                       <form method="POST" action="/projeto_extensao/<%= d.id_projeto %>/status" style="display:inline" onsubmit="return confirm('Submeter este projeto para avaliação?')">
                         <input type="hidden" name="novo_status" value="em_avaliacao">
-                        <button class="btn btn-sm btn-warning" style="font-size:0.563rem; padding:2px 5px" title="Submeter para Análise"><i class="bi bi-send"></i> Submeter</button>
+                        <button class="btn btn-sm btn-warning" style="font-size:0.75rem; padding:2px 5px" title="Submeter para Análise"><i class="bi bi-send"></i> Submeter</button>
                       </form>
                     <% } %>
 
                     <% if (st === 'em_avaliacao' && (isCoord || isAdmin)) { %>
-                      <form method="POST" action="/projeto_extensao/<%= d.id_projeto %>/status" style="display:inline">
+                      <form method="POST" action="/projeto_extensao/<%= d.id_projeto %>/status" style="display:inline" onsubmit="return confirm('Aprovar este projeto?')">
                         <input type="hidden" name="novo_status" value="aprovado">
-                        <button class="btn btn-sm btn-success" style="font-size:0.563rem; padding:2px 5px" title="Aprovar"><i class="bi bi-check-lg"></i> Aprovar</button>
+                        <button class="btn btn-sm btn-success" style="font-size:0.75rem; padding:2px 5px" title="Aprovar"><i class="bi bi-check-lg"></i> Aprovar</button>
                       </form>
-                      <form method="POST" action="/projeto_extensao/<%= d.id_projeto %>/status" style="display:inline">
+                      <form method="POST" action="/projeto_extensao/<%= d.id_projeto %>/status" style="display:inline" onsubmit="return confirm('Rejeitar este projeto? O professor será notificado.')">
                         <input type="hidden" name="novo_status" value="rejeitado">
-                        <button class="btn btn-sm btn-danger" style="font-size:0.563rem; padding:2px 5px" title="Rejeitar"><i class="bi bi-x-lg"></i> Rejeitar</button>
+                        <button class="btn btn-sm btn-danger" style="font-size:0.75rem; padding:2px 5px" title="Rejeitar"><i class="bi bi-x-lg"></i> Rejeitar</button>
                       </form>
                     <% } %>
 
                     <% if (st === 'aprovado' && (isCoord || isAdmin)) { %>
-                      <form method="POST" action="/projeto_extensao/<%= d.id_projeto %>/status" style="display:inline">
+                      <form method="POST" action="/projeto_extensao/<%= d.id_projeto %>/status" style="display:inline" onsubmit="return confirm('Iniciar execução deste projeto?')">
                         <input type="hidden" name="novo_status" value="em_execucao">
-                        <button class="btn btn-sm btn-info" style="font-size:0.563rem; padding:2px 5px" title="Iniciar Execução"><i class="bi bi-play"></i> Executar</button>
+                        <button class="btn btn-sm btn-info" style="font-size:0.75rem; padding:2px 5px" title="Iniciar Execução"><i class="bi bi-play"></i> Executar</button>
                       </form>
                     <% } %>
 
                     <% if (st === 'em_execucao' && isAdmin) { %>
-                      <form method="POST" action="/projeto_extensao/<%= d.id_projeto %>/status" style="display:inline">
+                      <form method="POST" action="/projeto_extensao/<%= d.id_projeto %>/status" style="display:inline" onsubmit="return confirm('Concluir este projeto? Esta ação finaliza o ciclo.')">
                         <input type="hidden" name="novo_status" value="concluido">
-                        <button class="btn btn-sm btn-primary" style="font-size:0.563rem; padding:2px 5px" title="Concluir"><i class="bi bi-trophy"></i> Concluir</button>
+                        <button class="btn btn-sm btn-primary" style="font-size:0.75rem; padding:2px 5px" title="Concluir"><i class="bi bi-trophy"></i> Concluir</button>
                       </form>
                     <% } %>
 
                     <% if (st === 'rejeitado' && isAdmin) { %>
-                      <form method="POST" action="/projeto_extensao/<%= d.id_projeto %>/status" style="display:inline">
+                      <form method="POST" action="/projeto_extensao/<%= d.id_projeto %>/status" style="display:inline" onsubmit="return confirm('Reabrir este projeto como rascunho?')">
                         <input type="hidden" name="novo_status" value="rascunho">
-                        <button class="btn btn-sm btn-secondary" style="font-size:0.563rem; padding:2px 5px" title="Devolver para Rascunho"><i class="bi bi-arrow-counterclockwise"></i> Reabrir</button>
+                        <button class="btn btn-sm btn-secondary" style="font-size:0.75rem; padding:2px 5px" title="Devolver para Rascunho"><i class="bi bi-arrow-counterclockwise"></i> Reabrir</button>
                       </form>
                     <% } %>
 
                     <!-- Editar/Excluir (só rascunho ou admin) -->
                     <% if (st === 'rascunho' || isAdmin) { %>
-                      <a href="/projeto_extensao/<%= d.id_projeto %>/edit" class="btn btn-sm btn-outline-secondary" style="font-size:0.563rem; padding:2px 5px" title="Editar"><i class="bi bi-pencil"></i></a>
+                      <a href="/projeto_extensao/<%= d.id_projeto %>/edit" class="btn btn-sm btn-outline-secondary" style="font-size:0.75rem; padding:2px 5px" title="Editar"><i class="bi bi-pencil"></i></a>
                     <% } %>
                     <% if (isAdmin) { %>
-                      <a href="/projeto_extensao/<%= d.id_projeto %>/delete" class="btn btn-sm btn-outline-danger" style="font-size:0.563rem; padding:2px 5px" title="Excluir" onclick="return confirm('Tem certeza que deseja excluir este projeto?')"><i class="bi bi-trash"></i></a>
+                      <a href="/projeto_extensao/<%= d.id_projeto %>/delete" class="btn btn-sm btn-outline-danger" style="font-size:0.75rem; padding:2px 5px" title="Excluir" onclick="return confirm('Tem certeza que deseja excluir este projeto?')"><i class="bi bi-trash"></i></a>
                     <% } %>
                   </div>
                 </td>

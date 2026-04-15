@@ -139,6 +139,7 @@ async function addprojeto_extensao(req, res) {
       ID_PAPEL_PROFESSOR
     );
 
+    req.session.flash = { type: 'success', message: 'Projeto criado com sucesso!' };
     res.redirect('/projeto_extensao');
   } catch (error) {
     console.error('Erro ao inserir projeto_extensao:', error);
@@ -232,6 +233,7 @@ async function editprojeto_extensao(req, res) {
       ID_PAPEL_PROFESSOR
     );
 
+    req.session.flash = { type: 'success', message: 'Projeto atualizado com sucesso!' };
     res.redirect('/projeto_extensao');
   } catch (error) {
     console.error('Erro ao editar projeto_extensao:', error);
@@ -264,6 +266,7 @@ async function deleteprojeto_extensao(req, res) {
   const id = req.params.id;
   try {
     await projeto_extensaoModel.deleteprojeto_extensaos(id);
+    req.session.flash = { type: 'success', message: 'Projeto excluído com sucesso!' };
     res.redirect('/projeto_extensao');
   } catch (error) {
     console.error('Erro ao excluir projeto_extensao:', error);
@@ -288,6 +291,7 @@ async function showPlano(req, res) {
 async function savePlano(req, res) {
   try {
     await projeto_extensaoModel.updatePlano(req.params.id, req.body);
+    req.session.flash = { type: 'success', message: 'Plano salvo com sucesso!' };
     res.redirect('/projeto_extensao/' + req.params.id + '/plano');
   } catch (error) {
     console.error('Erro ao salvar plano:', error);
@@ -309,6 +313,7 @@ async function showRelatorio(req, res) {
 async function saveRelatorio(req, res) {
   try {
     await projeto_extensaoModel.updateRelatorio(req.params.id, req.body);
+    req.session.flash = { type: 'success', message: 'Relatório salvo com sucesso!' };
     res.redirect('/projeto_extensao/' + req.params.id + '/relatorio');
   } catch (error) {
     console.error('Erro ao salvar relatório:', error);
@@ -552,6 +557,8 @@ async function changeStatus(req, res) {
     }
 
     await projeto_extensaoModel.updateStatus(id, novo_status);
+    const statusNomes = { em_avaliacao:'Em Avaliação', aprovado:'Aprovado', rejeitado:'Rejeitado', em_execucao:'Em Execução', concluido:'Concluído', rascunho:'Rascunho' };
+    req.session.flash = { type: 'success', message: 'Status alterado para "' + (statusNomes[novo_status] || novo_status) + '" com sucesso!' };
     res.redirect('/projeto_extensao');
   } catch (error) {
     console.error('Erro ao alterar status:', error);
