@@ -39,6 +39,9 @@ router.post('/:id/local/:localId/delete', projeto_extensaoController.deleteLocal
 router.post('/:id/instituicao', projeto_extensaoController.addInstituicaoProjeto);
 router.post('/:id/instituicao/:instId/delete', projeto_extensaoController.deleteInstituicaoProjeto);
 
+// Mudança de status (workflow)
+router.post('/:id/status', projeto_extensaoController.changeStatus);
+
 // Plano de Extensão
 router.get('/:id/plano', projeto_extensaoController.showPlano);
 router.post('/:id/plano', projeto_extensaoController.savePlano);

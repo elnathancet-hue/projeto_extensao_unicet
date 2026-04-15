@@ -2,19 +2,22 @@ const pool = require('../db');
 
 async function getAllprojeto_extensaos() {
   const [rows] = await pool.query(`
-    SELECT 
-      id_projeto,
-      titulo,
-      id_tipo_plano,
-      coordenador_id,
-      periodo_inicio,
-      periodo_fim,
-      carga_horaria_total,
-      id_publico_alvo,
-      objetivo,
-      metodologia
-    FROM projeto_extensao
-    ORDER BY id_projeto DESC
+    SELECT
+      pe.id_projeto,
+      pe.titulo,
+      pe.id_tipo_plano,
+      pe.coordenador_id,
+      pe.periodo_inicio,
+      pe.periodo_fim,
+      pe.carga_horaria_total,
+      pe.id_publico_alvo,
+      pe.objetivo,
+      pe.metodologia,
+      pe.status,
+      p.nome AS coordenador_nome
+    FROM projeto_extensao pe
+    LEFT JOIN pessoa p ON pe.coordenador_id = p.id_pessoa
+    ORDER BY pe.id_projeto DESC
   `);
   return rows;
 }
@@ -275,17 +278,46 @@ async function getPessoasByProjeto(id_projeto) {
   }
 
 async function filterprojeto_extensao(filters) {
-  let sql = `SELECT id_projeto, titulo, id_tipo_plano, coordenador_id, periodo_inicio, periodo_fim, carga_horaria_total, id_publico_alvo, objetivo, metodologia FROM projeto_extensao`;
+  let sql = `SELECT pe.id_projeto, pe.titulo, pe.id_tipo_plano, pe.coordenador_id, pe.periodo_inicio, pe.periodo_fim, pe.carga_horaria_total, pe.id_publico_alvo, pe.objetivo, pe.metodologia, pe.status, p.nome AS coordenador_nome FROM projeto_extensao pe LEFT JOIN pessoa p ON pe.coordenador_id = p.id_pessoa`;
   const conditions = [];
   const params = [];
-  if (filters.titulo) { conditions.push('titulo LIKE ?'); params.push('%' + filters.titulo + '%'); }
-  if (filters.id_tipo_plano) { conditions.push('id_tipo_plano = ?'); params.push(filters.id_tipo_plano); }
-  if (filters.periodo_inicio_de) { conditions.push('periodo_inicio >= ?'); params.push(filters.periodo_inicio_de); }
-  if (filters.periodo_inicio_ate) { conditions.push('periodo_inicio <= ?'); params.push(filters.periodo_inicio_ate); }
+  if (filters.titulo) { conditions.push('pe.titulo LIKE ?'); params.push('%' + filters.titulo + '%'); }
+  if (filters.id_tipo_plano) { conditions.push('pe.id_tipo_plano = ?'); params.push(filters.id_tipo_plano); }
+  if (filters.status) { conditions.push('pe.status = ?'); params.push(filters.status); }
+  if (filters.periodo_inicio_de) { conditions.push('pe.periodo_inicio >= ?'); params.push(filters.periodo_inicio_de); }
+  if (filters.periodo_inicio_ate) { conditions.push('pe.periodo_inicio <= ?'); params.push(filters.periodo_inicio_ate); }
   if (conditions.length) sql += ' WHERE ' + conditions.join(' AND ');
-  sql += ' ORDER BY id_projeto DESC';
+  sql += ' ORDER BY pe.id_projeto DESC';
   const [rows] = await pool.query(sql, params);
   return rows;
+}
+
+async function updateStatus(id, status) {
+  await pool.query('UPDATE projeto_extensao SET status = ? WHERE id_projeto = ?', [status, id]);
+}
+
+async function getDashboardStats() {
+  const [statusCounts] = await pool.query(`
+    SELECT status, COUNT(*) AS total FROM projeto_extensao GROUP BY status
+  `);
+  const [totalProjetos] = await pool.query('SELECT COUNT(*) AS total FROM projeto_extensao');
+  const [totalPessoas] = await pool.query('SELECT COUNT(*) AS total FROM pessoa');
+  const [totalCursos] = await pool.query('SELECT COUNT(*) AS total FROM curso');
+  const [projetosPorCurso] = await pool.query(`
+    SELECT c.nome_curso, COUNT(pc.id_projeto) AS total
+    FROM projeto_curso pc
+    JOIN curso c ON pc.id_curso = c.id_curso
+    GROUP BY c.nome_curso
+    ORDER BY total DESC
+    LIMIT 5
+  `);
+  return {
+    statusCounts: statusCounts.reduce((acc, r) => { acc[r.status] = r.total; return acc; }, {}),
+    totalProjetos: totalProjetos[0].total,
+    totalPessoas: totalPessoas[0].total,
+    totalCursos: totalCursos[0].total,
+    projetosPorCurso
+  };
 }
 
 async function getProjetoCompletoById(id) {
@@ -384,5 +416,7 @@ module.exports = {
   addLocalProjeto,
   removeLocalProjeto,
   addInstituicaoProjeto,
-  removeInstituicaoProjeto
+  removeInstituicaoProjeto,
+  updateStatus,
+  getDashboardStats
 };

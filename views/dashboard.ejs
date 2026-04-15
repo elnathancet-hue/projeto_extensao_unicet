@@ -1,24 +1,157 @@
 <%- include('cabecalho', { titulo: 'Dashboard' }) %>
 
+<%
+  const s = (typeof stats !== 'undefined' && stats) ? stats : {};
+  const sc = s.statusCounts || {};
+  const perfil = (typeof sessionTipo !== 'undefined') ? sessionTipo : '';
+  const isAdmin = perfil === 'admin';
+  const isCoord = perfil === 'coordenador';
+%>
+
 <div class="d-flex justify-content-between align-items-center mb-4">
   <div>
     <h1 class="mb-1">Bem-vindo, <%= sessionUsuario %>!</h1>
-    <p class="text-muted mb-0" style="font-size:0.875rem">Gerenciador de Projetos de Extensão</p>
+    <p class="text-muted mb-0" style="font-size:0.875rem">
+      Gerenciador de Projetos de Extensão
+      <span class="badge bg-secondary ms-2" style="font-size:0.625rem; text-transform:uppercase"><%= perfil || 'professor' %></span>
+    </p>
   </div>
   <span class="badge bg-info">
     <i class="bi bi-calendar3"></i> <%= new Date().toLocaleDateString('pt-BR') %>
   </span>
 </div>
 
+<!-- KPIs -->
+<div class="row mb-4">
+  <div class="col-md-3 mb-3">
+    <div class="card module-card" style="border-left: 4px solid var(--bs-primary);">
+      <div class="card-body">
+        <div class="d-flex justify-content-between align-items-center">
+          <div>
+            <p class="text-muted mb-1" style="font-size:0.688rem; text-transform:uppercase; letter-spacing:0.05em">Total de Projetos</p>
+            <h2 class="mb-0 fw-bold"><%= s.totalProjetos || 0 %></h2>
+          </div>
+          <div style="font-size:2rem; color:var(--bs-primary); opacity:0.3"><i class="bi bi-briefcase-fill"></i></div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-3 mb-3">
+    <div class="card module-card" style="border-left: 4px solid var(--bs-success);">
+      <div class="card-body">
+        <div class="d-flex justify-content-between align-items-center">
+          <div>
+            <p class="text-muted mb-1" style="font-size:0.688rem; text-transform:uppercase; letter-spacing:0.05em">Aprovados</p>
+            <h2 class="mb-0 fw-bold" style="color:var(--bs-success)"><%= (sc.aprovado || 0) + (sc.em_execucao || 0) + (sc.concluido || 0) %></h2>
+          </div>
+          <div style="font-size:2rem; color:var(--bs-success); opacity:0.3"><i class="bi bi-check-circle-fill"></i></div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-3 mb-3">
+    <div class="card module-card" style="border-left: 4px solid var(--bs-warning);">
+      <div class="card-body">
+        <div class="d-flex justify-content-between align-items-center">
+          <div>
+            <p class="text-muted mb-1" style="font-size:0.688rem; text-transform:uppercase; letter-spacing:0.05em">Em Avaliação</p>
+            <h2 class="mb-0 fw-bold" style="color:var(--bs-warning)"><%= sc.em_avaliacao || 0 %></h2>
+          </div>
+          <div style="font-size:2rem; color:var(--bs-warning); opacity:0.3"><i class="bi bi-hourglass-split"></i></div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-3 mb-3">
+    <div class="card module-card" style="border-left: 4px solid var(--brand);">
+      <div class="card-body">
+        <div class="d-flex justify-content-between align-items-center">
+          <div>
+            <p class="text-muted mb-1" style="font-size:0.688rem; text-transform:uppercase; letter-spacing:0.05em">Pessoas Cadastradas</p>
+            <h2 class="mb-0 fw-bold"><%= s.totalPessoas || 0 %></h2>
+          </div>
+          <div style="font-size:2rem; color:var(--brand); opacity:0.3"><i class="bi bi-people-fill"></i></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Status breakdown -->
+<div class="row mb-4">
+  <div class="col-md-8 mb-3">
+    <div class="card">
+      <div class="card-body">
+        <h6 class="fw-bold mb-3"><i class="bi bi-bar-chart"></i> Projetos por Status</h6>
+        <div class="row text-center">
+          <div class="col">
+            <div class="p-2 rounded" style="background:#f3f4f6">
+              <div class="fw-bold" style="font-size:1.25rem"><%= sc.rascunho || 0 %></div>
+              <small class="text-muted" style="font-size:0.625rem">RASCUNHO</small>
+            </div>
+          </div>
+          <div class="col">
+            <div class="p-2 rounded" style="background:#fef3c7">
+              <div class="fw-bold" style="font-size:1.25rem; color:#92400e"><%= sc.em_avaliacao || 0 %></div>
+              <small style="font-size:0.625rem; color:#92400e">EM AVALIAÇÃO</small>
+            </div>
+          </div>
+          <div class="col">
+            <div class="p-2 rounded" style="background:#dcfce7">
+              <div class="fw-bold" style="font-size:1.25rem; color:#166534"><%= sc.aprovado || 0 %></div>
+              <small style="font-size:0.625rem; color:#166534">APROVADO</small>
+            </div>
+          </div>
+          <div class="col">
+            <div class="p-2 rounded" style="background:#e0f2fe">
+              <div class="fw-bold" style="font-size:1.25rem; color:#075985"><%= sc.em_execucao || 0 %></div>
+              <small style="font-size:0.625rem; color:#075985">EM EXECUÇÃO</small>
+            </div>
+          </div>
+          <div class="col">
+            <div class="p-2 rounded" style="background:#dbeafe">
+              <div class="fw-bold" style="font-size:1.25rem; color:#1e40af"><%= sc.concluido || 0 %></div>
+              <small style="font-size:0.625rem; color:#1e40af">CONCLUÍDO</small>
+            </div>
+          </div>
+          <div class="col">
+            <div class="p-2 rounded" style="background:#fee2e2">
+              <div class="fw-bold" style="font-size:1.25rem; color:#991b1b"><%= sc.rejeitado || 0 %></div>
+              <small style="font-size:0.625rem; color:#991b1b">REJEITADO</small>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-4 mb-3">
+    <div class="card h-100">
+      <div class="card-body">
+        <h6 class="fw-bold mb-3"><i class="bi bi-mortarboard"></i> Projetos por Curso</h6>
+        <% if (s.projetosPorCurso && s.projetosPorCurso.length > 0) { %>
+          <% s.projetosPorCurso.forEach(c => { %>
+            <div class="d-flex justify-content-between align-items-center mb-2">
+              <span style="font-size:0.75rem; max-width:70%; overflow:hidden; text-overflow:ellipsis; white-space:nowrap"><%= c.nome_curso %></span>
+              <span class="badge bg-primary"><%= c.total %></span>
+            </div>
+          <% }) %>
+        <% } else { %>
+          <p class="text-muted text-center" style="font-size:0.75rem">Nenhum curso vinculado</p>
+        <% } %>
+      </div>
+    </div>
+  </div>
+</div>
+
 <!-- Acesso Rápido -->
-<h3 class="mb-3">Acesso Rápido</h3>
+<h5 class="fw-bold mb-3"><i class="bi bi-lightning"></i> Acesso Rápido</h5>
 <div class="row mb-4">
   <div class="col-md-3 mb-3">
     <div class="card module-card" style="border-left: 4px solid var(--bs-success);">
       <div class="card-body text-center">
         <div class="card-icon" style="color: var(--bs-success);"><i class="bi bi-briefcase-fill"></i></div>
         <h5 class="card-title">Projetos</h5>
-        <p class="card-text text-muted">Projetos de Extensão</p>
+        <p class="card-text text-muted" style="font-size:0.75rem">Projetos de Extensão</p>
         <a href="/projeto_extensao" class="btn btn-primary btn-sm">Acessar</a>
       </div>
     </div>
@@ -28,47 +161,35 @@
       <div class="card-body text-center">
         <div class="card-icon" style="color: var(--brand);"><i class="bi bi-people-fill"></i></div>
         <h5 class="card-title">Pessoas</h5>
-        <p class="card-text text-muted">Cadastro de pessoas</p>
+        <p class="card-text text-muted" style="font-size:0.75rem">Cadastro de pessoas</p>
         <a href="/pessoa" class="btn btn-primary btn-sm">Acessar</a>
       </div>
     </div>
   </div>
+  <% if (isAdmin || isCoord) { %>
   <div class="col-md-3 mb-3">
-    <div class="card module-card" style="border-left: 4px solid #0d6efd;">
+    <div class="card module-card" style="border-left: 4px solid #6366f1;">
       <div class="card-body text-center">
-        <div class="card-icon" style="color: #0d6efd;"><i class="bi bi-cash-stack"></i></div>
-        <h5 class="card-title">Custos</h5>
-        <p class="card-text text-muted">Custos dos projetos</p>
-        <a href="/projeto_custo" class="btn btn-primary btn-sm">Acessar</a>
+        <div class="card-icon" style="color: #6366f1;"><i class="bi bi-person-gear"></i></div>
+        <h5 class="card-title">Usuários</h5>
+        <p class="card-text text-muted" style="font-size:0.75rem">Gerenciar acessos</p>
+        <a href="/usuarios" class="btn btn-primary btn-sm">Acessar</a>
       </div>
     </div>
   </div>
-  <div class="col-md-3 mb-3">
-    <div class="card module-card" style="border-left: 4px solid var(--bs-warning);">
-      <div class="card-body text-center">
-        <div class="card-icon" style="color: var(--bs-warning);"><i class="bi bi-star-fill"></i></div>
-        <h5 class="card-title">Avaliações</h5>
-        <p class="card-text text-muted">Avaliações institucionais</p>
-        <a href="/avaliacao_institucional" class="btn btn-primary btn-sm">Acessar</a>
-      </div>
-    </div>
-  </div>
-</div>
-
-<!-- Gerenciamento -->
-<div class="row mb-4">
   <div class="col-md-3 mb-3">
     <div class="card module-card">
       <div class="card-body text-center">
         <div class="card-icon" style="color: var(--brand);"><i class="bi bi-gear"></i></div>
         <h5 class="card-title">Configurações</h5>
+        <p class="card-text text-muted" style="font-size:0.75rem">Tabelas do sistema</p>
         <a href="/configuracoes" class="btn btn-outline-primary btn-sm">Gerenciar</a>
       </div>
     </div>
   </div>
+  <% } %>
 </div>
 
-<!-- Footer -->
 <div class="mt-4 pt-3 border-top text-muted text-center">
   <p class="mb-0"><small>Sistema de Projetos de Extensão - UNI-CET 2025</small></p>
 </div>

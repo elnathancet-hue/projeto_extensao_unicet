@@ -2,7 +2,10 @@
 const express = require('express');
 const router = express.Router();
 const usuarioController = require('../controllers/usuarioController');
-const cursoRouter = require('./curso'); 
+const projeto_extensaoController = require('../controllers/projeto_extensaoController');
+const { authMiddleware, authorize } = require('../middleware/authMiddleware');
+
+const cursoRouter = require('./curso');
 const faixa_etariaRouter = require('./faixa_etaria');
 const escolaridadeRouter = require('./escolaridade');
 const tipo_pessoaRouter = require('./tipo_pessoa');
@@ -18,39 +21,28 @@ const linha_programaticaRouter = require('./linha_programatica');
 const papel_projetoRouter = require('./papel_projeto');
 const local_execucaoRouter = require('./local_execucao');
 const cronogramaRouter = require('./cronograma');
-
-//minha modificação adicionar os que estavão faltando 
-//OBS: VERIFICAR SE FALTA MAIS ALGUM 
-const projeto_assinaturaRouter = require ('./projeto_assinatura');
+const projeto_assinaturaRouter = require('./projeto_assinatura');
 const projeto_custoRouter = require('./projeto_custo');
 
-// Rota GET para exibir a página de login
+// ===== ROTAS PÚBLICAS (sem auth) =====
 router.get('/login', (req, res) => {
+  if (req.session && req.session.usuario) return res.redirect('/logo');
   res.render('login');
 });
-
-// Rota GET para o dashboard/logo
-router.get('/logo', (req, res) => {
-  if (!req.session || !req.session.usuario) {
-    return res.redirect('/login');
-  }
-  res.render('dashboard', { 
-    usuario: req.session.usuario,
-    tipo: req.session.tipo 
-  });
-});
-
-// Rota POST para processar o formulário de login
 router.post('/login', usuarioController.login);
-
-// Rota de logout
 router.get('/logout', usuarioController.logout);
 
-// Rota de configurações - carrega dados das 9 tabelas
-router.get('/configuracoes', async (req, res) => {
-  if (!req.session || !req.session.usuario) {
-    return res.redirect('/login');
-  }
+// ===== TODAS AS ROTAS ABAIXO REQUEREM AUTENTICAÇÃO =====
+router.use(authMiddleware);
+
+// Dashboard com KPIs
+router.get('/logo', projeto_extensaoController.showDashboard);
+
+// Rota raiz
+router.get('/', (req, res) => res.redirect('/logo'));
+
+// Configurações (somente admin/coordenador)
+router.get('/configuracoes', authorize('admin', 'coordenador'), async (req, res) => {
   try {
     const tipo_pessoaModel = require('../models/tipo_pessoaModel');
     const tipo_planoModel = require('../models/tipo_planoModel');
@@ -61,7 +53,6 @@ router.get('/configuracoes', async (req, res) => {
     const faixa_etariaModel = require('../models/faixa_etariaModel');
     const escolaridadeModel = require('../models/escolaridadeModel');
     const linha_programaticaModel = require('../models/linha_programaticaModel');
-
     const pessoaModel = require('../models/pessoaModel');
     const cursoModel = require('../models/cursoModel');
     const instituicaoModel = require('../models/instituicaoModel');
@@ -96,15 +87,15 @@ router.get('/configuracoes', async (req, res) => {
   }
 });
 
-// Rota raiz redireciona para /logo
-router.get('/', (req, res) => {
-  if (!req.session || !req.session.usuario) {
-    return res.redirect('/login');
-  }
-  res.redirect('/logo');
-});
+// ===== CRUD DE USUÁRIOS (somente admin) =====
+router.get('/usuarios', authorize('admin'), usuarioController.listUsuarios);
+router.get('/usuarios/forms/usuario', authorize('admin'), usuarioController.showCreateForm);
+router.post('/usuarios/cadastrar', authorize('admin'), usuarioController.addUsuario);
+router.get('/usuarios/:id/edit', authorize('admin'), usuarioController.showEditForm);
+router.post('/usuarios/:id/edit', authorize('admin'), usuarioController.editUsuario);
+router.get('/usuarios/:id/delete', authorize('admin'), usuarioController.deleteUsuario);
 
-// Rotas de recursos
+// Rotas de recursos (protegidas pelo authMiddleware acima)
 router.use('/curso', cursoRouter);
 router.use('/faixa_etaria', faixa_etariaRouter);
 router.use('/escolaridade', escolaridadeRouter);
@@ -120,11 +111,8 @@ router.use('/tipo_acao', tipo_acaoRouter);
 router.use('/linha_programatica', linha_programaticaRouter);
 router.use('/papel_projeto', papel_projetoRouter);
 router.use('/local_execucao', local_execucaoRouter);
-router.use('/cronograma', cronogramaRouter); // Vincula a URL /cronograma ao arquivo
-//minha modificação 
+router.use('/cronograma', cronogramaRouter);
 router.use('/projeto_assinatura', projeto_assinaturaRouter);
 router.use('/projeto_custo', projeto_custoRouter);
 
-
-
-module.exports = router;        
+module.exports = router;

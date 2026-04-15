@@ -65,6 +65,7 @@ async function listprojeto_extensaos(req, res) {
     const filters = {
       titulo: req.query.titulo || '',
       id_tipo_plano: req.query.id_tipo_plano || '',
+      status: req.query.status || '',
       periodo_inicio_de: req.query.periodo_inicio_de || '',
       periodo_inicio_ate: req.query.periodo_inicio_ate || ''
     };
@@ -508,6 +509,75 @@ async function deleteInstituicaoProjeto(req, res) {
   }
 }
 
+// ===== MUDANÇA DE STATUS (WORKFLOW) =====
+const STATUS_TRANSITIONS = {
+  // perfil: { statusAtual: [statusPermitidos] }
+  professor: {
+    rascunho: ['em_avaliacao'],    // professor submete para análise
+  },
+  coordenador: {
+    em_avaliacao: ['aprovado', 'rejeitado'],  // coordenador aprova ou rejeita
+    aprovado: ['em_execucao'],                // coordenador inicia execução
+  },
+  admin: {
+    rascunho: ['em_avaliacao'],
+    em_avaliacao: ['aprovado', 'rejeitado'],
+    aprovado: ['em_execucao'],
+    rejeitado: ['rascunho'],
+    em_execucao: ['concluido'],
+    concluido: ['em_execucao'] // reabrir se necessário
+  }
+};
+
+async function changeStatus(req, res) {
+  try {
+    const { id } = req.params;
+    const { novo_status } = req.body;
+    const perfil = (req.session.tipo || 'professor').toLowerCase();
+
+    const projeto = await projeto_extensaoModel.getprojeto_extensaosById(id);
+    if (!projeto) {
+      return res.render('error', { message: 'Projeto não encontrado', returnLink: '/projeto_extensao' });
+    }
+
+    const statusAtual = projeto.status || 'rascunho';
+    const transicoes = STATUS_TRANSITIONS[perfil] || STATUS_TRANSITIONS.professor;
+    const permitidos = transicoes[statusAtual] || [];
+
+    if (!permitidos.includes(novo_status)) {
+      return res.render('error', {
+        message: `Transição de "${statusAtual}" para "${novo_status}" não permitida para o perfil "${perfil}".`,
+        returnLink: '/projeto_extensao'
+      });
+    }
+
+    await projeto_extensaoModel.updateStatus(id, novo_status);
+    res.redirect('/projeto_extensao');
+  } catch (error) {
+    console.error('Erro ao alterar status:', error);
+    res.render('error', { message: 'Erro ao alterar status do projeto', returnLink: '/projeto_extensao' });
+  }
+}
+
+// ===== DASHBOARD COM KPIs =====
+async function showDashboard(req, res) {
+  try {
+    const stats = await projeto_extensaoModel.getDashboardStats();
+    res.render('dashboard', {
+      usuario: req.session.usuario,
+      tipo: req.session.tipo,
+      stats
+    });
+  } catch (error) {
+    console.error('Erro ao carregar dashboard:', error);
+    res.render('dashboard', {
+      usuario: req.session.usuario,
+      tipo: req.session.tipo,
+      stats: null
+    });
+  }
+}
+
 module.exports = {
   listprojeto_extensaos,
   filterprojeto_extensao,
@@ -533,5 +603,7 @@ module.exports = {
   addLocalProjeto,
   deleteLocalProjeto,
   addInstituicaoProjeto,
-  deleteInstituicaoProjeto
+  deleteInstituicaoProjeto,
+  changeStatus,
+  showDashboard
 };

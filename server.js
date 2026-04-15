@@ -53,6 +53,20 @@ app.use((err, req, res, next) => {
   res.status(500).send('Algo deu errado!')
 })
 
+// Executar migrations pendentes na inicialização
+const runMigration = require('./run_migration_status');
+const pool = require('./db');
+
+(async () => {
+  try {
+    const conn = await pool.getConnection();
+    await runMigration(conn);
+    conn.release();
+  } catch (err) {
+    console.warn('[migration] Não foi possível executar migration:', err.message);
+  }
+})();
+
 // Iniciando o servidor
 app.listen(port, '0.0.0.0', () => {
   console.log(`Server is running on port http://localhost:${port}/logo`)

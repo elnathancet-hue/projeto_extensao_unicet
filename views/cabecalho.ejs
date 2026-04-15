@@ -28,6 +28,13 @@
           <i class="bi bi-briefcase"></i> Projetos de Extensão
         </a>
 
+        <!-- Usuários (admin/coordenador) -->
+        <% if (sessionTipo === 'admin' || sessionTipo === 'coordenador') { %>
+        <a href="/usuarios" class="<%= currentPath.startsWith('/usuarios') ? 'active' : '' %>">
+          <i class="bi bi-person-gear"></i> Usuários
+        </a>
+        <% } %>
+
         <!-- Configuração -->
         <div class="sidebar-group">
           <a href="#menuConfig" class="sidebar-toggle" data-bs-toggle="collapse"

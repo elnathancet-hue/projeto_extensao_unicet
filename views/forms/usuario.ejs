@@ -1,0 +1,58 @@
+<%- include('../cabecalho', { titulo: isEdit ? 'Editar Usuário' : 'Novo Usuário' }) %>
+
+<% const u = usuario_edit || {}; %>
+
+<main class="container my-5">
+  <section class="card shadow p-4 p-md-5" style="max-width:600px; margin:0 auto">
+
+    <h1 class="fs-4 fw-bold mb-4 border-bottom pb-3">
+      <i class="bi bi-person-gear"></i> <%= isEdit ? 'Editar Usuário' : 'Novo Usuário' %>
+    </h1>
+
+    <form method="POST" action="<%= isEdit ? '/usuarios/' + u.id_usuario + '/edit' : '/usuarios/cadastrar' %>">
+
+      <div class="mb-3">
+        <label class="form-label">Login <span class="text-danger">*</span></label>
+        <input name="usuario" class="form-control" value="<%= u.usuario || '' %>" required placeholder="Nome de acesso ao sistema" autocomplete="off">
+      </div>
+
+      <div class="mb-3">
+        <label class="form-label">Senha <%= isEdit ? '(deixe vazio para manter)' : '' %> <% if (!isEdit) { %><span class="text-danger">*</span><% } %></label>
+        <input name="senha" type="password" class="form-control" placeholder="<%= isEdit ? 'Nova senha (opcional)' : 'Defina a senha' %>" <%= !isEdit ? 'required' : '' %> autocomplete="new-password">
+      </div>
+
+      <div class="mb-3">
+        <label class="form-label">Perfil de Acesso <span class="text-danger">*</span></label>
+        <select name="tipo" class="form-select" required>
+          <option value="professor" <%= u.tipo === 'professor' ? 'selected' : '' %>>Professor (Docente)</option>
+          <option value="coordenador" <%= u.tipo === 'coordenador' ? 'selected' : '' %>>Coordenador de Curso</option>
+          <option value="admin" <%= u.tipo === 'admin' ? 'selected' : '' %>>Administrador (Pró-Reitoria)</option>
+        </select>
+        <small class="text-muted" style="font-size:0.688rem">
+          Professor: cria projetos e relatórios. Coordenador: aprova/rejeita planos. Admin: acesso total.
+        </small>
+      </div>
+
+      <div class="mb-3">
+        <label class="form-label">Vincular a Pessoa (opcional)</label>
+        <select name="id_pessoa" class="form-select">
+          <option value="">-- Nenhuma --</option>
+          <% if (typeof pessoas !== 'undefined' && pessoas) { %>
+            <% pessoas.forEach(p => { %>
+              <option value="<%= p.id_pessoa %>" <%= u.id_pessoa == p.id_pessoa ? 'selected' : '' %>><%= p.nome %></option>
+            <% }) %>
+          <% } %>
+        </select>
+        <small class="text-muted" style="font-size:0.688rem">Associe este login a uma pessoa cadastrada no sistema</small>
+      </div>
+
+      <div class="d-flex gap-2 mt-4">
+        <button type="submit" class="btn btn-primary btn-sm"><i class="bi bi-check-lg"></i> <%= isEdit ? 'Salvar' : 'Cadastrar' %></button>
+        <a href="/usuarios" class="btn btn-secondary btn-sm"><i class="bi bi-arrow-left"></i> Voltar</a>
+      </div>
+
+    </form>
+  </section>
+</main>
+
+<%- include('../rodape') %>
